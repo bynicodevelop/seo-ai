@@ -10,13 +10,19 @@ export default defineEventHandler(async (event) => {
 
         for (let i = 0; i < 5; i++) {
             db.collection('domains').doc('localhost').collection('categories').doc(`category-${i}`).set({
-                name: `Category ${i}`,
+                name: {
+                    fr: `Catégorie ${i}`,
+                    en: `Category ${i}`,
+                },
                 slug: `category-${i}`,
                 seo: {
                     title: `Category ${i} - MagicApex`,
                     description: `Category ${i} - MagicApex description`,
                 },
-                description: `Category ${i} description`,
+                description: {
+                    fr: `Description de la catégorie ${i}`,
+                    en: `Description of category ${i}`,
+                },
                 createdAt: new Date(),
                 updatedAt: new Date(),
             });

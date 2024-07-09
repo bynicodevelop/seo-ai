@@ -10,11 +10,7 @@ export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        console.log(name);
-        
         const snapshot = await db.collection('domains').doc(name).collection('categories').get();
-
-        console.log(snapshot.docs);
 
         const categories: Category[] = snapshot.docs.map((doc) => {
             const { name, slug, seo, description, createdAt, updatedAt } = doc.data() as Category;
