@@ -10,7 +10,6 @@ export type Content = {
     category: string;
     excerpt: string;
     content: string;
-    featuredImage: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;
     publishedAt: Timestamp;

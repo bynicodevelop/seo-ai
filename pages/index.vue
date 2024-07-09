@@ -4,21 +4,36 @@ const { locale } = useI18n();
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchDomain } = useContent();
 
-const { data: domain } = await useAsyncData<Domain>('domain', async () => await fetchDomain($domain as string));
+const domain = ref<Domain | null>(null);
 
-useHead({
-    title: $translate(domain.value?.title, locale.value),
-    meta: [
-        {
-            hid: 'description',
-            name: 'description',
-            content: $translate(domain.value?.description, locale.value),
-        },
-    ],
-});
+try {
+    const { data: domainData } = await useAsyncData<Domain>('domain', async () => await fetchDomain($domain as string));
+
+    domain.value = domainData.value;
+
+    useHead({
+        title: $translate(domain.value?.title, locale.value),
+        meta: [
+            {
+                hid: 'description',
+                name: 'description',
+                content: $translate(domain.value?.description, locale.value),
+            },
+        ],
+    });
+} catch (error) {
+    throw createError({
+        statusCode: 404,
+        message: 'Domain not found',
+        fatal: true
+    });
+}
 </script>
 
 <template>
-    {{ $domain }}
-    home
+    <main>
+        <h1>
+            home
+        </h1>
+    </main>
 </template>

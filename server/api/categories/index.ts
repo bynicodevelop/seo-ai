@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
         const snapshot = await db.collection('domains').doc(name).collection('categories').get();
 
         const categories: Category[] = snapshot.docs.map((doc) => {
-            const { name, slug, seo, description, createdAt, updatedAt } = doc.data() as Category;
+            const { title, slug, seo, description, createdAt, updatedAt } = doc.data() as Category;
             return {
                 id: doc.id,
-                name,
+                title,
                 slug,
                 seo,
                 description,

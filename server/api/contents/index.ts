@@ -1,0 +1,75 @@
+// /server/api/getData.js
+import first from 'lodash/first';
+import { db } from '../../config/firebase';
+import { ApiResponse } from '~/shared/types/api-response';
+import { ErrorResponse } from '~/shared/types/error';
+import { CategoryQuery, DomainQuery } from '~/shared/types/queries';
+import { Content } from '~/shared/types/content';
+
+
+export default defineEventHandler(async (event) => {
+    const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
+
+    try {
+        const categorySnapshot = await db.collection('domains')
+        .doc(name)
+        .collection('categories')
+        .where('slug', '==', categorySlug)
+        .get();
+
+        if (categorySnapshot.empty) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Category not found',
+                },
+            } as ApiResponse<ErrorResponse>;
+        }
+
+
+        const contentsSnapshot = await first(categorySnapshot.docs)?.ref.collection('contents').get();
+
+        if (contentsSnapshot?.empty) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Contents not found',
+                },
+            } as ApiResponse<ErrorResponse>;
+        }
+
+        const contents: Content[] = (contentsSnapshot?.docs ?? []).map((doc: any) => { 
+            const { title, slug, excerpt, content, createdAt, updatedAt, publishedAt } = doc.data();
+            return {
+                id: doc.id,
+                slug,
+                title,
+                seo: {
+                    title,
+                    description: excerpt,
+                },
+                category: categorySlug,
+                excerpt,
+                content,
+                createdAt,
+                updatedAt,
+                publishedAt,
+            } as Content;
+        })
+
+        return {
+            status: 200,
+            data: contents,
+        } as ApiResponse<Content[]>;
+        
+    } catch (error) {
+        console.log(error);
+        
+        return {
+            status: 500,
+            data: {
+                message: 'Error fetching categories data',
+            },
+        } as ApiResponse<ErrorResponse>
+    }
+});

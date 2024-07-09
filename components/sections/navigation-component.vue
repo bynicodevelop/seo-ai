@@ -1,19 +1,24 @@
 <script setup lang="ts">
+import type { Category } from '~/shared/types/category';
+import type { Domain } from '~/shared/types/domain';
+
 const { locale } = useI18n();
+const localePath = useLocalePath();
 const { $domain, $translate } = useNuxtApp() as any;
-const { fetchCategories } = useContent();
+const { fetchCategories, fetchDomain } = useContent();
 
 const show = ref(false);
 
-const { data: categories } = await useAsyncData('categories', async () => await fetchCategories($domain as string));
+const { data: domain } = await useAsyncData<Domain>('domain', async () => await fetchDomain($domain as string));
+const { data: categories } = await useAsyncData<Category[]>('categories', async () => await fetchCategories($domain as string));
 </script>
 
 <template>
     <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-        <a href="#" class="-m-1.5 p-1.5">
-            <span class="sr-only">Your Company</span>
-            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
-        </a>
+        <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5">
+            <span class="sr-only">{{ domain?.title }}</span>
+            {{ domain?.title }}
+        </NuxtLink>
         <div class="flex lg:hidden">
             <button @click="show = true" type="button"
                 class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
@@ -26,9 +31,10 @@ const { data: categories } = await useAsyncData('categories', async () => await 
             </button>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-            <NuxtLink v-for="category in categories" :key="category.slug" :to="`/categories/${category.slug}`"
+            <NuxtLink v-for="category in categories" :key="category.slug"
+                :to="localePath(`/categories/${category.slug}`)" :title="$translate(category.seo.title, locale)"
                 class="text-sm font-semibold leading-6 text-gray-900 capitalize">
-                {{ $translate(category.name, locale) }}
+                {{ $translate(category.title, locale) }}
             </NuxtLink>
         </div>
     </nav>
@@ -39,11 +45,10 @@ const { data: categories } = await useAsyncData('categories', async () => await 
         <div
             class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div class="flex items-center justify-between">
-                <a href="#" class="-m-1.5 p-1.5">
-                    <span class="sr-only">Your Company</span>
-                    <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                        alt="">
-                </a>
+                <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.title">
+                    <span class="sr-only">{{ domain?.title }}</span>
+                    {{ domain?.title }}
+                </NuxtLink>
                 <button @click="show = false" type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
                     <span class="sr-only">Close menu</span>
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -56,9 +61,10 @@ const { data: categories } = await useAsyncData('categories', async () => await 
                 <div class="-my-6 divide-y divide-gray-500/10">
                     <div class="space-y-2 py-6">
                         <NuxtLink @click="show = false" v-for="category in categories" :key="category.slug"
-                            :to="`/categories/${category.slug}`"
+                            :title="$translate(category.seo.title, locale)"
+                            :to="localePath(`/categories/${category.slug}`)"
                             class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
-                            {{ $translate(category.name, locale) }}
+                            {{ $translate(category.title, locale) }}
                         </NuxtLink>
                     </div>
                 </div>

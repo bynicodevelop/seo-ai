@@ -26,5 +26,5 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
   },
 
-  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/i18n", "nuxt-lodash"]
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/i18n", "nuxt-lodash", "@nuxtjs/mdc"]
 })

@@ -8,14 +8,14 @@ import first from 'lodash/first';
 
 
 export default defineEventHandler(async (event) => {
-    const { slug } = event.context.params as { slug: string };
+    const { categorySlug } = event.context.params as { categorySlug: string };
     const { name } = getQuery(event) as DomainQuery;
 
     try {
         const doc = await db.collection('domains').doc(name).collection('categories')
-        .where('slug', '==', slug)
-        .get();
-        
+            .where('slug', '==', categorySlug)
+            .get();
+
         if (doc.empty) {
             return {
                 status: 404,
@@ -25,7 +25,17 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const category = first(doc.docs)!.data() as Category;
+        const { title, seo, description, createdAt, updatedAt } = first(doc.docs)!.data() as Category;
+
+        const category: Category = {
+            id: first(doc.docs)!.id,
+            title,
+            slug: categorySlug,
+            seo,
+            description,
+            createdAt,
+            updatedAt,
+        };
 
         return {
             status: 200,
@@ -33,7 +43,7 @@ export default defineEventHandler(async (event) => {
         } as ApiResponse<Category>;
     } catch (error) {
         console.log(error);
-        
+
         return {
             status: 500,
             data: {
