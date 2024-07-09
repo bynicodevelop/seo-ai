@@ -153,4 +153,4 @@ domains (collection)
 ## Lexite & Aide
 
 _SDK Admin Firebase_ : 
-Fichier disponible dans l'englet `Paramètres du projet` de votre [console firebase](https://console.firebase.google.com/) puis `Compte de service` en cliquant sur `Générer une nouvelle clé privée`.
+Fichier disponible dans l'onglet `Paramètres du projet` de votre [console firebase](https://console.firebase.google.com/) puis `Compte de service` en cliquant sur `Générer une nouvelle clé privée`.

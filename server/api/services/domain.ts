@@ -9,23 +9,69 @@ export default defineEventHandler(async (event) => {
         });
 
         for (let i = 0; i < 5; i++) {
-            db.collection('domains').doc('localhost').collection('categories').doc(`category-${i}`).set({
-                name: {
-                    fr: `Catégorie ${i}`,
-                    en: `Category ${i}`,
-                },
-                slug: `category-${i}`,
-                seo: {
-                    title: `Category ${i} - MagicApex`,
-                    description: `Category ${i} - MagicApex description`,
-                },
-                description: {
-                    fr: `Description de la catégorie ${i}`,
-                    en: `Description of category ${i}`,
-                },
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            });
+            db.collection('domains')
+                .doc('localhost')
+                .collection('categories')
+                .doc(`category-${i}`)
+                .set({
+                    title: {
+                        fr: `Catégorie ${i}`,
+                        en: `Category ${i}`,
+                    },
+                    slug: `category-${i}`,
+                    seo: {
+                        title: {
+                            fr: `Catégorie ${i} - MagicApex`,
+                            en: `Category ${i} - MagicApex`,
+                        },
+                        description: {
+                            fr: `Description de la catégorie ${i}`,
+                            en: `Description of category ${i}`,
+                        }
+                    },
+                    description: {
+                        fr: `Description de la catégorie ${i}`,
+                        en: `Description of category ${i}`,
+                    },
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                });
+
+            for (let j = 0; j < 5; j++) {
+                db.collection('domains')
+                    .doc('localhost')
+                    .collection('categories')
+                    .doc(`category-${i}`)
+                    .collection('contents')
+                    .doc(`content-${j}`)
+                    .set({
+                        title: {
+                            fr: `Article ${j}`,
+                            en: `Article ${j}`,
+                        },
+                        content: {
+                            fr: `Contenu de l'article ${j}`,
+                            en: `Content of article ${j}`,
+                        },
+                        slug: `article-${j}`,
+                        seo: {
+                            title: {
+                                fr: `Article ${j} - MagicApex`,
+                                en: `Article ${j} - MagicApex`,
+                            },
+                            description: {
+                                fr: `Description de l'article ${j}`,
+                                en: `Description of article ${j}`,
+                            }
+                        },
+                        excerpt: {
+                            fr: `Description de l'article ${j}`,
+                            en: `Description of article ${j}`,
+                        },
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    });
+            }
         }
 
         return { success: true };
