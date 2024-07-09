@@ -1,6 +1,7 @@
+import type { I18n } from "./i18n";
+
 export type MetaSeo = {
-    title: string;
-    description: string;
-    keywords: string;
+    title: I18n;
+    description: I18n;
     image: string;
 };

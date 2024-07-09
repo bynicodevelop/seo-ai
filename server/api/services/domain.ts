@@ -16,8 +16,14 @@ export default defineEventHandler(async (event) => {
                 },
                 slug: `category-${i}`,
                 seo: {
-                    title: `Category ${i} - MagicApex`,
-                    description: `Category ${i} - MagicApex description`,
+                    title: {
+                        fr: `Catégorie ${i} - MagicApex`,
+                        en: `Category ${i} - MagicApex`,
+                    },
+                    description: {
+                        fr: `Description de la catégorie ${i}`,
+                        en: `Description of category ${i}`,
+                    }
                 },
                 description: {
                     fr: `Description de la catégorie ${i}`,
