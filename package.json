@@ -1,0 +1,19 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "FIRESTORE_EMULATOR_HOST=localhost:8080 && nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "firebase-admin": "^12.2.0",
+    "firebase-functions": "^5.0.1",
+    "nuxt": "^3.12.3",
+    "vue": "latest"
+  }
+}
