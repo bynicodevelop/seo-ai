@@ -62,7 +62,8 @@ Configuration multi-site
   "functions": [
     {
       "source": ".output/server",
-      "codebase": "website"
+      "codebase": "website",
+      "runtime": "nodejs20"
     },
     {
       "source": "functions",
@@ -74,10 +75,8 @@ Configuration multi-site
         "firebase-debug.*.log",
         "*.local"
       ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+      "predeploy": [],
+      "runtime": "nodejs20"
     }
   ],
   "hosting": [
@@ -96,7 +95,7 @@ Configuration multi-site
         "**/.*",
         "**/node_modules/**"
       ]
-    },
+    }
   ],
   "firestore": {
     "rules": "firestore.rules",
