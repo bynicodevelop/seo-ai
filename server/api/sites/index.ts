@@ -1,6 +1,7 @@
 // /server/api/getData.js
 import { db } from '../../firebase';
-import { Site, siteFactory, DomainQuery, ErrorResponse, ApiResponse } from '~/functions/src/shared';
+import { Site, siteFactory,  } from '~/functions/src/shared';
+import { DomainQuery, ApiResponse, ErrorResponse } from '~/server/types';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;

@@ -3,5 +3,12 @@
     "domain": "http://localhost:3000",
     "sitename": "Forex Trading - Magic Apex",
     "keywords": ["forex", "trading", "magic", "apex", "forex trading", "magic apex", "forex trading magic apex"],
-    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex."
+    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex.",
+    "categories": [
+        {
+            "title": "Forex", 
+            "slug": "forex", 
+            "description": "Le forex est un marché financier qui permet de trader les devises."
+        }
+    ]
 }

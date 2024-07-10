@@ -152,7 +152,7 @@ Utilisez le fichier `config.json` à la racine du projet.
 
 Le fichier de config : 
 
-```json
+```ts
 {
     // (optionnel) Permet de d'utilise OpenAI pour traduire les contenus
     "translate": ["en", "fr"], 
@@ -163,7 +163,18 @@ Le fichier de config :
     //  (requis) Mots clés utilisé pour le SEO (sera traduit en fonction des langues)
     "keywords": ["forex", "trading", "magic", "apex", "forex trading", "magic apex", "forex trading magic apex"],
     //  (require) Description du site (sera traduit en fonction des langues)
-    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex."
+    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex.",
+    // (optionnel) Si non défini sera généré par l'AI
+    "categories": [
+        {
+            // Titre du lien
+            "title": "Forex", 
+            // Url
+            "slug": "forex", 
+            // Description utilisé par l'AI
+            "description": "Le forex est un marché financier qui permet de trader les devises."
+        }
+    ]
 }
 ```
 

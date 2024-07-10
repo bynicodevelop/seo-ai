@@ -1,5 +1,5 @@
 // /server/api/getData.js
-import { siteFactory } from '~/functions/src/shared';
+import { categoryFactory, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
 import { MetaSeo } from '~/functions/src/shared';
 import { createSite } from '~/functions/src/shared';
@@ -32,29 +32,17 @@ export default defineEventHandler(async (event) => {
                 .doc('localhost')
                 .collection('categories')
                 .doc(`category-${i}`)
-                .set({
-                    title: {
+                .set(categoryFactory(
+                    {
                         fr: `Catégorie ${i}`,
                         en: `Category ${i}`,
                     },
-                    slug: `category-${i}`,
-                    seo: {
-                        title: {
-                            fr: `Catégorie ${i} - MagicApex`,
-                            en: `Category ${i} - MagicApex`,
-                        },
-                        description: {
-                            fr: `Description de la catégorie ${i}`,
-                            en: `Description of category ${i}`,
-                        }
-                    },
-                    description: {
+                    {
                         fr: `Description de la catégorie ${i}`,
                         en: `Description of category ${i}`,
                     },
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
+                    `category-${i}`
+                ));
 
             for (let j = 0; j < 5; j++) {
                 db.collection('sites')

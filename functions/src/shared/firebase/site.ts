@@ -1,9 +1,9 @@
-import type { Firestore } from "firebase-admin/firestore";
+import { Firestore } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
 import { siteFactory, type Site } from "../types/site";
 
 export const initSite = async (config: Config, db: Firestore): Promise<void> => {
-    const { domain, sitename, description, keywords, translate } = config;
+    const { domain, sitename, description, keywords, translate, categories } = config;
 
     const url = new URL(domain);
 
@@ -13,6 +13,7 @@ export const initSite = async (config: Config, db: Firestore): Promise<void> => 
         description,
         keywords,
         translate,
+        categories
     });
 };
 
@@ -21,3 +22,8 @@ export const createSite = async (site: Site, db: Firestore): Promise<void> => {
         .doc(site.domain)
         .set(siteFactory(site.domain, site.seo));
 };
+
+export const createCategories = async (site: Site, categories: [{ [key: string]: string }], db: Firestore): Promise<void> => {
+    await db.collection("categories")
+        .add(categories);
+}

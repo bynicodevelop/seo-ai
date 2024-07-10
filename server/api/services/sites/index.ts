@@ -8,7 +8,8 @@ export default defineEventHandler(async (event) => {
         sitename,
         keywords,
         description,
-        translate
+        translate,
+        categories
     } = await readBody(event) as Config;
 
     await initSite({
@@ -16,10 +17,11 @@ export default defineEventHandler(async (event) => {
         sitename,
         description,
         keywords: keywords || [],
-        translate: translate || []
+        translate: translate || [],
+        categories: categories || undefined
     }, db);
 
-    return{
+    return {
         message: 'Site created'
     }
 });

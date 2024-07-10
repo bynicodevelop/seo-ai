@@ -4,4 +4,5 @@ export type Config = {
     description: string;
     keywords?: string[];
     translate?: string[];
+    categories?: [{ [key: string]: string }];
 };

@@ -1,10 +1,8 @@
 // /server/api/getData.js
 import first from 'lodash/first';
 import { db } from '../../firebase';
-import { ApiResponse } from '~/functions/src/shared';
-import { ErrorResponse } from '~/functions/src/shared';
-import { CategoryQuery, DomainQuery } from '~/functions/src/shared';
 import { Content } from '~/functions/src/shared';
+import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse } from '~/server/types';
 
 
 export default defineEventHandler(async (event) => {

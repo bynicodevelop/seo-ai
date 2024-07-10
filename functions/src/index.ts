@@ -13,7 +13,7 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
 
     const data = event.data as any;
 
-    const { domain, sitename, description, keywords, translate } = data?.data() as any;
+    const { domain, sitename, description, keywords, translate, categories } = data?.data() as any;
 
     let defaultTranslate: any[] = ['fr'];
 

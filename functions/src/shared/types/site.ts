@@ -7,12 +7,16 @@ export type Site = {
     updatedAt?: Date;
 }
 
-export const siteFactory = (
+export function siteFactory(
+    domain: string,
+    seo: MetaSeo
+): Site;
+export function siteFactory (
     domain: string,
     seo: MetaSeo,
     createdAt?: Date,
     updatedAt?: Date
-): Site => {
+): Site {
     return {
         domain,
         seo,
