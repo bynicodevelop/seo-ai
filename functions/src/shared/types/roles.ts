@@ -1,0 +1,1 @@
+export type aiRole = 'user' | 'assistant';
