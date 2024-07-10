@@ -126,6 +126,14 @@ npm run dev
 curl http://localhost:3000/api/services/domain
 ```
 
+### Populer le projet en local avec fichier de configuration
+
+```batch
+curl -X POST http://localhost:3000/api/services/site -H "Content-Type: application/json" -d 'CONTENU_JSON_CONFIG'
+```
+
+Utilisez le fichier `config.json` à la racine du projet.
+
 ## Structure de la donnée
 
 Par exemple pour un blog
