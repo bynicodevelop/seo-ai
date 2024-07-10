@@ -1,5 +1,11 @@
 # SEO-AI
 
+## Techno
+
+- Nuxt 3 
+- Firebase (firestore, cloud functions)
+- tailwind css
+
 ## Installation 
 
 ```batch
