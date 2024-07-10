@@ -17,8 +17,6 @@ export const initSite = async (config: Config, db: Firestore): Promise<void> => 
 };
 
 export const createSite = async (site: Site, db: Firestore): Promise<void> => {
-    console.log(site);
-
     await db.collection("sites")
         .doc(site.domain)
         .set(siteFactory(site.domain, site.seo));
