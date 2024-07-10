@@ -1,9 +1,9 @@
 // /server/api/getData.js
 import { db } from '../../firebase';
-import { ApiResponse } from '~/shared/types/api-response';
-import { Category } from '~/shared/types/category';
-import { ErrorResponse } from '~/shared/types/error';
-import { DomainQuery } from '~/shared/types/queries';
+import { ApiResponse } from '~/functions/src/shared';
+import { Category } from '~/functions/src/shared';
+import { ErrorResponse } from '~/functions/src/shared';
+import { DomainQuery } from '~/functions/src/shared';
 
 
 export default defineEventHandler(async (event) => {
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
         } as ApiResponse<Category[]>;
     } catch (error) {
         console.log(error);
-        
+
         return {
             status: 500,
             data: {

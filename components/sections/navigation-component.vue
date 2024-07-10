@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Category } from '~/shared/types/category';
-import type { Site } from '~/shared/types/site';
+import type { Category } from '~/functions/src/shared';
+import type { Site } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const localePath = useLocalePath();

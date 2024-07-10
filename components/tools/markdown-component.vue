@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MDCParserResult } from '@nuxtjs/mdc';
-import type { I18n } from '~/shared/types/i18n';
+import type { I18n } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const { $translate } = useNuxtApp() as any;

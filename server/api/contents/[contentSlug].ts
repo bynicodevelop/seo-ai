@@ -1,10 +1,10 @@
 // /server/api/getData.js
 import first from 'lodash/first';
 import { db } from '../../firebase';
-import { ApiResponse } from '~/shared/types/api-response';
-import { ErrorResponse } from '~/shared/types/error';
-import { CategoryQuery, DomainQuery } from '~/shared/types/queries';
-import { Content } from '~/shared/types/content';
+import { ApiResponse } from '~/functions/src/shared';
+import { ErrorResponse } from '~/functions/src/shared';
+import { CategoryQuery, DomainQuery } from '~/functions/src/shared';
+import { Content } from '~/functions/src/shared';
 
 
 export default defineEventHandler(async (event) => {
@@ -12,15 +12,15 @@ export default defineEventHandler(async (event) => {
     const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
 
     console.log({ name, categorySlug });
-    
-    try {   
+
+    try {
         const contentSnapshot = await db.collection('sites')
-        .doc(name)
-        .collection('categories')
-        .doc(categorySlug)
-        .collection('contents')
-        .where('slug', '==', contentSlug)
-        .get() as any;
+            .doc(name)
+            .collection('categories')
+            .doc(categorySlug)
+            .collection('contents')
+            .where('slug', '==', contentSlug)
+            .get() as any;
 
         if (contentSnapshot.empty) {
             return {
@@ -62,10 +62,10 @@ export default defineEventHandler(async (event) => {
         return {
             status: 200,
             data: contentData,
-        } as ApiResponse<Content>;        
+        } as ApiResponse<Content>;
     } catch (error) {
         console.log(error);
-        
+
         return {
             status: 500,
             data: {

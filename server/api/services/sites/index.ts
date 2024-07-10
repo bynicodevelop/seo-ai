@@ -1,5 +1,4 @@
-import { initSite } from "~/shared/firebase/site";
-import { Config } from "~/shared/types/config";
+import { initSite, Config } from "~/functions/src/shared";
 import { db } from "../../../firebase";
 
 

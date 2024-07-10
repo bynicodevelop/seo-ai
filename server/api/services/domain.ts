@@ -1,8 +1,8 @@
 // /server/api/getData.js
-import { siteFactory } from '~/shared/types/site';
+import { siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
-import { MetaSeo } from '~/shared/types/meta-seo';
-import { createSite } from '~/shared/firebase/site';
+import { MetaSeo } from '~/functions/src/shared';
+import { createSite } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
     try {
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event) => {
         return { success: true };
     } catch (error) {
         console.log(error);
-        
+
         return { success: false, error: error };
     }
 });

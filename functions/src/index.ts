@@ -1,6 +1,6 @@
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
-import { Site, createSite } from "shared";
+import { Site, createSite } from './shared';
 
 admin.initializeApp();
 
