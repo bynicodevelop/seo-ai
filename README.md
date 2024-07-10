@@ -150,6 +150,23 @@ curl -X POST http://localhost:3000/api/services/site -H "Content-Type: applicati
 
 Utilisez le fichier `config.json` à la racine du projet.
 
+Le fichier de config : 
+
+```json
+{
+    // (optionnel) Permet de d'utilise OpenAI pour traduire les contenus
+    "translate": ["en", "fr"], 
+    // (requis) Point d'entrée pour la création d'un site
+    "domain": "http://localhost:3000", 
+    //  (requis) Titre principal du site
+    "sitename": "Forex Trading - Magic Apex", 
+    //  (requis) Mots clés utilisé pour le SEO (sera traduit en fonction des langues)
+    "keywords": ["forex", "trading", "magic", "apex", "forex trading", "magic apex", "forex trading magic apex"],
+    //  (require) Description du site (sera traduit en fonction des langues)
+    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex."
+}
+```
+
 ## Structure de la donnée
 
 Par exemple pour un blog
@@ -178,6 +195,14 @@ sites (collection)
                   └── {articleId} (document)
               └── products (sub-collection)
                   └── {productId} (document)
+```
+
+## Utilisation de l'AI
+
+Créer un fichier `.env.local` dans `/functions` avec les informations suivante : 
+
+```
+OPENAI_API=sk-proj-openai-key
 ```
 
 ## Déploiement 
