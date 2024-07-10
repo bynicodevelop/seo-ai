@@ -1,5 +1,5 @@
 // /server/api/getData.js
-import { db } from '../../config/firebase';
+import { db } from '../../firebase';
 import { ApiResponse } from '~/shared/types/api-response';
 import { Category } from '~/shared/types/category';
 import { ErrorResponse } from '~/shared/types/error';
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const snapshot = await db.collection('domains').doc(name).collection('categories').get();
+        const snapshot = await db.collection('sites').doc(name).collection('categories').get();
 
         const categories: Category[] = snapshot.docs.map((doc) => {
             const { title, slug, seo, description, createdAt, updatedAt } = doc.data() as Category;

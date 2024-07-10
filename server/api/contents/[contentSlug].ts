@@ -1,6 +1,6 @@
 // /server/api/getData.js
 import first from 'lodash/first';
-import { db } from '../../config/firebase';
+import { db } from '../../firebase';
 import { ApiResponse } from '~/shared/types/api-response';
 import { ErrorResponse } from '~/shared/types/error';
 import { CategoryQuery, DomainQuery } from '~/shared/types/queries';
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     console.log({ name, categorySlug });
     
     try {   
-        const contentSnapshot = await db.collection('domains')
+        const contentSnapshot = await db.collection('sites')
         .doc(name)
         .collection('categories')
         .doc(categorySlug)

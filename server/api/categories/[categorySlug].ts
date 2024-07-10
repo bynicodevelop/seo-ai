@@ -1,6 +1,6 @@
 // /server/api/getData.js
 import { ErrorResponse } from '~/shared/types/error';
-import { db } from '../../config/firebase';
+import { db } from '../../firebase';
 import { DomainQuery } from '~/shared/types/queries';
 import { ApiResponse } from '~/shared/types/api-response';
 import { Category } from '~/shared/types/category';
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const doc = await db.collection('domains').doc(name).collection('categories')
+        const doc = await db.collection('sites').doc(name).collection('categories')
             .where('slug', '==', categorySlug)
             .get();
 

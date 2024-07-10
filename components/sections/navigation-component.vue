@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Category } from '~/shared/types/category';
-import type { Domain } from '~/shared/types/domain';
+import type { Site } from '~/shared/types/site';
 
 const { locale } = useI18n();
 const localePath = useLocalePath();
@@ -9,15 +9,15 @@ const { fetchCategories, fetchDomain } = useContent();
 
 const show = ref(false);
 
-const { data: domain } = await useAsyncData<Domain>('domain', async () => await fetchDomain($domain as string));
+const { data: domain } = await useAsyncData<Site>('domain', async () => await fetchDomain($domain as string));
 const { data: categories } = await useAsyncData<Category[]>('categories', async () => await fetchCategories($domain as string));
 </script>
 
 <template>
     <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5">
-            <span class="sr-only">{{ domain?.title }}</span>
-            {{ domain?.title }}
+            <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
+            {{ $translate(domain?.seo.title, locale) }}
         </NuxtLink>
         <div class="flex lg:hidden">
             <button @click="show = true" type="button"
@@ -45,9 +45,9 @@ const { data: categories } = await useAsyncData<Category[]>('categories', async 
         <div
             class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div class="flex items-center justify-between">
-                <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.title">
-                    <span class="sr-only">{{ domain?.title }}</span>
-                    {{ domain?.title }}
+                <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.seo.title">
+                    <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
+                    {{ $translate(domain?.seo.title, locale) }}
                 </NuxtLink>
                 <button @click="show = false" type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
                     <span class="sr-only">Close menu</span>

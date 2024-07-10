@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import type { Domain } from '~/shared/types/domain';
+import type { Site } from '~/shared/types/site';
 const { locale } = useI18n();
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchDomain } = useContent();
 
-const domain = ref<Domain | null>(null);
+const domain = ref<Site | null>(null);
 
 try {
-    const { data: domainData } = await useAsyncData<Domain>('domain', async () => await fetchDomain($domain as string));
+    const { data: domainData } = await useAsyncData<Site>('domain', async () => await fetchDomain($domain as string));
 
     domain.value = domainData.value;
 
     useHead({
-        title: $translate(domain.value?.title, locale.value),
+        title: $translate(domain.value?.seo.title, locale.value),
         meta: [
             {
                 hid: 'description',
                 name: 'description',
-                content: $translate(domain.value?.description, locale.value),
+                content: $translate(domain.value?.seo.description, locale.value),
             },
         ],
     });

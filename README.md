@@ -127,7 +127,7 @@ Par exemple pour un blog
 _(En cours de dev)_
 
 ```
-domains (collection)
+sites (collection)
   └── {domainId} (document)
       └── categories (sub-collection)
           └── {categoryId} (document)
@@ -140,7 +140,7 @@ Par exemple blog + produits
 _(Pas pris en compte pour le moment)_
 
 ```
-domains (collection)
+sites (collection)
   └── {domainId} (document)
       └── categories (sub-collection)
           └── {categoryId} (document)

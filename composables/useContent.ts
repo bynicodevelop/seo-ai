@@ -1,11 +1,11 @@
 import type { Category } from "~/shared/types/category";
 import type { Content } from "~/shared/types/content";
-import type { Domain } from "~/shared/types/domain";
+import type { Site } from "~/shared/types/site";
 
 
-const fetchDomain = async (domain: string): Promise<Domain> => {
-    const { data } = await $fetch(`/api/domains?name=${domain}`);
-    return (data ?? {}) as Domain;
+const fetchDomain = async (domain: string): Promise<Site> => {
+    const { data } = await $fetch(`/api/sites?name=${domain}`);
+    return (data ?? {}) as Site;
 }
 const fetchCategories = async (domain: string): Promise<Category[]> => {
     const { data } = await $fetch(`/api/categories?name=${domain}`);

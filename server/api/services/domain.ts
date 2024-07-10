@@ -1,15 +1,34 @@
 // /server/api/getData.js
-import { db } from '../../config/firebase';
+import { siteFactory } from '~/shared/types/site';
+import { db } from '../../firebase';
+import { MetaSeo } from '~/shared/types/meta-seo';
+import { createSite } from '~/shared/firebase/site';
 
 export default defineEventHandler(async (event) => {
     try {
-        db.collection('domains').doc('localhost').set({
-            title: 'Localhost - MagicApex',
-            description: 'Localhost - MagicApex description',
-        });
+        await createSite(
+            siteFactory(
+                'localhost',
+                {
+                    title: {
+                        fr: 'Localhost - MagicApex',
+                        en: 'Localhost - MagicApex',
+                    },
+                    description: {
+                        fr: 'Localhost - MagicApex description',
+                        en: 'Localhost - MagicApex description',
+                    },
+                    keywords: {
+                        fr: ['MagicApex', 'localhost'],
+                        en: ['MagicApex', 'localhost'],
+                    },
+                } as MetaSeo
+            ),
+            db
+        );
 
         for (let i = 0; i < 5; i++) {
-            db.collection('domains')
+            db.collection('sites')
                 .doc('localhost')
                 .collection('categories')
                 .doc(`category-${i}`)
@@ -38,7 +57,7 @@ export default defineEventHandler(async (event) => {
                 });
 
             for (let j = 0; j < 5; j++) {
-                db.collection('domains')
+                db.collection('sites')
                     .doc('localhost')
                     .collection('categories')
                     .doc(`category-${i}`)
@@ -76,6 +95,8 @@ export default defineEventHandler(async (event) => {
 
         return { success: true };
     } catch (error) {
+        console.log(error);
+        
         return { success: false, error: error };
     }
 });
