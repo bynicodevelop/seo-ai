@@ -6,12 +6,11 @@
 - Firebase (firestore, cloud functions)
 - tailwind css
 
-## Installation 
+## Récupération du projet 
 
 ```batch
 git clone REPO
 cd DIR_NAME
-npm i
 ```
 
 ## Pré-requis
@@ -62,7 +61,8 @@ Configuration multi-site
   "functions": [
     {
       "source": ".output/server",
-      "codebase": "website"
+      "codebase": "website",
+      "runtime": "nodejs20"
     },
     {
       "source": "functions",
@@ -74,10 +74,8 @@ Configuration multi-site
         "firebase-debug.*.log",
         "*.local"
       ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+      "predeploy": [],
+      "runtime": "nodejs20"
     }
   ],
   "hosting": [
@@ -96,7 +94,7 @@ Configuration multi-site
         "**/.*",
         "**/node_modules/**"
       ]
-    },
+    }
   ],
   "firestore": {
     "rules": "firestore.rules",
@@ -108,16 +106,34 @@ Configuration multi-site
 
 ## Démarrer le projet
 
-### Serveur Firebase (firestore...)
+### Configuration firebase en local
 
-```batch
-firebase emulators:start
+Créer un fichier `.env` et ajoutez pour requête firestore en local pendant le développement : 
+
+```
+FIRESTORE_EMULATOR_HOST=localhost:8080
 ```
 
-### Serveur Nuxt
+Firestore est accéssible sur : [http://localhost:4000](http://localhost:4000)
+
+### Installer et démarrer le projet
+
+Installation des dépendances
+
+```batch
+npm run bootstrap
+```
+
+Démarrage de la stack pour le développement.
 
 ```batch
 npm run dev
+```
+
+Pour clean le projet : 
+
+```batch
+npm run clean
 ```
 
 ### Populer le projet en local
@@ -162,6 +178,26 @@ sites (collection)
                   └── {articleId} (document)
               └── products (sub-collection)
                   └── {productId} (document)
+```
+
+## Déploiement 
+
+Pour déployez le projet
+
+```batch
+npm run deploy
+```
+
+Pour juste péparer le projet au déploiement.
+
+```batch
+npm run deploy:prepare
+```
+
+Pour juste déployer le projet.
+
+```batch
+npm run deploy:firebase
 ```
 
 ## Lexite & Aide

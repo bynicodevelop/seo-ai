@@ -1,9 +1,9 @@
 // /server/api/getData.js
-import { ErrorResponse } from '~/shared/types/error';
+import { ErrorResponse } from '~/functions/src/shared';
 import { db } from '../../firebase';
-import { DomainQuery } from '~/shared/types/queries';
-import { ApiResponse } from '~/shared/types/api-response';
-import { Category } from '~/shared/types/category';
+import { DomainQuery } from '~/functions/src/shared';
+import { ApiResponse } from '~/functions/src/shared';
+import { Category } from '~/functions/src/shared';
 import first from 'lodash/first';
 
 

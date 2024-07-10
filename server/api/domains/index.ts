@@ -1,9 +1,9 @@
 // /server/api/getData.js
-import { Domain } from '~/shared/types/domain';
+import { Domain } from '~/functions/src/shared';
 import { db } from '../../firebase';
-import { ApiResponse } from '~/shared/types/api-response';
-import { ErrorResponse } from '~/shared/types/error';
-import { DomainQuery } from '~/shared/types/queries';
+import { ApiResponse } from '~/functions/src/shared';
+import { ErrorResponse } from '~/functions/src/shared';
+import { DomainQuery } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
@@ -15,16 +15,16 @@ export default defineEventHandler(async (event) => {
         return {
             status: 200,
             data: {
-                title, 
+                title,
                 description
             }
         } as ApiResponse<Domain>;
     } catch (error) {
-        return { 
+        return {
             status: 500,
             data: {
                 message: 'Error fetching domain data'
             }
-         } as ApiResponse<ErrorResponse>
+        } as ApiResponse<ErrorResponse>
     }
 });
