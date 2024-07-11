@@ -3,12 +3,15 @@ import { categoryFactory, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
 import { MetaSeo } from '~/functions/src/shared';
 import { createSite } from '~/functions/src/shared';
+import { DomainQuery } from '~/server/types';
 
 export default defineEventHandler(async (event) => {
+    const { name } = getQuery(event) as DomainQuery;
+
     try {
         await createSite(
             siteFactory(
-                'localhost',
+                name,
                 {
                     title: {
                         fr: 'Localhost - MagicApex',
@@ -29,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
         for (let i = 0; i < 5; i++) {
             db.collection('sites')
-                .doc('localhost')
+                .doc(name)
                 .collection('categories')
                 .doc(`category-${i}`)
                 .set(categoryFactory(
@@ -46,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
             for (let j = 0; j < 5; j++) {
                 db.collection('sites')
-                    .doc('localhost')
+                    .doc(name)
                     .collection('categories')
                     .doc(`category-${i}`)
                     .collection('contents')
