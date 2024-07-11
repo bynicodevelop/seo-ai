@@ -1,6 +1,7 @@
 import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
-import { type Site } from "../types/site";
+import { siteFactory, type Site } from "../types/site";
+import { Category } from "../types";
 
 export const initSite = async (config: Config, db: Firestore): Promise<void> => {
     const { domain, sitename, description, keywords, translate, categories } = config;
@@ -35,7 +36,13 @@ export const getSite = async (domain: string, db: Firestore): Promise<QueryDocum
     return (snapshot.docs[0] as QueryDocumentSnapshot);
 }
 
-export const createCategories = async (site: Site, categories: [{ [key: string]: string }], db: Firestore): Promise<void> => {
-    await db.collection("categories")
-        .add(categories);
+export const createCategories = async (site: Site, categories: Category[], db: Firestore): Promise<void> => {
+    const batch = db.batch();
+
+    categories.forEach((category) => {
+        const ref = db.collection("sites").doc(site.domain).collection("categories").doc();
+        batch.set(ref, category);
+    });
+
+    await batch.commit();
 }

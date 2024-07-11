@@ -14,7 +14,7 @@ const category = ref<Category | null>(null);
 const contents = ref<Content[] | null>([]);
 
 try {
-    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string));
+    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string, locale.value as locale));
     const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
 
     category.value = categoryData.value;
@@ -31,6 +31,8 @@ try {
         ],
     });
 } catch (error) {
+    console.log(error);
+
     throw createError({
         statusCode: 404,
         message: 'Category not found',
@@ -57,7 +59,7 @@ try {
             <article v-for="content in contents" :key="content.id">
                 <h2>
                     <NuxtLink :to="localePath(`/${categoryslug}/${content.slug}`)"
-                        :title="$translate(content.seo.title, locale)">
+                        :title="$translate(content.title, locale)">
                         {{ $translate(content.title, locale) }}
                     </NuxtLink>
                 </h2>

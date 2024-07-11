@@ -1,14 +1,93 @@
 {
-    "translate": ["en", "fr"],
-    "domain": "http://localhost:3000",
-    "sitename": "Forex Trading - Magic Apex",
-    "keywords": ["forex", "trading", "magic", "apex", "forex trading", "magic apex", "forex trading magic apex"],
-    "description": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex.",
-    "categories": [
-        {
-            "title": "Forex", 
-            "slug": "forex", 
-            "description": "Le forex est un marché financier qui permet de trader les devises."
-        }
-    ]
+   "translate": [
+      "en",
+      "fr"
+   ],
+   "domain": "http://localhost:3000",
+   "sitename": "Forex Trading - Magic Apex",
+   "keywords": [
+      "forex",
+      "trading",
+      "magic",
+      "apex",
+      "forex trading",
+      "magic apex",
+      "forex trading magic apex"
+   ],
+   "description": {
+      "fr": "Le site Forex Trading - Magic Apex est blog permettant de découvrir le monde du trading forex.",
+      "en": "The Forex Trading - Magic Apex site is a blog that allows you to discover the world of forex trading."
+   },
+   "categories": [
+      {
+         "title": {
+            "fr": "Stratégies Forex",
+            "en": "Forex Strategies"
+         },
+         "slug": {
+            "fr": "",
+            "en": "forex-strategies"
+         },
+         "description": {
+            "fr": "Découvrez des stratégies Forex efficaces pour améliorer vos compétences en trading et maximiser vos profits sur le marché des changes.",
+            "en": "Discover effective Forex strategies to improve your trading skills and maximize your profits in the currency market."
+         }
+      },
+      {
+         "title": {
+            "fr": "Analyse du Marché",
+            "en": "Market Analysis"
+         },
+         "slug": {
+            "fr": "analyse-marche",
+            "en": "market-analysis"
+         },
+         "description": {
+            "fr": "Analysez les tendances du marché Forex avec des outils et techniques experts afin de prendre des décisions éclairées pour vos trades.",
+            "en": "Analyze Forex market trends with expert tools and techniques to make informed decisions for your trades."
+         }
+      },
+      {
+         "title": {
+            "fr": "Formation Trading",
+            "en": "Trading Training"
+         },
+         "slug": {
+            "fr": "formation-trading",
+            "en": "trading-training"
+         },
+         "description": {
+            "fr": "Apprenez les bases du trading Forex ainsi que des techniques avancées grâce à nos ressources de formation détaillées.",
+            "en": "Learn the basics of Forex trading as well as advanced techniques with our detailed training resources."
+         }
+      },
+      {
+         "title": {
+            "fr": "Psychologie du Trading",
+            "en": "Trading Psychology"
+         },
+         "slug": {
+            "fr": "psychologie-trading",
+            "en": "trading-psychology"
+         },
+         "description": {
+            "fr": "Adoptez la bonne mentalité pour réussir dans le trading Forex en explorant les aspects psychologiques du trading.",
+            "en": "Adopt the right mindset for Forex trading success by exploring the psychological aspects of trading."
+         }
+      },
+      {
+         "title": {
+            "fr": "Outils de Trading",
+            "en": "Trading Tools"
+         },
+         "slug": {
+            "fr": "outils-trading",
+            "en": "trading-tools"
+         },
+         "description": {
+            "fr": "Découvrez les meilleurs outils de trading Forex pour optimiser vos stratégies et améliorer votre performance sur le marché des changes.",
+            "en": "Discover the best Forex trading tools to optimize your strategies and improve your performance in the currency market."
+         }
+      }
+   ]
 }

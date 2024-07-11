@@ -15,7 +15,7 @@ export const callOpenAI = async <T>(messages: ChatCompletionMessageParam[], open
         messages,
     });
 
-    return JSON.parse(chat.choices[0].message.content ?? '{}') as T;
+    return JSON.parse(chat.choices[0].message.content!) as T;
 }
 
 export const addMessages = (messages: ChatCompletionMessageParam[], role: aiRole, content: string | object) => {
