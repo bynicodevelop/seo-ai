@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         description,
         keywords: keywords || [],
         translate: translate || [],
-        categories: categories || undefined
+        categories: categories || [] as any
     }, db);
 
     return {

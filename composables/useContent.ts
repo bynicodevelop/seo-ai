@@ -1,4 +1,5 @@
-import type { Category, Content, Site } from "~/functions/src/shared";
+import type { Category, Content, locales, Site } from "~/functions/src/shared";
+
 
 const fetchDomain = async (domain: string): Promise<Site> => {
     const { data } = await $fetch(`/api/sites?name=${domain}`);
@@ -8,8 +9,8 @@ const fetchCategories = async (domain: string): Promise<Category[]> => {
     const { data } = await $fetch(`/api/categories?name=${domain}`);
     return data as Category[];
 };
-const fetchCategory = async (domain: string, category: string): Promise<Category> => {
-    const { data } = await $fetch(`/api/categories/${category}?name=${domain}`);
+const fetchCategory = async (domain: string, category: string, locale: locales): Promise<Category> => {
+    const { data } = await $fetch(`/api/categories/${category}?name=${domain}&locale=${locale}`);
     return (data ?? {}) as Category;
 }
 const fetchContents = async (domain: string, category: string): Promise<Content[]> => {

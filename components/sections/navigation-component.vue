@@ -32,7 +32,8 @@ const { data: categories } = await useAsyncData<Category[]>('categories', async 
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
             <NuxtLink v-for="category in categories" :key="category.slug"
-                :to="localePath(`/categories/${category.slug}`)" :title="$translate(category.title, locale)"
+                :to="localePath(`/categories/${$translate(category.slug, locale)}`)"
+                :title="$translate(category.title, locale)"
                 class="text-sm font-semibold leading-6 text-gray-900 capitalize">
                 {{ $translate(category.title, locale) }}
             </NuxtLink>

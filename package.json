@@ -11,7 +11,7 @@
     "build:nuxt:firebase": "npm run build:nuxt -- --preset=firebase",
     "build:nuxt:watch": "nuxt build --watch",
     "build:functions": "npm run --prefix functions build",
-    "build:functions:watch": "npm-run-all build:functions -- --watch",
+    "build:functions:watch": "npm run --prefix functions build:watch",
     "deploy": "npm run deploy:prepare && npm run deploy:firebase",
     "deploy:prepare": "npm-run-all --sequential clean bootstrap build:nuxt:firebase build:functions",
     "deploy:firebase": "firebase deploy",

@@ -2,12 +2,12 @@
 import { categoryFactory, getSite } from '~/functions/src/shared';
 import { db } from '../../firebase';
 import { Category } from '~/functions/src/shared';
-import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
+import { ApiResponse, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
 
 
 export default defineEventHandler(async (event) => {
     const { categorySlug } = event.context.params as { categorySlug: string };
-    const { name } = getQuery(event) as DomainQuery;
+    const { name, locale } = getQuery(event) as DomainQuery & LocaleQuery;
 
     try {
         const siteRef = await getSite(name, db);
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const doc = await siteRef.ref.collection('categories')
-            .where('slug', '==', categorySlug)
+            .where(`slug.${locale}`, '==', categorySlug)
             .get();
 
         if (doc.empty) {
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const { title, description, createdAt, updatedAt } = doc.docs[0]!.data() as Category;
+        const { title, description } = doc.docs[0]!.data() as Category;
 
         const category: Category = categoryFactory(
             title,

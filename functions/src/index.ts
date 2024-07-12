@@ -1,7 +1,8 @@
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
-import { Site, createSite, initOpentAI, translatePrompt, I18n } from './shared';
+import { Category, categoryFactory, createCategories, createSite, generateCategoriesPrompt, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { defineString } from "firebase-functions/params";
+import { first, isEmpty } from "lodash";
 
 admin.initializeApp();
 
@@ -9,11 +10,12 @@ admin.initializeApp();
 const openAIKey = defineString('OPENAI_API');
 
 export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async (event) => {
+    const db = admin.firestore();
     const openAi = initOpentAI(openAIKey.value());
 
     const data = event.data as any;
 
-    const { domain, sitename, description, keywords, translate } = data?.data() as any;
+    const { domain, sitename, description, keywords, translate, categories } = data?.data() as any;
 
     let defaultTranslate: any[] = ['fr'];
 
@@ -21,13 +23,60 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
         defaultTranslate = translate;
     }
 
-    const translatedDescription: I18n = await translatePrompt(defaultTranslate, description, openAi);
+    const defaultCategories = [];
 
-    const db = admin.firestore();
+    if (isEmpty(categories)) {
+        const generateCategories = await generateCategoriesPrompt(
+            {
+                domain,
+                sitename,
+                description,
+                keywords
+            },
+            openAi
+        );
 
-    const dataSite: Site = {
+        const translatedCategories = await translateCategoriesPrompt(
+            defaultTranslate,
+            generateCategories.categories,
+            openAi
+
+        );
+
+        defaultCategories.push(...translatedCategories.categories.map((category) => ({
+            title: category.title,
+            description: category.description,
+            slug: category.slug,
+        })));
+    } else {
+        if (first<Category>(categories) && defaultTranslate.find((lang) => first<Category>(categories)?.title[lang])) {
+            defaultCategories.push(...categories);
+        } else {
+            const translatedCategories = await translateCategoriesPrompt(
+                defaultTranslate,
+                categories,
+                openAi
+
+            );
+
+            defaultCategories.push(...translatedCategories.categories);
+        }
+    }
+
+    let translatedDescription: I18n;
+
+    if (typeof description === 'string') {
+        translatedDescription = await translatePrompt(defaultTranslate, description, openAi);
+    } else {
+        translatedDescription = defaultTranslate.reduce((acc: any, lang: string) => {
+            acc[lang] = description[lang];
+            return acc;
+        }, {});
+    }
+
+    const dataSite: Site = siteFactory(
         domain,
-        seo: {
+        {
             title: defaultTranslate.reduce((acc: any, lang: string) => {
                 acc[lang] = sitename;
                 return acc;
@@ -37,8 +86,19 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
                 acc[lang] = keywords;
                 return acc;
             }, {}),
-        }
-    };
+        },
+    );
 
     await createSite(dataSite, db);
+
+    await createCategories(
+        dataSite,
+        defaultCategories.map((category) => (
+            categoryFactory(
+                category.title,
+                category.description,
+                category.slug
+            ))),
+        db
+    );
 });
