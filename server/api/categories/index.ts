@@ -5,7 +5,6 @@ import { Category, categoryFactory, getSite } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
-    console.log(name);
 
     try {
         const siteRef = await getSite(name, db);
