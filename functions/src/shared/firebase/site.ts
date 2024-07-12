@@ -1,6 +1,6 @@
 import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
-import { siteFactory, type Site } from "../types/site";
+import { type Site } from "../types/site";
 import { Category } from "../types";
 
 export const initSite = async (config: Config, db: Firestore): Promise<void> => {

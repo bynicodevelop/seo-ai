@@ -1,6 +1,6 @@
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
-import { Category, categoryFactory, createCategories, createSite, generateCategoriesPrompt, I18n, initOpentAI, locales, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
+import { Category, categoryFactory, createCategories, createSite, generateCategoriesPrompt, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { defineString } from "firebase-functions/params";
 import { first, isEmpty } from "lodash";
 
@@ -73,7 +73,7 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
             return acc;
         }, {});
     }
-    
+
     const dataSite: Site = siteFactory(
         domain,
         {
