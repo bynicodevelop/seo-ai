@@ -17,11 +17,7 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
 
     const { domain, sitename, description, keywords, translate, categories } = data?.data() as any;
 
-    let defaultTranslate: any[] = ['fr'];
-
-    if (translate && translate.length > 0) {
-        defaultTranslate = translate;
-    }
+    const defaultTranslate: any[] = translate.length > 0 ? translate : ['fr'];
 
     const defaultCategories = [];
 
