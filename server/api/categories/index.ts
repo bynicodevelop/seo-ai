@@ -1,13 +1,13 @@
 // /server/api/getData.js
 import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
 import { db } from '../../firebase';
-import { Category, categoryFactory, getSite } from '~/functions/src/shared';
+import { Category, categoryFactory, getSiteByDomain } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const siteRef = await getSite(name, db);
+        const siteRef = await getSiteByDomain(name, db);
 
         if (!siteRef) {
             return {

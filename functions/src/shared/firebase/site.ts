@@ -1,6 +1,6 @@
 import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
-import { type Site } from "../types/site";
+import { SiteDomain, SiteId, type Site } from "../types/site";
 import { Category } from "../types";
 import { CATEGORY_COLLECTION, SITE_COLLECTION } from "./types";
 
@@ -24,8 +24,20 @@ export const createSite = async (site: Site, db: Firestore): Promise<DocumentDat
         .add(site);
 };
 
-export const getSite = async (domain: string, db: Firestore): Promise<QueryDocumentSnapshot | null> => {
-    const snapshot = await db.collection(SITE_COLLECTION)
+export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<DocumentData | null> => {
+    const snapshot = await db.collection("sites")
+        .doc(siteId)
+        .get();
+
+    if (!snapshot.exists) {
+        return null;
+    }
+
+    return snapshot;
+}
+
+export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promise<QueryDocumentSnapshot | null> => {
+    const snapshot = await db.collection("sites")
         .where("domain", "==", domain)
         .limit(1)
         .get();

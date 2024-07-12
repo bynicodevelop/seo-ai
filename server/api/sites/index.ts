@@ -1,13 +1,13 @@
 // /server/api/getData.js
 import { db } from '../../firebase';
-import { getSite, Site, siteFactory, } from '~/functions/src/shared';
+import { getSiteByDomain, Site, siteFactory, } from '~/functions/src/shared';
 import { DomainQuery, ApiResponse, ErrorResponse } from '~/server/types';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const siteRef = await getSite(name, db);
+        const siteRef = await getSiteByDomain(name, db);
 
         if (siteRef === null) {
             return {

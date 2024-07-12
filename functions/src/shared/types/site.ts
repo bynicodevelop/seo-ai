@@ -1,18 +1,21 @@
 import type { MetaSeo } from "./meta-seo";
 
+export type SiteId = string;
+export type SiteDomain = string;
+
 export type Site = {
-    domain: string;
+    domain: SiteDomain;
     seo: MetaSeo;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
 export function siteFactory(
-    domain: string,
+    id: SiteDomain,
     seo: MetaSeo
 ): Site;
-export function siteFactory (
-    domain: string,
+export function siteFactory(
+    domain: SiteDomain,
     seo: MetaSeo,
     createdAt?: Date,
     updatedAt?: Date
