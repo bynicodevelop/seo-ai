@@ -13,30 +13,30 @@ const { fetchCategory, fetchContents } = useContent();
 const category = ref<Category | null>(null);
 const contents = ref<Content[] | null>([]);
 
-// try {
-const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string));
-const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
+try {
+    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string));
+    const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
 
-category.value = categoryData.value;
-contents.value = contentsData.value;
+    category.value = categoryData.value;
+    contents.value = contentsData.value;
 
-useHead({
-    title: $translate(category.value?.title, locale.value),
-    meta: [
-        {
-            hid: 'description',
-            name: 'description',
-            content: $translate(category.value?.description, locale.value),
-        },
-    ],
-});
-// } catch (error) {
-//     throw createError({
-//         statusCode: 404,
-//         message: 'Category not found',
-//         fatal: true
-//     });
-// }
+    useHead({
+        title: $translate(category.value?.title, locale.value),
+        meta: [
+            {
+                hid: 'description',
+                name: 'description',
+                content: $translate(category.value?.description, locale.value),
+            },
+        ],
+    });
+} catch (error) {
+    throw createError({
+        statusCode: 404,
+        message: 'Category not found',
+        fatal: true
+    });
+}
 </script>
 
 <template>
