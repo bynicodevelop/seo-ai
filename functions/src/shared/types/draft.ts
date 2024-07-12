@@ -25,6 +25,11 @@ export function draftFactory(
 export function draftFactory(
     siteId: string,
     content: string,
+    status: DraftStatus
+): Draft;
+export function draftFactory(
+    siteId: string,
+    content: string,
     status?: DraftStatus,
     createdAt?: Date,
     updatedAt?: Date

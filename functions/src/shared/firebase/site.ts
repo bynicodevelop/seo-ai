@@ -25,7 +25,7 @@ export const createSite = async (site: Site, db: Firestore): Promise<DocumentDat
 };
 
 export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<DocumentData | null> => {
-    const snapshot = await db.collection("sites")
+    const snapshot = await db.collection(SITE_COLLECTION)
         .doc(siteId)
         .get();
 
@@ -33,11 +33,12 @@ export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<Docume
         return null;
     }
 
+
     return snapshot;
 }
 
 export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promise<QueryDocumentSnapshot | null> => {
-    const snapshot = await db.collection("sites")
+    const snapshot = await db.collection(SITE_COLLECTION)
         .where("domain", "==", domain)
         .limit(1)
         .get();

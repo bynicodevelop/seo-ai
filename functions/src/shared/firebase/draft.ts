@@ -1,6 +1,6 @@
 import { DocumentReference, Firestore } from "firebase-admin/firestore";
 import { Draft, DraftId, SiteId } from "../types";
-import { getSiteById } from "./site";
+import { getSiteByDomain, getSiteById } from "./site";
 import { DRAFT_COLLECTION } from "./types";
 
 export const updateDraft = async (draftId: DraftId, siteId: SiteId, data: any, db: Firestore): Promise<void> => {
@@ -14,7 +14,7 @@ export const updateDraft = async (draftId: DraftId, siteId: SiteId, data: any, d
 };
 
 export const createDraft = async (draft: Draft, db: Firestore): Promise<DocumentReference> => {
-    const siteRef = await getSiteById(draft.siteId, db);
+    const siteRef = await getSiteByDomain(draft.siteId, db);
 
     if (!siteRef) {
         throw new Error("Site not found");
