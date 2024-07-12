@@ -8,6 +8,8 @@
  */
 export type DraftStatus = 'DRAFT' | 'ARTICLE_CREATED' | 'SEO_OPTIMIZED' | 'TRANSLATED' | 'READY_FOR_PUBLISHING';
 
+export type DraftId = string;
+
 export type Draft = {
     siteId: string;
     content: string;
