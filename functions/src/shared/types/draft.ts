@@ -8,6 +8,8 @@
  */
 export type DraftStatus = 'DRAFT' | 'ARTICLE_CREATED' | 'SEO_OPTIMIZED' | 'TRANSLATED' | 'READY_FOR_PUBLISHING';
 
+export type DraftId = string;
+
 export type Draft = {
     siteId: string;
     content: string;
@@ -19,6 +21,11 @@ export type Draft = {
 export function draftFactory(
     siteId: string,
     content: string
+): Draft;
+export function draftFactory(
+    siteId: string,
+    content: string,
+    status: DraftStatus
 ): Draft;
 export function draftFactory(
     siteId: string,

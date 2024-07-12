@@ -1,8 +1,12 @@
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
-import { Category, categoryFactory, createCategories, createSite, generateCategoriesPrompt, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
+import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, getSiteById, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { defineString } from "firebase-functions/params";
 import { first, isEmpty } from "lodash";
+import { updateDraft } from "./shared/firebase/draft";
+import { Firestore } from "firebase-admin/firestore";
+import OpenAI from "openai";
+import { generateContent } from "./shared/prompts/generate-content";
 
 admin.initializeApp();
 
@@ -97,4 +101,44 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
             ))),
         db
     );
+});
+
+const generateArticle = async (
+    siteId: string,
+    draftId: string,
+    content: string,
+    openAi: OpenAI,
+    db: Firestore
+) => {
+    const siteRef = await getSiteById(siteId, db);
+    const site = siteRef?.data() as Site;
+
+    const article = await generateContent(site, {
+        content
+    }, openAi);
+
+    const draft = {
+        article,
+        status: 'ARTICLE_CREATED',
+    }
+
+    await updateDraft(draftId, siteId, draft, db);
+};
+
+export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}', async (event) => {
+    const db = admin.firestore();
+    const openAi = initOpentAI(openAIKey.value());
+    const { siteId, draftId } = event.params;
+
+    const { content, status } = event.data?.after.data() as Partial<Draft>;
+
+    if (status === 'DRAFT' && content) {
+        await generateArticle(
+            siteId,
+            draftId,
+            content,
+            openAi,
+            db
+        );
+    }
 });
