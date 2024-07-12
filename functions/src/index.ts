@@ -1,12 +1,12 @@
 import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import * as admin from "firebase-admin";
-import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, getSiteById, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
+import { Category, categoryFactory, createCategories, createSite, Draft, draftFactory, generateCategoriesPrompt, getSiteById, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { defineString } from "firebase-functions/params";
 import { first, isEmpty } from "lodash";
 import { updateDraft } from "./shared/firebase/draft";
 import { Firestore } from "firebase-admin/firestore";
 import OpenAI from "openai";
-import { generateContent } from "./shared/prompts/generate-content";
+import { generateArticleFromContent, generateSeoFromArticle } from "./shared/prompts/generate-content";
 
 admin.initializeApp();
 
@@ -113,30 +113,68 @@ const generateArticle = async (
     const siteRef = await getSiteById(siteId, db);
     const site = siteRef?.data() as Site;
 
-    const article = await generateContent(site, {
-        content
-    }, openAi);
+    const article = await generateArticleFromContent(content, site, openAi);
 
-    const draft = {
+    const draft = draftFactory(
+        siteId,
+        content,
         article,
-        status: 'ARTICLE_CREATED',
-    }
+        'ARTICLE_CREATED'
+    )
 
     await updateDraft(draftId, siteId, draft, db);
 };
+
+const generateSeo = async (
+    siteId: string,
+    draftId: string,
+    draft: Draft,
+    openAi: OpenAI,
+    db: Firestore
+) => {
+    if (!draft.article) {
+        return;
+    }
+    const seo = await generateSeoFromArticle(draft.article, openAi);
+
+    await updateDraft(
+        draftId,
+        siteId,
+        draftFactory(
+            siteId,
+            draft.content,
+            draft.article,
+            seo.title,
+            seo.keywords,
+            seo.description,
+            'SEO_OPTIMIZED'
+        ),
+        db
+    );
+}
 
 export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}', async (event) => {
     const db = admin.firestore();
     const openAi = initOpentAI(openAIKey.value());
     const { siteId, draftId } = event.params;
 
-    const { content, status } = event.data?.after.data() as Partial<Draft>;
+    const { content, status, article } = event.data?.after.data() as Partial<Draft>;
 
     if (status === 'DRAFT' && content) {
         await generateArticle(
             siteId,
             draftId,
             content,
+            openAi,
+            db
+        );
+    }
+
+    if (status === 'ARTICLE_CREATED' && article) {
+        await generateSeo(
+            siteId,
+            draftId,
+            draftFactory(siteId, content!, article, status),
             openAi,
             db
         );

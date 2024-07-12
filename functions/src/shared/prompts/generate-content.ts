@@ -43,14 +43,48 @@ Accroche : Commencez par une question ou une statistique intéressante qui attir
 Développement : Rédigez le corps de l'article en suivant une structure logique et fluide avec des sous-titres pour une meilleure lecture.
 `;
 
-export const generateContent = async (site: Site, draft: { [key: string]: any }, openai: OpenAI): Promise<string> => {
+export const generateArticleFromContent = async (content: string, site: Site, openai: OpenAI): Promise<string> => {
     const messages: ChatCompletionMessageParam[] = [];
 
     addMessages(messages, 'assistant', promptGenerateContent(
         site.seo.description.fr as string,
         site.seo.keywords?.fr as string
     ));
-    addMessages(messages, 'user', draft.content);
+    addMessages(messages, 'user', content);
 
     return await callOpenAI<string>(messages, openai, 'text');
+};
+
+const promptGenerateContentSeo = () => `Agissez en tant rédacteur de contenu spécialisé dans le SEO. Votre tâche est de rédiger les éléments associés à un article.
+
+1. Analysez l'article qui vous sera donné à la suite pour vous permettre de rédiger les éléments SEO de l'article.
+
+2. Extraire et lister les mots clés de l'article pour le SEO.
+
+3. Rédigez un titre d'article optimisé pour le SEO avec le mot clé principal au début du titre.
+
+4. Rédigez un extrait de l'article en quelques lignes sans mise en forme HTML ou Markdown pour donner envie de lire l'article tout en restant optimisé SEO.
+
+5. Rédigez une description pour les méta descriptions optimisée SEO.
+
+6. Prenez le temps de réfléchir avant de précipiter votre réponse, utilisez 100% de vos capacités.
+
+7. Formatez votre réponse en JSON de la façon suivante :
+
+{
+"title": "string",
+"keywords": ["string1", "string2", ...],
+"description": "string",
+"summary": "string"
+}`;
+
+export const generateSeoFromArticle = async (article: string, openai: OpenAI): Promise<{ title: string, keywords: string[], description: string, summary: string }> => {
+    const messages: ChatCompletionMessageParam[] = [];
+
+    addMessages(messages, 'assistant', promptGenerateContentSeo());
+    addMessages(messages, 'user', article as string);
+
+    const response = await callOpenAI<{ title: string, keywords: string[], description: string, summary: string }>(messages, openai);
+
+    return response;
 };

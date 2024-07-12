@@ -14,8 +14,12 @@ export type Draft = {
     siteId: string;
     content: string;
     status: DraftStatus;
-    createdAt: Date;
-    updatedAt: Date;
+    article?: string;
+    title?: string;
+    keywords?: string[];
+    description?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export function draftFactory(
@@ -25,11 +29,30 @@ export function draftFactory(
 export function draftFactory(
     siteId: string,
     content: string,
+    article: string
+): Draft;
+export function draftFactory(
+    siteId: string,
+    content: string,
+    article: string,
     status: DraftStatus
 ): Draft;
 export function draftFactory(
     siteId: string,
     content: string,
+    article: string,
+    title: string,
+    keywords: string[],
+    description: string,
+    status: DraftStatus
+): Draft;
+export function draftFactory(
+    siteId: string,
+    content: string,
+    article?: string,
+    title?: string,
+    keywords?: string[],
+    description?: string,
     status?: DraftStatus,
     createdAt?: Date,
     updatedAt?: Date
@@ -37,6 +60,10 @@ export function draftFactory(
     return {
         siteId,
         content,
+        article,
+        title,
+        keywords,
+        description,
         status: status || 'DRAFT',
         createdAt: createdAt || new Date(),
         updatedAt: updatedAt || new Date()
