@@ -13,30 +13,30 @@ const { fetchCategory, fetchContents } = useContent();
 const category = ref<Category | null>(null);
 const contents = ref<Content[] | null>([]);
 
-try {
-    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string));
-    const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
+// try {
+const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string));
+const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
 
-    category.value = categoryData.value;
-    contents.value = contentsData.value;
+category.value = categoryData.value;
+contents.value = contentsData.value;
 
-    useHead({
-        title: $translate(category.value?.title, locale.value),
-        meta: [
-            {
-                hid: 'description',
-                name: 'description',
-                content: $translate(category.value?.description, locale.value),
-            },
-        ],
-    });
-} catch (error) {
-    throw createError({
-        statusCode: 404,
-        message: 'Category not found',
-        fatal: true
-    });
-}
+useHead({
+    title: $translate(category.value?.title, locale.value),
+    meta: [
+        {
+            hid: 'description',
+            name: 'description',
+            content: $translate(category.value?.description, locale.value),
+        },
+    ],
+});
+// } catch (error) {
+//     throw createError({
+//         statusCode: 404,
+//         message: 'Category not found',
+//         fatal: true
+//     });
+// }
 </script>
 
 <template>
@@ -44,8 +44,9 @@ try {
         <header class="bg-white px-4 py-5 sm:px-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-900">{{ $translate(category?.title, locale)
-                        }}</h3>
+                    <h3 class="text-base font-semibold leading-6 text-gray-900">
+                        {{ $translate(category?.title, locale) }}
+                    </h3>
                     <p class="mt-1 text-sm text-gray-500">
                         {{ $translate(category?.description, locale) }}
                     </p>

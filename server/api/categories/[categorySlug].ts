@@ -1,10 +1,8 @@
 // /server/api/getData.js
-import { ErrorResponse } from '~/functions/src/shared';
+import { categoryFactory, getSite } from '~/functions/src/shared';
 import { db } from '../../firebase';
-import { DomainQuery } from '~/functions/src/shared';
-import { ApiResponse } from '~/functions/src/shared';
 import { Category } from '~/functions/src/shared';
-import first from 'lodash/first';
+import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
 
 
 export default defineEventHandler(async (event) => {
@@ -12,7 +10,18 @@ export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const doc = await db.collection('sites').doc(name).collection('categories')
+        const siteRef = await getSite(name, db);
+
+        if (!siteRef) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Site not found'
+                }
+            } as ApiResponse<ErrorResponse>
+        }
+
+        const doc = await siteRef.ref.collection('categories')
             .where('slug', '==', categorySlug)
             .get();
 
@@ -25,17 +34,13 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const { title, seo, description, createdAt, updatedAt } = first(doc.docs)!.data() as Category;
+        const { title, description, createdAt, updatedAt } = doc.docs[0]!.data() as Category;
 
-        const category: Category = {
-            id: first(doc.docs)!.id,
+        const category: Category = categoryFactory(
             title,
-            slug: categorySlug,
-            seo,
             description,
-            createdAt,
-            updatedAt,
-        };
+            categorySlug
+        );
 
         return {
             status: 200,

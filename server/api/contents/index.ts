@@ -1,7 +1,6 @@
 // /server/api/getData.js
-import first from 'lodash/first';
 import { db } from '../../firebase';
-import { Content } from '~/functions/src/shared';
+import { Content, getSite } from '~/functions/src/shared';
 import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse } from '~/server/types';
 
 
@@ -9,8 +8,18 @@ export default defineEventHandler(async (event) => {
     const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
 
     try {
-        const categorySnapshot = await db.collection('sites')
-            .doc(name)
+        const siteRef = await getSite(name, db);
+
+        if (!siteRef) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Site not found'
+                }
+            } as ApiResponse<ErrorResponse>
+        }
+
+        const categorySnapshot = await siteRef.ref
             .collection('categories')
             .where('slug', '==', categorySlug)
             .get();
@@ -24,8 +33,7 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-
-        const contentsSnapshot = await first(categorySnapshot.docs)?.ref.collection('contents').get();
+        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection('contents').get();
 
         if (contentsSnapshot?.empty) {
             return {
