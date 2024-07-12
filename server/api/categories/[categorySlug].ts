@@ -1,7 +1,6 @@
 // /server/api/getData.js
-import { categoryFactory, getSiteByDomain } from '~/functions/src/shared';
+import { categoryFactory, getSiteByDomain, Category } from '~/shared';
 import { db } from '../../firebase';
-import { Category } from '~/functions/src/shared';
 import { ApiResponse, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
 
 

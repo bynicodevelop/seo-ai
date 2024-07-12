@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Site } from '~/functions/src/shared';
+import type { Site } from '~/shared';
 const { locale } = useI18n();
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchDomain } = useContent();

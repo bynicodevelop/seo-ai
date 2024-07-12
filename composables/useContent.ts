@@ -1,4 +1,4 @@
-import type { Category, Content, locales, Site } from "~/functions/src/shared";
+import type { Category, Content, locales, Site } from "~/shared";
 
 
 const fetchDomain = async (domain: string): Promise<Site> => {

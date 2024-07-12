@@ -1,4 +1,4 @@
-import { locales } from "~/functions/src/shared";
+import { locales } from "~/shared";
 
 export type DomainQuery = {
     name: string;

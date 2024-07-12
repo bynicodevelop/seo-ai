@@ -1,8 +1,7 @@
-import { categoryFactory, siteFactory } from '~/functions/src/shared';
-import { db } from '../../firebase';
-import { MetaSeo } from '~/functions/src/shared';
-import { createSite } from '~/functions/src/shared';
+// /server/api/getData.js
 import { DomainQuery } from '~/server/types';
+import { MetaSeo, categoryFactory, createSite, siteFactory } from '~/shared';
+import { db } from '../../firebase';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
