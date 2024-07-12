@@ -1,16 +1,26 @@
 // /server/api/getData.js
 import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
 import { db } from '../../firebase';
-import { Category, categoryFactory } from '~/functions/src/shared';
-
+import { Category, categoryFactory, getSite } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        const snapshot = await db.collection('sites').doc(name).collection('categories').get();
+        const siteRef = await getSite(name, db);
 
-        const categories: Category[] = snapshot.docs.map((doc) => {
+        if (!siteRef) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Site not found'
+                }
+            } as ApiResponse<ErrorResponse>
+        }
+
+        const snapshot = await siteRef.ref.collection('categories').get();
+
+        const categories: Category[] = snapshot.docs.map((doc: any) => {
             const { title, slug, description } = doc.data() as Category;
             return categoryFactory(
                 title,

@@ -9,8 +9,6 @@ export default defineEventHandler(async (event) => {
     const { contentSlug } = event.context.params as { contentSlug: string };
     const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
 
-    console.log({ name, categorySlug });
-
     try {
         const contentSnapshot = await db.collection('sites')
             .doc(name)

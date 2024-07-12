@@ -21,12 +21,12 @@ try {
     contents.value = contentsData.value;
 
     useHead({
-        title: $translate(category.value?.seo.title, locale.value),
+        title: $translate(category.value?.title, locale.value),
         meta: [
             {
                 hid: 'description',
                 name: 'description',
-                content: $translate(category.value?.seo.description, locale.value),
+                content: $translate(category.value?.description, locale.value),
             },
         ],
     });

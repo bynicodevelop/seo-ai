@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const { name } = getQuery(event) as DomainQuery;
 
     try {
-        await createSite(
+        const siteRef = await createSite(
             siteFactory(
                 name,
                 {
@@ -31,8 +31,7 @@ export default defineEventHandler(async (event) => {
         );
 
         for (let i = 0; i < 5; i++) {
-            db.collection('sites')
-                .doc(name)
+            await siteRef
                 .collection('categories')
                 .doc(`category-${i}`)
                 .set(categoryFactory(
@@ -48,8 +47,7 @@ export default defineEventHandler(async (event) => {
                 ));
 
             for (let j = 0; j < 5; j++) {
-                db.collection('sites')
-                    .doc(name)
+                await siteRef
                     .collection('categories')
                     .doc(`category-${i}`)
                     .collection('contents')

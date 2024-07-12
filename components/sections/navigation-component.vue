@@ -16,8 +16,8 @@ const { data: categories } = await useAsyncData<Category[]>('categories', async 
 <template>
     <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5">
-            <span class="sr-only">{{ $translate(domain?.title, locale) }}</span>
-            {{ $translate(domain?.title, locale) }}
+            <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
+            {{ $translate(domain?.seo.title, locale) }}
         </NuxtLink>
         <div class="flex lg:hidden">
             <button @click="show = true" type="button"
@@ -38,16 +38,14 @@ const { data: categories } = await useAsyncData<Category[]>('categories', async 
             </NuxtLink>
         </div>
     </nav>
-    <!-- Mobile menu, show/hide based on menu open state. -->
     <div :class="{ 'block': show, 'hidden': !show }" role="dialog" aria-modal="true">
-        <!-- Background backdrop, show/hide based on slide-over state. -->
         <div class="fixed inset-0 z-10"></div>
         <div
             class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div class="flex items-center justify-between">
-                <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.title">
-                    <span class="sr-only">{{ $translate(domain?.title, locale) }}</span>
-                    {{ $translate(domain?.title, locale) }}
+                <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.seo.title">
+                    <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
+                    {{ $translate(domain?.seo.title, locale) }}
                 </NuxtLink>
                 <button @click="show = false" type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700">
                     <span class="sr-only">Close menu</span>
