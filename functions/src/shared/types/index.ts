@@ -2,6 +2,7 @@ export * from './category';
 export * from './config';
 export * from './content';
 export * from './domain';
+export * from './draft';
 export * from './i18n';
 export * from './meta-seo';
 export * from './roles';

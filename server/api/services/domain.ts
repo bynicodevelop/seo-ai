@@ -1,4 +1,3 @@
-// /server/api/getData.js
 import { categoryFactory, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
 import { MetaSeo } from '~/functions/src/shared';
