@@ -27,3 +27,4 @@ firebase-config.json
 .firebaserc
 firebase.json
 hosting.*
+*-lock.json
