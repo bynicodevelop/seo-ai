@@ -4,7 +4,7 @@ import { defineString } from "firebase-functions/params";
 import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import { first, isEmpty } from "lodash";
 import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, I18n, initOpentAI, locales, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
-import { generateArticle, generateSeo, selectCategoryForArticle, translate } from "./utils/draft";
+import { generateArticle, generateSeo, moveDraftToArticle, selectCategoryForArticle, translate } from "./utils/draft";
 
 admin.initializeApp();
 
@@ -173,4 +173,13 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
             db
         )
     }
+
+    if(status === 'READY_FOR_PUBLISHING') {
+        await moveDraftToArticle(
+            draftId,
+            siteId,
+            db
+        )
+    }
+
 });
