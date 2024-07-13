@@ -30,7 +30,8 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@nuxtjs/i18n",
     "@nuxtjs/mdc",
-    "@nuxt/image"
+    "@nuxt/image",
+    "@nuxt/test-utils/module"
   ],
 
   alias: {
