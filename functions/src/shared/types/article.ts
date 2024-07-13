@@ -5,7 +5,7 @@ export type Article = {
     keywords: I18n;
     description: I18n;
     article: I18n;
-    // TODO: Ajouter summary
+    summary: I18n;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -15,6 +15,7 @@ export function articleFactory(
     keywords: I18n,
     description: I18n,
     article: I18n,
+    summary: I18n
 ): Article;
 
 export function articleFactory(
@@ -22,6 +23,7 @@ export function articleFactory(
     keywords: I18n,
     description: I18n,
     article: I18n,
+    summary: I18n,
     createdAt?: Date,
     updatedAt?: Date
 ): Article {
@@ -30,6 +32,7 @@ export function articleFactory(
         keywords,
         description,
         article,
+        summary,
         createdAt: createdAt ?? new Date(),
         updatedAt: updatedAt ?? new Date()
     }
