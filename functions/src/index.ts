@@ -3,10 +3,11 @@ import * as admin from "firebase-admin";
 import { Category, categoryFactory, createCategories, createSite, Draft, draftFactory, generateCategoriesPrompt, getSiteById, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { defineString } from "firebase-functions/params";
 import { first, isEmpty } from "lodash";
-import { updateDraft } from "./shared/firebase/draft";
+import { updateDraft, updateDraftArticle } from "./shared/firebase/draft";
 import { Firestore } from "firebase-admin/firestore";
 import OpenAI from "openai";
 import { generateArticleFromContent, generateSeoFromArticle } from "./shared/prompts/generate-content";
+import { articleFactory } from "./shared/types/article";
 
 admin.initializeApp();
 
@@ -126,7 +127,6 @@ const generateArticle = async (
 };
 
 const generateSeo = async (
-    siteId: string,
     draftId: string,
     draft: Draft,
     openAi: OpenAI,
@@ -139,9 +139,9 @@ const generateSeo = async (
 
     await updateDraft(
         draftId,
-        siteId,
+        draft.siteId,
         draftFactory(
-            siteId,
+            draft.siteId,
             draft.content,
             draft.article,
             seo.title,
@@ -153,12 +153,40 @@ const generateSeo = async (
     );
 }
 
+const translate = async (
+    draftId: string,
+    draft: Draft,
+    openAi: OpenAI,
+    db: Firestore
+) => {
+    // const siteRef = await getSiteById(draft.siteId, db);
+
+    // const site = siteRef?.data() as Site;
+    // TODO: Manque les langes de traduction dans le site
+    const languages = ['fr', 'en'];
+
+    // TODO: Tester dans un Promise.all
+    const title = await translatePrompt(languages, draft.title!, openAi);
+    const keywords = await translatePrompt(languages, draft.keywords!.join(', '), openAi);
+    const description = await translatePrompt(languages, draft.description!, openAi);
+    const article = await translatePrompt(languages, draft.article!, openAi);
+
+    const articleEntity = articleFactory(
+        title,
+        keywords,
+        description,
+        article
+    );
+
+    await updateDraftArticle(draftId, draft.siteId, articleEntity, db);
+}
+
 export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}', async (event) => {
     const db = admin.firestore();
     const openAi = initOpentAI(openAIKey.value());
     const { siteId, draftId } = event.params;
 
-    const { content, status, article } = event.data?.after.data() as Partial<Draft>;
+    const { content, status, article, title, keywords, description } = event.data?.after.data() as Partial<Draft>;
 
     if (status === 'DRAFT' && content) {
         await generateArticle(
@@ -172,11 +200,32 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
 
     if (status === 'ARTICLE_CREATED' && article) {
         await generateSeo(
-            siteId,
             draftId,
-            draftFactory(siteId, content!, article, status),
+            draftFactory(
+                siteId,
+                content!,
+                article,
+                status
+            ),
             openAi,
             db
         );
+    }
+
+    if (status === 'SEO_OPTIMIZED') {
+        translate(
+            draftId,
+            draftFactory(
+                siteId,
+                content!,
+                article!,
+                title!,
+                keywords!,
+                description!,
+                status,
+            ),
+            openAi,
+            db
+        )
     }
 });

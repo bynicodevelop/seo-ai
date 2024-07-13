@@ -26,4 +26,4 @@ export const translatePrompt = async (codeLang: string[], content: string, opena
     addMessages(messages, 'user', content);
 
     return await callOpenAI<I18n>(messages, openai);
-}
+};
