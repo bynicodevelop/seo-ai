@@ -84,7 +84,5 @@ export const generateSeoFromArticle = async (article: string, openai: OpenAI): P
     addMessages(messages, 'assistant', promptGenerateContentSeo());
     addMessages(messages, 'user', article as string);
 
-    const response = await callOpenAI<{ title: string, keywords: string[], description: string, summary: string }>(messages, openai);
-
-    return response;
+    return await callOpenAI<{ title: string, keywords: string[], description: string, summary: string }>(messages, openai);
 };

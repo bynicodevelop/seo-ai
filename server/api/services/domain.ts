@@ -24,7 +24,8 @@ export default defineEventHandler(async (event) => {
                         fr: ['MagicApex', 'localhost'],
                         en: ['MagicApex', 'localhost'],
                     },
-                } as MetaSeo
+                } as MetaSeo,
+                ['fr', 'en'],
             ),
             db
         );

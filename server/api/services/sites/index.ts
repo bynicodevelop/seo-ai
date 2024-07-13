@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
         sitename,
         keywords,
         description,
-        translate,
+        locales,
         categories
     } = await readBody(event) as Config;
 
@@ -16,8 +16,8 @@ export default defineEventHandler(async (event) => {
         domain,
         sitename,
         description,
+        locales,
         keywords: keywords || [],
-        translate: translate || [],
         categories: categories || [] as any
     }, db);
 

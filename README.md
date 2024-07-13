@@ -154,8 +154,8 @@ Le fichier de config :
 
 ```ts
 {
-    // (optionnel) Permet de d'utilise OpenAI pour traduire les contenus
-    "translate": ["en", "fr"], 
+    // Permet de d'utilise OpenAI pour traduire les contenus
+    "locales": ["en", "fr"], 
     // (requis) Point d'entrée pour la création d'un site
     "domain": "http://localhost:3000", 
     //  (requis) Titre principal du site

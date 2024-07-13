@@ -2,6 +2,7 @@ import { ChatCompletionMessageParam } from "openai/resources";
 import OpenAI from "openai";
 import { addMessages, callOpenAI } from "../ai/open-ai";
 import { Category } from "../types";
+import { error, info } from "firebase-functions/logger";
 
 const promptCreateCategories = () => `Agissez en tant qu'expert SEO. 
 Vous devez pour un trouver une liste de catégories optimisé pour le SEO dans le cadre de la création d'un blog.
@@ -77,31 +78,52 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
         }
     ]
 }> => {
-    const messages: ChatCompletionMessageParam[] = [];
+    info('Generating categories');
 
-    addMessages(messages, 'assistant', promptCreateCategories());
-    addMessages(messages, 'user', content);
+    try {
+        const messages: ChatCompletionMessageParam[] = [];
 
-    return await callOpenAI<{
-        [key: string]: [
-            {
-                title: string;
-                slug: string;
-                description: string;
-            }
-        ]
-    }>(messages, openai);
+        addMessages(messages, 'assistant', promptCreateCategories());
+        addMessages(messages, 'user', content);
+
+        const result = await callOpenAI<{
+            [key: string]: [
+                {
+                    title: string;
+                    slug: string;
+                    description: string;
+                }
+            ]
+        }>(messages, openai);
+
+        info('Categories generated');
+
+        return result;
+    } catch (err) {
+        error(err);
+        throw err;
+    }
 }
 
 export const translateCategoriesPrompt = async (codeLang: string[], content: object, openai: OpenAI): Promise<{
     [key: string]: Category[]
 }> => {
-    const messages: ChatCompletionMessageParam[] = [];
+    info('Translating categories');
+    try {
+        const messages: ChatCompletionMessageParam[] = [];
 
-    addMessages(messages, 'assistant', promptTranslateCategories(codeLang));
-    addMessages(messages, 'user', content);
+        addMessages(messages, 'assistant', promptTranslateCategories(codeLang));
+        addMessages(messages, 'user', content);
 
-    return await callOpenAI<{
-        [key: string]: Category[]
-    }>(messages, openai);
+        const result = await callOpenAI<{
+            [key: string]: Category[]
+        }>(messages, openai);
+
+        info('Categories translated');
+
+        return result;
+    } catch (err) {
+        error(err);
+        throw err;
+    }
 }
