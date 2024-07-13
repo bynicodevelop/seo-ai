@@ -1,7 +1,8 @@
 import { Firestore } from "firebase-admin/firestore";
 import OpenAI from "openai";
-import { articleFactory, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, Site, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
+import { articleFactory, convertDraftToArticle, DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, Site, SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
 import { selectCategoryForArticlePrompt } from "../shared/prompts/select-category-for-article";
+import { info } from "firebase-functions/logger";
 
 export const selectCategoryForArticle = async (
     content: string,
@@ -97,4 +98,26 @@ export const translate = async (
         ),
         db
     );
+}
+
+export const moveDraftToArticle = async (
+    draftId: DraftId,
+    siteId: SiteId,
+    db: Firestore
+) => {
+    info(`Moving draft ${draftId} to article in site ${siteId}`);
+
+    const site = await getSiteById(siteId, db);
+
+    if (!site) {
+        throw new Error("Site not found");
+    }
+
+    await convertDraftToArticle(
+        draftId,
+        site,
+        db
+    );
+
+    info(`Draft ${draftId} moved to article in site ${siteId}`);
 }

@@ -1,9 +1,10 @@
-import { DocumentReference, Firestore } from "firebase-admin/firestore";
+import { DocumentData, DocumentReference, Firestore } from "firebase-admin/firestore";
 import { error, info } from "firebase-functions/logger";
-import { DraftId, SiteId } from "../types";
+import { Draft, draftFactory, DraftId, SiteId } from "../types";
 import { Article } from "../types/article";
 import { getSiteByDomain, getSiteById } from "./site";
 import { DRAFT_COLLECTION } from "./types";
+import { createArticleToCategory } from "./article";
 
 export const createDraft = async (
     domainId: SiteId,
@@ -23,14 +24,25 @@ export const createDraft = async (
         });
 }
 
-export const updateDraft = async (draftId: DraftId, siteId: SiteId, data: any, db: Firestore): Promise<void> => {
-    const site = await getSiteById(siteId, db);
+export const updateDraft = async (draftId: DraftId, site: SiteId | DocumentData, data: any, db: Firestore): Promise<void> => {
+    try {
+        let siteRef;
 
-    if (!site) {
-        throw new Error("Site not found");
+        if ((site as DocumentData)!.ref === undefined) {
+            siteRef = await getSiteById(site as SiteId, db);
+        } else {
+            siteRef = site as DocumentData;
+        }
+
+        if (!siteRef) {
+            throw new Error("Site not found");
+        }
+
+        await siteRef.ref.collection(DRAFT_COLLECTION).doc(draftId).set(data, { merge: true });
+    } catch (e) {
+        error(e);
+        throw e;
     }
-
-    await site.ref.collection(DRAFT_COLLECTION).doc(draftId).set(data, { merge: true });
 };
 
 export const updateDraftArticleContent = async (
@@ -138,3 +150,80 @@ export const updateDraftCategory = async (
         throw e;
     }
 };
+
+export const getDraftById = async (
+    draftId: DraftId,
+    site: SiteId | DocumentData,
+    db: Firestore
+): Promise<Draft> => {
+    info(`Getting draft ${draftId} in site`);
+
+    try {
+        let siteRef;
+
+        if ((site as DocumentData)!.ref === undefined) {
+            siteRef = await getSiteById(site as SiteId, db);
+        } else {
+            siteRef = site as DocumentData;
+        }
+
+        if (!siteRef) {
+            throw new Error("Site not found");
+        }
+
+        const draft = await siteRef!.ref.collection(DRAFT_COLLECTION).doc(draftId).get();
+
+        if (!draft.exists) {
+            throw new Error("Draft not found");
+        }
+
+        const {
+            content,
+            article,
+            title,
+            keywords,
+            description,
+            summary,
+            categoryId,
+            publishableArticle,
+            status,
+        } = draft.data();
+
+        return draftFactory(
+            draft.id,
+            content,
+            article,
+            title,
+            keywords,
+            description,
+            summary,
+            categoryId,
+            publishableArticle,
+            status,
+        );
+    } catch (e) {
+        error(e);
+        throw e;
+    }
+}
+
+export const convertDraftToArticle = async (
+    draftId: DraftId,
+    site: SiteId | DocumentData,
+    db: Firestore
+) => {
+    info(`Converting draft ${draftId} to article`);
+
+    const { categoryId, publishableArticle } = await getDraftById(draftId, site, db);
+
+    await createArticleToCategory(
+        publishableArticle!,
+        categoryId!,
+        site,
+        db
+    );
+
+    await updateDraft(draftId, site as SiteId, {
+        status: 'PUBLISHED'
+    }, db);
+}

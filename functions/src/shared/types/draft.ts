@@ -1,3 +1,5 @@
+import { Article } from "./article";
+
 /**
  * The status of a draft.
  * DRAFT: Le brouillon a été créé mais n'a pas encore été traité.
@@ -12,63 +14,45 @@ export type DraftStatus = 'DRAFT' | 'CATEGORY_SELECTED' | 'ARTICLE_CREATED' | 'S
 export type DraftId = string;
 
 export type Draft = {
-    siteId: string;
+    draftId: DraftId;
     content: string;
+    article: string;
+    title: string;
+    keywords: string[];
+    description: string;
+    summary: string;
+    categoryId: string;
+    publishableArticle: Article;
     status: DraftStatus;
-    article?: string;
-    title?: string;
-    keywords?: string[];
-    description?: string;
-    summary?: string;
-    categorySlug?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export function draftFactory(
-    siteId: string,
-    content: string
-): Draft;
-export function draftFactory(
-    siteId: string,
-    content: string,
-    article: string
-): Draft;
-export function draftFactory(
-    siteId: string,
-    content: string,
-    article: string,
-    status: DraftStatus
-): Draft;
-export function draftFactory(
-    siteId: string,
+    draftId: DraftId,
     content: string,
     article: string,
     title: string,
     keywords: string[],
     description: string,
-    status: DraftStatus
-): Draft;
-export function draftFactory(
-    siteId: string,
-    content: string,
-    article?: string,
-    title?: string,
-    keywords?: string[],
-    description?: string,
-    status?: DraftStatus,
+    summary: string,
+    categoryId: string,
+    publishableArticle: Article,
+    status: DraftStatus,
     createdAt?: Date,
     updatedAt?: Date
 ): Draft {
     return {
-        siteId,
+        draftId,
         content,
         article,
         title,
         keywords,
         description,
-        summary : '',
-        status: status || 'DRAFT',
+        summary,
+        categoryId,
+        publishableArticle,
+        status,
         createdAt: createdAt || new Date(),
         updatedAt: updatedAt || new Date()
     }
