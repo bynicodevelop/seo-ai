@@ -18,6 +18,7 @@ export type Draft = {
     title?: string;
     keywords?: string[];
     description?: string;
+    summary?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -44,6 +45,7 @@ export function draftFactory(
     title: string,
     keywords: string[],
     description: string,
+    summary: string,
     status: DraftStatus
 ): Draft;
 export function draftFactory(
@@ -53,6 +55,7 @@ export function draftFactory(
     title?: string,
     keywords?: string[],
     description?: string,
+    summary?: string,
     status?: DraftStatus,
     createdAt?: Date,
     updatedAt?: Date
@@ -64,6 +67,7 @@ export function draftFactory(
         title,
         keywords,
         description,
+        summary,
         status: status || 'DRAFT',
         createdAt: createdAt || new Date(),
         updatedAt: updatedAt || new Date()

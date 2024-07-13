@@ -147,6 +147,7 @@ const generateSeo = async (
             seo.title,
             seo.keywords,
             seo.description,
+            seo.summary,
             'SEO_OPTIMIZED'
         ),
         db
@@ -169,13 +170,15 @@ const translate = async (
     const title = await translatePrompt(languages, draft.title!, openAi);
     const keywords = await translatePrompt(languages, draft.keywords!.join(', '), openAi);
     const description = await translatePrompt(languages, draft.description!, openAi);
+    const summary = await translatePrompt(languages, draft.summary!, openAi);
     const article = await translatePrompt(languages, draft.article!, openAi);
 
     const articleEntity = articleFactory(
         title,
         keywords,
         description,
-        article
+        article,
+        summary
     );
 
     await updateDraftArticle(draftId, draft.siteId, articleEntity, db);
@@ -186,7 +189,7 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
     const openAi = initOpentAI(openAIKey.value());
     const { siteId, draftId } = event.params;
 
-    const { content, status, article, title, keywords, description } = event.data?.after.data() as Partial<Draft>;
+    const { content, status, article, title, keywords, description, summary } = event.data?.after.data() as Partial<Draft>;
 
     if (status === 'DRAFT' && content) {
         await generateArticle(
@@ -222,6 +225,7 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
                 title!,
                 keywords!,
                 description!,
+                summary!,
                 status,
             ),
             openAi,
