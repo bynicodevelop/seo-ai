@@ -1,8 +1,9 @@
 import * as admin from "firebase-admin";
+import { info } from "firebase-functions/logger";
 import { defineString } from "firebase-functions/params";
 import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import { first, isEmpty } from "lodash";
-import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, I18n, initOpentAI, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
+import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, I18n, initOpentAI, locales, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { generateArticle, generateSeo, selectCategoryForArticle, translate } from "./utils/draft";
 
 admin.initializeApp();
@@ -11,18 +12,22 @@ admin.initializeApp();
 const openAIKey = defineString('OPENAI_API');
 
 export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async (event) => {
+    info('Site builder triggered');
+
     const db = admin.firestore();
     const openAi = initOpentAI(openAIKey.value());
 
     const data = event.data as any;
 
-    const { domain, sitename, description, keywords, translate, categories } = data?.data() as any;
+    const { domain, sitename, description, keywords, locales, categories } = data?.data() as any;
 
-    const defaultTranslate: any[] = translate.length > 0 ? translate : ['fr'];
+    const defaultTranslate: locales[] = locales.length > 0 ? locales : ['fr'];
 
     const defaultCategories = [];
 
     if (isEmpty(categories)) {
+        info('No categories found, generating categories');
+
         const generateCategories = await generateCategoriesPrompt(
             {
                 domain,
@@ -47,8 +52,12 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
         })));
     } else {
         if (first<Category>(categories) && defaultTranslate.find((lang) => first<Category>(categories)?.title[lang])) {
+            info('Categories found, translating categories');
+
             defaultCategories.push(...categories);
         } else {
+            info('Categories found, generating categories');
+
             const translatedCategories = await translateCategoriesPrompt(
                 defaultTranslate,
                 categories,
@@ -84,10 +93,13 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
                 return acc;
             }, {}),
         },
+        defaultTranslate
     );
 
+    info('Creating site');
     await createSite(dataSite, db);
 
+    info('Creating categories');
     await createCategories(
         dataSite,
         defaultCategories.map((category) => (
@@ -99,6 +111,8 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
             ))),
         db
     );
+
+    info('Site created');
 });
 
 export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}', async (event) => {

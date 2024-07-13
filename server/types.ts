@@ -20,3 +20,8 @@ export type ErrorResponse = {
 export type CategoryQuery = {
     categorySlug: string;
 }
+
+export type ArticleQuery = {
+    siteId: string;
+    content: string;
+}

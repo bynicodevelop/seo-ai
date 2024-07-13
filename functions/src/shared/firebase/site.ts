@@ -1,21 +1,24 @@
 import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
 import { SiteDomain, SiteId, type Site } from "../types/site";
-import { SITE_COLLECTION } from "./types";
+import { Category, configFactory } from "../types";
+import { CATEGORY_COLLECTION, SITE_COLLECTION } from "./types";
 
 export const initSite = async (config: Config, db: Firestore): Promise<void> => {
-    const { domain, sitename, description, keywords, translate, categories } = config;
+    const { domain, sitename, description, keywords, locales, categories } = config;
 
     const url = new URL(domain);
 
-    await db.collection("site_builder").add({
-        domain: url.hostname,
-        sitename,
-        description,
-        keywords,
-        translate,
-        categories
-    });
+    await db.collection("site_builder").add(
+        configFactory(
+            url.hostname,
+            sitename,
+            description,
+            locales,
+            keywords ?? [],
+            categories ?? [] as any
+        )
+    );
 };
 
 export const createSite = async (site: Site, db: Firestore): Promise<DocumentData> => {
@@ -47,4 +50,20 @@ export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promis
     }
 
     return (snapshot.docs[0] as QueryDocumentSnapshot);
+}
+
+export const createCategories = async (site: Site, categories: Category[], db: Firestore): Promise<void> => {
+    const siteRef = await getSiteByDomain(site.domain, db);
+
+    const batch = db.batch();
+
+    categories.forEach((category) => {
+        const ref = siteRef?.ref.collection(CATEGORY_COLLECTION).doc();
+
+        if (ref) {
+            batch.set(ref, category);
+        }
+    });
+
+    await batch.commit();
 }

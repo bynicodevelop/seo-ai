@@ -1,9 +1,9 @@
 import { DocumentReference, Firestore } from "firebase-admin/firestore";
+import { error, info } from "firebase-functions/logger";
 import { DraftId, SiteId } from "../types";
+import { Article } from "../types/article";
 import { getSiteByDomain, getSiteById } from "./site";
 import { DRAFT_COLLECTION } from "./types";
-import { Article } from "../types/article";
-import { error, info } from "firebase-functions/logger";
 
 export const createDraft = async (
     domainId: SiteId,
