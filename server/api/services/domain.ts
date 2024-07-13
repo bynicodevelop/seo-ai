@@ -34,6 +34,7 @@ export default defineEventHandler(async (event) => {
                 .collection('categories')
                 .doc(`category-${i}`)
                 .set(categoryFactory(
+                    `category-${i}`,
                     {
                         fr: `Catégorie ${i}`,
                         en: `Category ${i}`,
