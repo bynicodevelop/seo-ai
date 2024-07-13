@@ -31,5 +31,9 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@nuxtjs/mdc",
     "@nuxt/image"
-  ]
+  ],
+
+  alias: {
+    '~/shared': '/functions/src/shared'
+  }
 })

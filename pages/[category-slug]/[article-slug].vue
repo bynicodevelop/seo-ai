@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Content } from '~/functions/src/shared';
+import type { Content } from '~/shared';
 
 const { locale } = useI18n();
 const { params } = useRoute();
