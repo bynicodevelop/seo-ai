@@ -1,4 +1,4 @@
-import { createDraft, draftFactory } from "~/functions/src/shared";
+import { createDraft } from "~/functions/src/shared";
 import { db } from "../../../firebase";
 
 export default defineEventHandler(async (event) => {
@@ -19,10 +19,11 @@ export default defineEventHandler(async (event) => {
         }
     }
 
-    await createDraft(draftFactory(
+    await createDraft(
         body.siteId,
-        body.content
-    ), db);
+        body.content, 
+        db
+    );
 
     return {
         status: 201,

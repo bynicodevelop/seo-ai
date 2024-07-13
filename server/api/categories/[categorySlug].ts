@@ -34,9 +34,12 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const { title, description } = doc.docs[0]!.data() as Category;
+        const docData = doc.docs[0];
+
+        const { title, description } = docData!.data() as Category;
 
         const category: Category = categoryFactory(
+            docData!.id,
             title,
             description,
             categorySlug
