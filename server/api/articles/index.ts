@@ -1,8 +1,7 @@
 // /server/api/getData.js
 import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
-import { Article, articleFactory, getSiteByDomain } from '~/functions/src/shared';
+import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION } from '~/functions/src/shared';
 import { db } from '../../firebase';
-import { ARTICLE_COLLECTION, CATEGORY_COLLECTION } from '~/functions/lib/shared/firebase/types';
 import { DocumentData } from 'firebase-admin/firestore';
 
 export default defineEventHandler(async (event) => {
