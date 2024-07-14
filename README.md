@@ -139,7 +139,7 @@ npm run clean
 ### Populer le projet en local
 
 ```batch
-curl http://localhost:3000/api/services/domain
+curl http://localhost:3000/api/services/domain?name=%22http://localhost:3000%22
 ```
 
 ### Populer le projet en local avec fichier de configuration
