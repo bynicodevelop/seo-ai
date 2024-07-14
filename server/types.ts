@@ -1,7 +1,7 @@
 import { locales } from "~/functions/src/shared";
 
 export type DomainQuery = {
-    name: string;
+    domain: string;
 }
 
 export type LocaleQuery = {

@@ -71,18 +71,33 @@ const promptGenerateContentSeo = () => `Agissez en tant rédacteur de contenu sp
 
 7. Formatez votre réponse en JSON de la façon suivante :
 
+Attention : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
+
 {
 "title": "string",
+"slug": "sample-slug",
 "keywords": ["string1", "string2", ...],
 "description": "string",
 "summary": "string"
 }`;
 
-export const generateSeoFromArticle = async (article: string, openai: OpenAI): Promise<{ title: string, keywords: string[], description: string, summary: string }> => {
+export const generateSeoFromArticle = async (article: string, openai: OpenAI): Promise<{
+    description: string,
+    keywords: string[],
+    slug: string,
+    summary: string,
+    title: string
+}> => {
     const messages: ChatCompletionMessageParam[] = [];
 
     addMessages(messages, 'assistant', promptGenerateContentSeo());
     addMessages(messages, 'user', article as string);
 
-    return await callOpenAI<{ title: string, keywords: string[], description: string, summary: string }>(messages, openai);
+    return await callOpenAI<{
+        description: string,
+        keywords: string[],
+        slug: string,
+        summary: string,
+        title: string
+    }>(messages, openai);
 };

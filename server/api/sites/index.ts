@@ -4,10 +4,10 @@ import { getSiteByDomain, Site, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
 export default defineEventHandler(async (event) => {
-    const { name } = getQuery(event) as DomainQuery;
+    const { domain } = getQuery(event) as DomainQuery;
 
     try {
-        const siteRef = await getSiteByDomain(name, db);
+        const siteRef = await getSiteByDomain(domain, db);
 
         if (siteRef === null) {
             return {
@@ -18,13 +18,14 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>
         }
 
-        const { domain, seo } = siteRef.data() as Site;
+        const site = siteRef.data() as Site;
 
         return {
             status: 200,
             data: siteFactory(
-                domain,
-                seo
+                site.domain,
+                site.seo,
+                site.locales
             )
         } as ApiResponse<Site>;
     } catch (error) {

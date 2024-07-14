@@ -127,7 +127,8 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
         title,
         keywords,
         description,
-        summary
+        summary,
+        slug
     } = event.data?.after.data() as Partial<Draft>;
 
     if (status === 'DRAFT' && content) {
@@ -169,12 +170,13 @@ export const onDraftCreated = onDocumentWritten('sites/{siteId}/drafts/{draftId}
             keywords!,
             description!,
             summary!,
+            slug!,
             openAi,
             db
         )
     }
 
-    if(status === 'READY_FOR_PUBLISHING') {
+    if (status === 'READY_FOR_PUBLISHING') {
         await moveDraftToArticle(
             draftId,
             siteId,

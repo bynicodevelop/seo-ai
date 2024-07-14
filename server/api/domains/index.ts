@@ -4,10 +4,10 @@ import { db } from '../../firebase';
 import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
 
 export default defineEventHandler(async (event) => {
-    const { name } = getQuery(event) as DomainQuery;
+    const { domain } = getQuery(event) as DomainQuery;
 
     try {
-        const snapshot = await db.collection('sites').doc(name).get();
+        const snapshot = await db.collection('sites').doc(domain).get();
         const { title, description } = (snapshot.data() || {}) as Domain;
 
         return {

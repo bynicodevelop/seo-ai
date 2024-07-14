@@ -21,6 +21,7 @@ export type Draft = {
     keywords: string[];
     description: string;
     summary: string;
+    slug: string;
     categoryId: string;
     publishableArticle: Article;
     status: DraftStatus;
@@ -36,6 +37,7 @@ export function draftFactory(
     keywords: string[],
     description: string,
     summary: string,
+    slug: string,
     categoryId: string,
     publishableArticle: Article,
     status: DraftStatus,
@@ -50,6 +52,7 @@ export function draftFactory(
         keywords,
         description,
         summary,
+        slug,
         categoryId,
         publishableArticle,
         status,
