@@ -20,6 +20,79 @@ cd DIR_NAME
 - Créer un fichier `firebase-config.json` à la racine avec la configuration _SDK Admin Firebase_.
 - Créer un fichier `.firebaserc` à la racine.
 
+## Commandes :
+
+Voici une liste de commandes utiles pour le développement de l'application.
+
+### `npm run bootstrap`
+
+Installe toutes les dépendances du projet.
+
+### `npm run clean`
+
+Réinitialise tout le projet.
+
+### `npm run dev` (Recommandé)
+
+Démarre le projet Nuxt avec firebase.
+
+### `npm run dev:restore`
+
+Démarre le projet et firebase avec des données pré-enregistrées (dump).
+
+### `npm run firebase:start`
+
+Démarre l'émulateur firebase.
+
+### `npm run build:nuxt`
+
+Build le projet nuxt.
+
+### `npm run build:nuxt:firebase`
+
+Build le projet nuxt pour être déployé sur le hosting de Firebase.
+
+### `npm run build:nuxt:watch`
+
+Build le projet nuxt et écoute les modifications.
+
+### `npm run build:functions`
+
+Build les cloud functions.
+
+### `npm run build:functions:watch`
+
+Build les cloud functions et écoute les modifications.
+
+### `npm run deploy`
+
+Permet de déployer tout le projet sur Firebase.
+
+### `npm run deploy:prepare`
+
+Prépare le projet pour le déploiement pour firebase.
+
+### `npm run deploy:firebase`
+
+Déploie le projet.
+
+### `npm run dev:nuxt`
+
+Démarre le projet Nuxt.
+
+### `npm run firebase:dump`
+
+Créer un dump de Firestore de l'émulateur Firebase.
+
+### `npm run firebase:restore`
+
+Démarre Firebase avec les données de Firestore.
+
+### `npm run test`
+
+Execute les tests unitaires du projet.
+
+
 ## Contenu du fichier de configuration `.firebaserc`
 
 Configuration minimal
