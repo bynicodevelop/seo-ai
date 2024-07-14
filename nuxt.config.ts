@@ -33,8 +33,4 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/test-utils/module"
   ],
-
-  alias: {
-    '~/shared': '/functions/src/shared'
-  }
 })

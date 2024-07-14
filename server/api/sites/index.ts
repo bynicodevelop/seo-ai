@@ -1,6 +1,6 @@
 // /server/api/getData.js
 import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
-import { getSiteByDomain, Site, siteFactory } from '~/shared';
+import { getSiteByDomain, Site, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
 export default defineEventHandler(async (event) => {

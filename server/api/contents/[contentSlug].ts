@@ -1,6 +1,6 @@
 // /server/api/getData.js
 import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse } from '~/server/types';
-import { Content, getSiteByDomain } from '~/shared';
+import { Content, getSiteByDomain } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
 
