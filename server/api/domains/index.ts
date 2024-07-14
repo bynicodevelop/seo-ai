@@ -1,5 +1,5 @@
 // /server/api/getData.js
-import { Domain } from '~/shared';
+import { Domain } from '~/functions/src/shared';
 import { db } from '../../firebase';
 import { ApiResponse, DomainQuery, ErrorResponse } from '~/server/types';
 

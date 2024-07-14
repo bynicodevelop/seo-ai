@@ -10,7 +10,7 @@
       "@/*": [
         "./*"
       ],
-      "~/shared": [
+      "~/functions/src/shared": [
         "./functions/src/shared"
       ]
     },

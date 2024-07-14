@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Category, Site } from '~/shared';
+import type { Category, Site } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const localePath = useLocalePath();

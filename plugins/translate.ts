@@ -1,4 +1,4 @@
-import type { I18n, locales } from "~/shared/types/i18n";
+import type { I18n, locales } from "~/functions/src/shared/types/i18n";
 import isEmpty from "lodash/isEmpty";
 
 export default defineNuxtPlugin((nuxtApp) => {
