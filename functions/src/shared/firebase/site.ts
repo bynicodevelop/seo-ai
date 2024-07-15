@@ -2,14 +2,14 @@ import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/f
 import type { Config } from "../types/config";
 import { SiteDomain, SiteId, type Site } from "../types/site";
 import { configFactory } from "../types";
-import { SITE_COLLECTION } from "./types";
+import { SITE_BUILDER_COLLECTION, SITE_COLLECTION } from "./types";
 
 export const initSite = async (config: Config, db: Firestore): Promise<void> => {
     const { domain, sitename, description, keywords, locales, categories } = config;
 
     const url = new URL(domain);
 
-    await db.collection("site_builder").add(
+    await db.collection(SITE_BUILDER_COLLECTION).add(
         configFactory(
             url.hostname,
             sitename,

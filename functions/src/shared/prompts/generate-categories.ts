@@ -59,7 +59,10 @@ Voici un exemple de format attendu :
 "fr": "contenu traduit...",
 "en": "..."
 },
-        slug: "slug",
+        slug: {
+"fr": "contenu traduit...",
+"en": "..."
+        },
         description: {
 "fr": "contenu traduit...",
 "en": "..."
