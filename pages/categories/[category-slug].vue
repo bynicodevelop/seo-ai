@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Category } from '~/functions/src/shared';
-import type { Content } from '~/functions/src/shared';
+import type { Article, Category, locales } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const localePath = useLocalePath();
@@ -11,14 +10,14 @@ const { $domain, $translate } = useNuxtApp() as any;
 const { fetchCategory, fetchContents } = useContent();
 
 const category = ref<Category | null>(null);
-const contents = ref<Content[] | null>([]);
+const articles = ref<Article[] | null>([]);
 
 try {
-    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string, locale.value as locale));
-    const { data: contentsData } = await useAsyncData<Content[]>('contents', async () => await fetchContents($domain as string, categoryslug as string));
+    const { data: categoryData } = await useAsyncData<Category>('category', async () => await fetchCategory($domain as string, categoryslug as string, locale.value as locales));
+    const { data: contentsData } = await useAsyncData<Article[]>('articles', async () => await fetchContents($domain as string, categoryslug as string, locale.value as locales));
 
     category.value = categoryData.value;
-    contents.value = contentsData.value;
+    articles.value = contentsData.value;
 
     useHead({
         title: $translate(category.value?.title, locale.value),
@@ -56,14 +55,14 @@ try {
             </div>
         </header>
         <section>
-            <article v-for="content in contents" :key="content.id">
+            <article v-for="(article, index) in articles" :key="index">
                 <h2>
-                    <NuxtLink :to="localePath(`/${categoryslug}/${content.slug}`)"
-                        :title="$translate(content.title, locale)">
-                        {{ $translate(content.title, locale) }}
+                    <NuxtLink :to="localePath(`/${categoryslug}/${$translate(article.slug, locale)}`)"
+                        :title="$translate(article.title, locale)">
+                        {{ $translate(article.title, locale) }}
                     </NuxtLink>
                 </h2>
-                <p>{{ content.excerpt }}</p>
+                <p>{{ $translate(article.summary, locale) }}</p>
             </article>
         </section>
     </main>

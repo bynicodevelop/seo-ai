@@ -4,12 +4,12 @@ import { MetaSeo, categoryFactory, createSite, siteFactory } from '~/functions/s
 import { db } from '../../firebase';
 
 export default defineEventHandler(async (event) => {
-    const { name } = getQuery(event) as DomainQuery;
+    const { domain } = getQuery(event) as DomainQuery;
 
     try {
         const siteRef = await createSite(
             siteFactory(
-                name,
+                domain,
                 {
                     title: {
                         fr: 'Localhost - MagicApex',

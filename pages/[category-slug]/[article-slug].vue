@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Content } from '~/functions/src/shared';
+import type { Article, locales } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const { params } = useRoute();
@@ -8,20 +8,28 @@ const { categoryslug, articleslug } = params as { categoryslug: string, articles
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchContent } = useContent();
 
-const content = ref<Content | null>(null);
+const article = ref<Article | null>(null);
 
 try {
-    const { data: contentData } = await useAsyncData<Content>('content', async () => await fetchContent($domain as string, categoryslug as string, articleslug as string));
+    const { data: contentData } = await useAsyncData<Article>(
+        'article',
+        async () => await fetchContent(
+            $domain as string,
+            categoryslug as string,
+            articleslug as string,
+            locale.value as locales
+        )
+    );
 
-    content.value = contentData.value;
+    article.value = contentData.value;
 
     useHead({
-        title: $translate(content.value?.seo.title, locale.value),
+        title: $translate(article.value?.title, locale.value),
         meta: [
             {
                 hid: 'description',
                 name: 'description',
-                content: $translate(content.value?.seo.description, locale.value),
+                content: $translate(article.value?.description, locale.value),
             },
         ],
     });
@@ -34,13 +42,13 @@ try {
 }
 </script>
 <template>
-    <main>
-        <h1>
-            {{ $translate(content?.title, locale) }}
+    <main class="mx-auto max-w-3xl p-4">
+        <h1 class="text-3xl font-bold text-gray-800">
+            {{ $translate(article?.title, locale) }}
         </h1>
 
         <section>
-            <tools-markdown-component :content="content?.content" />
+            <tools-markdown-component :content="article?.article" />
         </section>
     </main>
 </template>

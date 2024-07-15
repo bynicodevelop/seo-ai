@@ -4,10 +4,10 @@ import { db } from '../../firebase';
 import { Category, categoryFactory, getSiteByDomain } from '~/functions/src/shared';
 
 export default defineEventHandler(async (event) => {
-    const { name } = getQuery(event) as DomainQuery;
+    const { domain } = getQuery(event) as DomainQuery;
 
     try {
-        const siteRef = await getSiteByDomain(name, db);
+        const siteRef = await getSiteByDomain(domain, db);
 
         if (!siteRef) {
             return {

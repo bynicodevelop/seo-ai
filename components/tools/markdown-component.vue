@@ -15,5 +15,7 @@ const { data: ast } = await useAsyncData('markdown', () => parseMarkdown($transl
 </script>
 
 <template>
-    <MDCRenderer :body="ast.body" :data="ast.data" />
+    <article class="prose prose-a:no-underline">
+        <MDCRenderer :body="ast.body" :data="ast.data" />
+    </article>
 </template>
