@@ -274,7 +274,7 @@ Réponse :
 
 ## Déploiement 
 
-Pour déployez le projet
+Pour déployer le projet
 
 ```batch
 npm run deploy
