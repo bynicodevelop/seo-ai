@@ -1,4 +1,15 @@
 <script setup lang="ts">
+const { getCanonical } = useUtils();
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: getCanonical()
+    }
+  ]
+});
+
 const { locale } = useI18n();
 
 useHead({
@@ -6,6 +17,7 @@ useHead({
     lang: locale.value,
   },
 })
+
 </script>
 
 <template>
