@@ -237,7 +237,7 @@ Réponse :
 
 ### GET `/services/sites`
 
-Permet de créer un site assisté par l'intélligence artificielle avec une configuration.
+Permet de créer un site assisté par l'intelligence artificielle avec une configuration.
 
 Params :
 
