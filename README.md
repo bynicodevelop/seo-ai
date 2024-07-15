@@ -224,7 +224,7 @@ Permet d'enregister un jeu de données dans Firestore.
 
 Params :
 
-- `name` (string, requis) : Le nom de domaine pour lequel créer les données.
+- `name` (string, requis) : Le nom de domaine lié aux données créées.
 
 Réponse : 
 
