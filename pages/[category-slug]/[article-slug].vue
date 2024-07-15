@@ -27,12 +27,22 @@ try {
         title: $translate(article.value?.title, locale.value),
         meta: [
             {
-                hid: 'description',
                 name: 'description',
                 content: $translate(article.value?.description, locale.value),
             },
+            {
+                name: "keywords",
+                content: $translate(article.value?.keywords, locale.value),
+            }
         ],
     });
+
+    useSchemaOrg([
+        defineArticle({
+            'datePublished': article.value?.createdAt,
+            'dateModified': article.value?.updatedAt,
+        })
+    ]);
 } catch (error) {
     throw createError({
         statusCode: 404,

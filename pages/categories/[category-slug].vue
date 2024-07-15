@@ -23,12 +23,34 @@ try {
         title: $translate(category.value?.title, locale.value),
         meta: [
             {
-                hid: 'description',
                 name: 'description',
                 content: $translate(category.value?.description, locale.value),
             },
         ],
     });
+
+    const articlesItems: any[] = [];
+
+    if (!articles.value?.hasOwnProperty('message')) {
+        articles.value?.forEach((article) => {
+            articlesItems.push({
+                '@type': 'ListItem',
+                'position': articlesItems.length + 1,
+                'url': `${$domain}/${categoryslug}/${$translate(article.slug, locale.value)}`,
+                'name': $translate(article.title, locale.value),
+            });
+        });
+    }
+
+    useSchemaOrg([
+        defineItemList({
+            '@type': 'ItemList',
+            'itemListElement': articlesItems,
+        }),
+        defineWebPage({
+            '@type': 'CollectionPage'
+        }),
+    ])
 } catch (error) {
     console.log(error);
 

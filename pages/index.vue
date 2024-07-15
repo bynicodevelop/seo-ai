@@ -17,6 +17,10 @@ try {
             },
         ],
     });
+
+    useSchemaOrg([
+        defineWebPage(),
+    ]);
 } catch (error) {
     console.log(error);
 
