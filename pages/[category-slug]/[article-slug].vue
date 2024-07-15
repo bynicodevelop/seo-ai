@@ -42,8 +42,8 @@ try {
 }
 </script>
 <template>
-    <main>
-        <h1>
+    <main class="mx-auto max-w-3xl p-4">
+        <h1 class="text-3xl font-bold text-gray-800">
             {{ $translate(article?.title, locale) }}
         </h1>
 
