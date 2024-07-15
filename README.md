@@ -216,9 +216,65 @@ Créer un fichier `.env.local` dans `/functions` avec les informations suivante 
 OPENAI_API=sk-proj-openai-key
 ```
 
+## Utilisation de l'API
+
+### GET `/services/domain`
+
+Permet d'enregister un jeu de données dans Firestore.
+
+Params :
+
+- `name` (string, requis) : Le nom de domaine lié aux données créées.
+
+Réponse : 
+
+```json
+{
+    "success": Boolean, 
+    "error": Object
+}
+```
+
+### GET `/services/sites`
+
+Permet de créer un site assisté par l'intelligence artificielle avec une configuration.
+
+Params :
+
+- Voir le fichier `config.json`
+
+Réponse : 
+
+```json
+
+```json
+{
+  "message": String
+}
+```
+
+### GET `/services/articles`
+
+Permet de créer un article assisté par l'intélligence artificielle avec une configuration.
+
+Params :
+
+- `siteId` (string, requis) : Le nom de domaine sur lequel publier un article.
+- `content` (string, requis) : Description ou résumé de l'article à rédiger
+
+Réponse : 
+
+```json
+
+```json
+{
+  "message": String
+}
+```
+
 ## Déploiement 
 
-Pour déployez le projet
+Pour déployer le projet
 
 ```batch
 npm run deploy
