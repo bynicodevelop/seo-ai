@@ -4,6 +4,6 @@
     <main class="relative isolate ">
       <slot />
     </main>
-  </div>
   <footer-component />
+  </div>
 </template>
