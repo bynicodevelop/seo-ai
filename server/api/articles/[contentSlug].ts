@@ -1,15 +1,15 @@
 // /server/api/getData.js
-import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse } from '~/server/types';
-import { Content, getSiteByDomain } from '~/functions/src/shared';
+import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
+import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
 
 export default defineEventHandler(async (event) => {
     const { contentSlug } = event.context.params as { contentSlug: string };
-    const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
+    const { domain, categorySlug, locale } = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
 
     try {
-        const siteRef = await getSiteByDomain(name, db);
+        const siteRef = await getSiteByDomain(domain, db);
 
         if (!siteRef) {
             return {
@@ -19,13 +19,24 @@ export default defineEventHandler(async (event) => {
                 }
             } as ApiResponse<ErrorResponse>
         }
+        const categorySnapshot = await siteRef.ref
+            .collection(CATEGORY_COLLECTION)
+            .where(`slug.${locale}`, '==', categorySlug)
+            .get();
 
-        const contentSnapshot = await siteRef.ref
-            .collection('categories')
-            .doc(categorySlug)
-            .collection('contents')
-            .where('slug', '==', contentSlug)
-            .get() as any;
+        if (categorySnapshot.empty) {
+            return {
+                status: 404,
+                data: {
+                    message: 'Category not found',
+                },
+            } as ApiResponse<ErrorResponse>;
+        }
+
+        const contentSnapshot = await categorySnapshot.docs[0]?.ref
+            .collection(ARTICLE_COLLECTION)
+            .where(`slug.${locale}`, '==', contentSlug)
+            .get();
 
         if (contentSnapshot.empty) {
             return {
@@ -46,28 +57,23 @@ export default defineEventHandler(async (event) => {
         }
 
         const data = contentSnapshot.docs[0] ?? {} as any;
-        const { title, slug, excerpt, seo, content, createdAt, updatedAt, publishedAt } = data.data();
+        const { title, keywords, slug, article, description, createdAt, updatedAt } = data.data();
 
-        const contentData: Content = {
-            id: data.id,
-            slug,
+        const contentData = articleFactory(
             title,
-            seo: {
-                title: seo.title,
-                description: seo.description,
-            },
-            category: categorySlug,
-            excerpt,
-            content,
+            keywords,
+            description,
+            article,
+            description,
+            slug,
             createdAt,
-            updatedAt,
-            publishedAt,
-        } as Content;
+            updatedAt
+        );
 
         return {
             status: 200,
             data: contentData,
-        } as ApiResponse<Content>;
+        } as ApiResponse<Article>;
     } catch (error) {
         console.log(error);
 

@@ -77,6 +77,7 @@ export const updateDraftSeo = async (
     keywords: string[],
     description: string,
     summary: string,
+    slug: string,
     db: Firestore
 ) => {
     info(`Updating draft SEO for draft ${draftId} in site ${siteId}`);
@@ -93,6 +94,7 @@ export const updateDraftSeo = async (
             keywords,
             description,
             summary,
+            slug,
             status: 'SEO_OPTIMIZED'
         }, { merge: true });
     } catch (e) {
@@ -184,6 +186,7 @@ export const getDraftById = async (
             keywords,
             description,
             summary,
+            slug,
             categoryId,
             publishableArticle,
             status,
@@ -197,6 +200,7 @@ export const getDraftById = async (
             keywords,
             description,
             summary,
+            slug,
             categoryId,
             publishableArticle,
             status,

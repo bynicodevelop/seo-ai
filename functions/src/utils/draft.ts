@@ -58,6 +58,7 @@ export const generateSeo = async (
         seo.keywords,
         seo.description,
         seo.summary,
+        seo.slug,
         db
     );
 }
@@ -70,14 +71,14 @@ export const translate = async (
     keywords: string[],
     description: string,
     summary: string,
+    slug: string,
     openAi: OpenAI,
     db: Firestore
 ) => {
-    // const siteRef = await getSiteById(draft.siteId, db);
+    const siteRef = await getSiteById(siteId, db);
+    const site = siteRef?.data() as Site;
 
-    // const site = siteRef?.data() as Site;
-    // TODO: Manque les langes de traduction dans le site
-    const languages = ['fr', 'en'];
+    const languages = site.locales;
 
     // TODO: Tester dans un Promise.all
     const titleTranslated = await translatePrompt(languages, title, openAi);
@@ -85,6 +86,7 @@ export const translate = async (
     const descriptionTranslated = await translatePrompt(languages, description, openAi);
     const summaryTranslated = await translatePrompt(languages, summary, openAi);
     const articleTranslated = await translatePrompt(languages, article, openAi);
+    const slugTranslated = await translatePrompt(languages, slug, openAi);
 
     await updateDraftArticle(
         draftId,
@@ -94,7 +96,8 @@ export const translate = async (
             keywordsTranslated,
             descriptionTranslated,
             articleTranslated,
-            summaryTranslated
+            summaryTranslated,
+            slugTranslated,
         ),
         db
     );

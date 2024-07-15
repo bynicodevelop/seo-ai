@@ -1,13 +1,14 @@
 // /server/api/getData.js
-import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse } from '~/server/types';
-import { Content, getSiteByDomain } from '~/functions/src/shared';
+import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
+import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION } from '~/functions/src/shared';
 import { db } from '../../firebase';
+import { DocumentData } from 'firebase-admin/firestore';
 
 export default defineEventHandler(async (event) => {
-    const { name, categorySlug } = getQuery(event) as DomainQuery & CategoryQuery;
+    const { domain, categorySlug, locale } = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
 
     try {
-        const siteRef = await getSiteByDomain(name, db);
+        const siteRef = await getSiteByDomain(domain, db);
 
         if (!siteRef) {
             return {
@@ -19,8 +20,8 @@ export default defineEventHandler(async (event) => {
         }
 
         const categorySnapshot = await siteRef.ref
-            .collection('categories')
-            .where('slug', '==', categorySlug)
+            .collection(CATEGORY_COLLECTION)
+            .where(`slug.${locale}`, '==', categorySlug)
             .get();
 
         if (categorySnapshot.empty) {
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection('contents').get();
+        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection(ARTICLE_COLLECTION).get();
 
         if (contentsSnapshot?.empty) {
             return {
@@ -43,29 +44,26 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const contents: Content[] = (contentsSnapshot?.docs ?? []).map((doc: any) => {
-            const { title, slug, excerpt, content, createdAt, updatedAt, publishedAt } = doc.data();
-            return {
-                id: doc.id,
-                slug,
+
+        const contents: Article[] = (contentsSnapshot?.docs ?? []).map((doc: DocumentData) => {
+            const { title, keywords, slug, article, description, createdAt, updatedAt } = doc.data();
+
+            return articleFactory(
                 title,
-                seo: {
-                    title,
-                    description: excerpt,
-                },
-                category: categorySlug,
-                excerpt,
-                content,
+                keywords,
+                description,
+                article,
+                description,
+                slug,
                 createdAt,
-                updatedAt,
-                publishedAt,
-            } as Content;
+                updatedAt
+            );
         })
 
         return {
             status: 200,
             data: contents,
-        } as ApiResponse<Content[]>;
+        } as ApiResponse<Article[]>;
 
     } catch (error) {
         console.log(error);

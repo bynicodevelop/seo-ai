@@ -19,6 +19,8 @@ export const createCategories = async (site: Site, categories: Category[], db: F
                 ref = siteByDomain!.ref.collection(CATEGORY_COLLECTION).doc(category.id);
             }
 
+            delete category.id;
+
             batch.set(ref, category);
         });
 
@@ -54,6 +56,41 @@ export const getCategories = async (site: Site | DocumentData, db: Firestore): P
         }
 
         const categories = await siteByDomain!.ref.collection(CATEGORY_COLLECTION).get();
+
+        return categories.docs.map((doc: any) => {
+            const { title, description, slug } = doc.data() as Category;
+
+            return categoryFactory(
+                doc.id,
+                title,
+                description,
+                slug
+            )
+        });
+    } catch (e) {
+        error(e);
+        throw e;
+    }
+}
+
+export const getCategoryBySlug = async (site: Site | DocumentData, categorySlug: string, db: Firestore): Promise<Category[]> => {
+    try {
+        let siteByDomain;
+
+        if ((site as DocumentData)!.ref === undefined) {
+            siteByDomain = await getSiteByDomain(site.domain, db);
+        } else {
+            siteByDomain = site as DocumentData;
+        }
+
+        if (!siteByDomain) {
+            return [];
+        }
+
+        const categories = await siteByDomain!.ref
+            .collection(CATEGORY_COLLECTION)
+            .where('slug', '==', categorySlug)
+            .get();
 
         return categories.docs.map((doc: any) => {
             const { title, description, slug } = doc.data() as Category;
