@@ -7,9 +7,9 @@ export default defineEventHandler(async (event) => {
     const { domain } = getQuery(event) as DomainQuery;
 
     try {
-        const siteRef = await getSiteByDomain(domain, db);
+        const site = await getSiteByDomain(domain, db);
 
-        if (siteRef === null) {
+        if (site === null) {
             return {
                 status: 404,
                 data: {
@@ -17,8 +17,6 @@ export default defineEventHandler(async (event) => {
                 }
             } as ApiResponse<ErrorResponse>
         }
-
-        const site = siteRef.data() as Site;
 
         return {
             status: 200,

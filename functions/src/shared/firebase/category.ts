@@ -1,10 +1,10 @@
 import { DocumentData, Firestore } from "firebase-admin/firestore";
-import { Category, categoryFactory, Site } from "../types";
+import { Category, CategoryEntity, categoryFactoryEntity, locales, SiteEntity } from "../types";
 import { CATEGORY_COLLECTION } from "./types";
 import { getSiteByDomain } from "./site";
 import { error } from "firebase-functions/logger";
 
-export const createCategories = async (site: Site, categories: Category[], db: Firestore): Promise<void> => {
+export const createCategories = async (site: SiteEntity, categories: Category[], db: Firestore): Promise<void> => {
     try {
         const batch = db.batch();
 
@@ -14,9 +14,9 @@ export const createCategories = async (site: Site, categories: Category[], db: F
             let ref;
 
             if (!category.id) {
-                ref = siteByDomain!.ref.collection(CATEGORY_COLLECTION).doc();
+                ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
             } else {
-                ref = siteByDomain!.ref.collection(CATEGORY_COLLECTION).doc(category.id);
+                ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc(category.id);
             }
 
             delete category.id;
@@ -41,31 +41,32 @@ export const createCategories = async (site: Site, categories: Category[], db: F
  * @param db 
  * @returns 
  */
-export const getCategories = async (site: Site | DocumentData, db: Firestore): Promise<Category[]> => {
+export const getCategories = async (site: SiteEntity, db: Firestore): Promise<CategoryEntity[]> => {
     try {
         let siteByDomain;
 
-        if ((site as DocumentData)!.ref === undefined) {
+        if ((site)!.ref === undefined) {
             siteByDomain = await getSiteByDomain(site.domain, db);
         } else {
-            siteByDomain = site as DocumentData;
+            siteByDomain = site as SiteEntity;
         }
 
         if (!siteByDomain) {
             return [];
         }
 
-        const categories = await siteByDomain!.ref.collection(CATEGORY_COLLECTION).get();
+        const categories = await siteByDomain!.ref!.collection(CATEGORY_COLLECTION).get();
 
         return categories.docs.map((doc: any) => {
-            const { title, description, slug } = doc.data() as Category;
+            const { title, description, slug } = doc.data();
 
-            return categoryFactory(
+            return categoryFactoryEntity(
+                doc.ref,
                 doc.id,
                 title,
                 description,
                 slug
-            )
+            );
         });
     } catch (e) {
         error(e);
@@ -73,35 +74,36 @@ export const getCategories = async (site: Site | DocumentData, db: Firestore): P
     }
 }
 
-export const getCategoryBySlug = async (site: Site | DocumentData, categorySlug: string, db: Firestore): Promise<Category[]> => {
+export const getCategoryBySlug = async (site: SiteEntity, categorySlug: string, locale: locales, db: Firestore): Promise<CategoryEntity | null> => {
     try {
         let siteByDomain;
 
-        if ((site as DocumentData)!.ref === undefined) {
+        if ((site as SiteEntity)!.ref === undefined) {
             siteByDomain = await getSiteByDomain(site.domain, db);
         } else {
-            siteByDomain = site as DocumentData;
+            siteByDomain = site as SiteEntity;
         }
 
         if (!siteByDomain) {
-            return [];
+            return null;
         }
 
-        const categories = await siteByDomain!.ref
+        const categories = await siteByDomain!.ref!
             .collection(CATEGORY_COLLECTION)
-            .where('slug', '==', categorySlug)
+            .where(`slug.${locale}`, '==', categorySlug)
+            .limit(1)
             .get();
 
-        return categories.docs.map((doc: any) => {
-            const { title, description, slug } = doc.data() as Category;
+        const doc = categories.docs[0] as DocumentData;
+        const { title, description, slug } = doc.data();
 
-            return categoryFactory(
-                doc.id,
-                title,
-                description,
-                slug
-            )
-        });
+        return categoryFactoryEntity(
+            doc.ref,
+            doc.id,
+            title,
+            description,
+            slug
+        );
     } catch (e) {
         error(e);
         throw e;

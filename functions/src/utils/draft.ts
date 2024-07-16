@@ -1,6 +1,6 @@
 import { Firestore } from "firebase-admin/firestore";
 import OpenAI from "openai";
-import { articleFactory, convertDraftToArticle, DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, Site, SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
+import { articleFactory, convertDraftToArticle, DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
 import { selectCategoryForArticlePrompt } from "../shared/prompts/select-category-for-article";
 import { info } from "firebase-functions/logger";
 
@@ -35,11 +35,12 @@ export const generateArticle = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const siteRef = await getSiteById(siteId, db);
-    const site = siteRef?.data() as Site;
+    const site = await getSiteById(siteId, db);
 
-    const article = await generateArticleFromContent(content, site, openAi);
-    await updateDraftArticleContent(draftId, siteId, article, db);
+    // TODO: généré le cas d'erreur
+    // Ajouter un status erreur en BDD
+    const article = await generateArticleFromContent(content, site!, openAi);
+    await updateDraftArticleContent(draftId, site!, article);
 };
 
 export const generateSeo = async (
@@ -75,10 +76,11 @@ export const translate = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const siteRef = await getSiteById(siteId, db);
-    const site = siteRef?.data() as Site;
+    const site = await getSiteById(siteId, db);
 
-    const languages = site.locales;
+    // TODO: généré le cas d'erreur
+    // Ajouter un status erreur en BDD
+    const languages = site!.locales;
 
     // TODO: Tester dans un Promise.all
     const titleTranslated = await translatePrompt(languages, title, openAi);

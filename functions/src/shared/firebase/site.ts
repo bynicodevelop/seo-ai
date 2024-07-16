@@ -1,6 +1,6 @@
-import { DocumentData, Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { DocumentData, Firestore } from "firebase-admin/firestore";
 import type { Config } from "../types/config";
-import { SiteDomain, SiteId, type Site } from "../types/site";
+import { SiteDomain, SiteEntity, siteFactoryEntity, SiteId, type Site } from "../types/site";
 import { configFactory } from "../types";
 import { SITE_BUILDER_COLLECTION, SITE_COLLECTION } from "./types";
 
@@ -26,7 +26,7 @@ export const createSite = async (site: Site, db: Firestore): Promise<DocumentDat
         .add(site);
 };
 
-export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<DocumentData | null> => {
+export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<SiteEntity | null> => {
     const snapshot = await db.collection(SITE_COLLECTION)
         .doc(siteId)
         .get();
@@ -35,19 +35,40 @@ export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<Docume
         return null;
     }
 
+    const { domain, seo, locales, createdAt, updatedAt } = snapshot.data() as DocumentData;
 
-    return snapshot;
+    return siteFactoryEntity(
+        snapshot.ref,
+        snapshot.id,
+        domain,
+        seo,
+        locales,
+        createdAt,
+        updatedAt
+    );
 }
 
-export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promise<QueryDocumentSnapshot | null> => {
-    const snapshot = await db.collection(SITE_COLLECTION)
+export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promise<SiteEntity | null> => {
+    const queryDocumentSnapshot = await db.collection(SITE_COLLECTION)
         .where("domain", "==", domain)
         .limit(1)
         .get();
 
-    if (snapshot.empty) {
+    if (queryDocumentSnapshot.empty) {
         return null;
     }
 
-    return (snapshot.docs[0] as QueryDocumentSnapshot);
+    const snapshot = queryDocumentSnapshot.docs[0] as DocumentData;
+
+    const { seo, locales, createdAt, updatedAt } = snapshot.data() as DocumentData;
+
+    return siteFactoryEntity(
+        snapshot.ref,
+        snapshot.id,
+        domain,
+        seo,
+        locales,
+        createdAt,
+        updatedAt
+    );
 }

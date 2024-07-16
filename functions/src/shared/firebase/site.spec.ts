@@ -150,8 +150,13 @@ describe('site', () => {
             expect(mockDoc).toHaveBeenCalledWith(siteId);
             expect(mockGet).toHaveBeenCalled();
             expect(result).toEqual({
-                exists: true,
-                data: expect.any(Function)
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                domain: 'localhost',
+                id: undefined,
+                locales: undefined,
+                ref: undefined,
+                seo: undefined,
             });
         });
 
@@ -185,7 +190,30 @@ describe('site', () => {
         const domain: SiteDomain = 'localhost';
 
         it('Doit retourner un site existant par son domaine', async () => {
-            const mockDocs = [{ id: '12345', data: () => ({ domain: 'localhost' }) }] as unknown as QueryDocumentSnapshot[];
+            const data = {
+                domain: 'localhost',
+                seo: {
+                    title: {
+                        fr: 'Test',
+                    },
+                    description: {
+                        fr: 'Test',
+                    },
+                    keywords: {
+                        fr: ['test'],
+                    },
+                },
+                locales: ['fr'],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+            const mockDocs = [
+                {
+                    id: '12345',
+                    data: () => ({ ...data }),
+                } as unknown as QueryDocumentSnapshot<DocumentData>,
+            ];
+
             const mockGet = vi.fn().mockResolvedValue({
                 empty: false,
                 docs: mockDocs,
@@ -204,15 +232,17 @@ describe('site', () => {
                 collection: mockCollection,
             } as unknown as Firestore;
 
-
-
             const result = await getSiteByDomain(domain, db);
 
             // Assertions
             expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
             expect(mockWhere).toHaveBeenCalledWith('domain', '==', domain);
             expect(mockGet).toHaveBeenCalled();
-            expect(result).toEqual(mockDocs[0]);
+            expect(result).toEqual({
+                ...data,
+                id: '12345',
+                ref: undefined,
+            });
         });
 
         it('Doit retourner null si aucun site n\'existe pour le domaine', async () => {

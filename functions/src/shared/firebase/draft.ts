@@ -1,6 +1,6 @@
 import { DocumentData, DocumentReference, Firestore } from "firebase-admin/firestore";
 import { error, info } from "firebase-functions/logger";
-import { Draft, draftFactory, DraftId, SiteId } from "../types";
+import { Draft, draftFactory, DraftId, SiteEntity, SiteId } from "../types";
 import { Article } from "../types/article";
 import { getSiteByDomain, getSiteById } from "./site";
 import { DRAFT_COLLECTION } from "./types";
@@ -17,7 +17,7 @@ export const createDraft = async (
         throw new Error("Site not found");
     }
 
-    return await siteRef.ref.collection(DRAFT_COLLECTION)
+    return await siteRef.ref!.collection(DRAFT_COLLECTION)
         .add({
             content,
             status: 'DRAFT'
@@ -47,20 +47,17 @@ export const updateDraft = async (draftId: DraftId, site: SiteId | DocumentData,
 
 export const updateDraftArticleContent = async (
     draftId: DraftId,
-    siteId: SiteId,
+    site: SiteEntity,
     article: string,
-    db: Firestore
 ) => {
-    info(`Updating draft article content for draft ${draftId} in site ${siteId}`);
+    info(`Updating draft article content for draft ${draftId} in site ${site.id!}`);
 
     try {
-        const site = await getSiteById(siteId, db);
-
         if (!site) {
             throw new Error("Site not found");
         }
 
-        await site.ref.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
             article,
             status: 'ARTICLE_CREATED'
         }, { merge: true });
@@ -89,7 +86,7 @@ export const updateDraftSeo = async (
             throw new Error("Site not found");
         }
 
-        await site.ref.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
             title,
             keywords,
             description,
@@ -118,7 +115,7 @@ export const updateDraftArticle = async (
             throw new Error("Site not found");
         }
 
-        await site.ref.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
             publishableArticle: article,
             status: 'READY_FOR_PUBLISHING'
         }, { merge: true });
@@ -143,7 +140,7 @@ export const updateDraftCategory = async (
             throw new Error("Site not found");
         }
 
-        await site.ref.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
             categoryId,
             status: 'CATEGORY_SELECTED'
         }, { merge: true });

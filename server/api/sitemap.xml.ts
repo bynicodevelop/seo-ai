@@ -9,9 +9,9 @@ export default defineEventHandler(async (event) => {
   const baseUrl = `${protocol}://${domain}`;
 
   const siteRef = await getSiteByDomain(domain, db);
-  const { locales } = siteRef?.data() as DocumentData;
+  const { locales } = siteRef!;
 
-  const categories = await getCategories(siteRef as QueryDocumentSnapshot, db);
+  const categories = await getCategories(siteRef!, db);
 
   const categoriesPages = categories.map(category => {
     return locales.map((locale: string) => {
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   }).flat();
 
   const articlesPages = (await Promise.all(categories.map(async (category) => {
-    const articles = await getArticlesByCategory(siteRef as QueryDocumentSnapshot, category.id as string, db);
+    const articles = await getArticlesByCategory(category, db);
 
     return locales.map((locale: string) => {
       return articles.map((article) => {
