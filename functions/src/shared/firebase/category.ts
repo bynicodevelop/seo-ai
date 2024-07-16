@@ -11,15 +11,7 @@ export const createCategories = async (site: SiteEntity, categories: Category[],
         const siteByDomain = await getSiteByDomain(site.domain, db);
 
         categories.forEach((category) => {
-            let ref;
-
-            if (!category.id) {
-                ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
-            } else {
-                ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc(category.id);
-            }
-
-            delete category.id;
+            let ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
 
             batch.set(ref, category);
         });

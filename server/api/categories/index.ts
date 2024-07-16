@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
         const categories: Category[] = snapshot.docs.map((doc: any) => {
             const { title, slug, description } = doc.data() as Category;
             return categoryFactory(
-                doc.id,
                 title,
                 description,
                 slug

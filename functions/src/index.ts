@@ -104,7 +104,6 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
         dataSite,
         defaultCategories.map((category) => (
             categoryFactory(
-                undefined,
                 category.title,
                 category.description,
                 category.slug

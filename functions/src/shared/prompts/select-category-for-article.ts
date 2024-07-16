@@ -13,21 +13,22 @@ Vous devez sélectionner une catégorie pour un article.
 
 3. Sélectionnez la catégorie qui correspond le mieux à la description de l'article.
 
-Retourner la catégorie au format json suivant :
+Retourner la propriété id de la catégorie sélectionnée au format JSON suivant :
 
 {
-    "id": "id-de-la-categorie",
-    "title": "Nom de la catégorie",
-    "description": "Description de la catégorie",
-    "slug": "slug-de-la-categorie"
+    "id": "string"
 }
 `;
 
-export const selectCategoryForArticlePrompt = async (content: string, categories: Category[], openai: OpenAI): Promise<Category> => {
+export const selectCategoryForArticlePrompt = async (content: string, categories: Category[], openai: OpenAI): Promise<{
+    id: string;
+}> => {
     const messages: ChatCompletionMessageParam[] = [];
 
     addMessages(messages, 'assistant', promptSelectCategoryForArticle(categories));
     addMessages(messages, 'user', content);
 
-    return await callOpenAI<Category>(messages, openai);
+    return await callOpenAI<{
+        id: string;
+    }>(messages, openai);
 }

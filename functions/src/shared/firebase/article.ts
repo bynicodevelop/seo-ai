@@ -76,7 +76,6 @@ export const getLatestArticles = async (site: SiteId | DocumentData, limit: numb
                     updatedAt
                 ),
                 category: categoryFactory(
-                    categoryDoc.id,
                     titleCategory,
                     descriptionCategory,
                     slugCategory

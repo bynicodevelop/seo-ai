@@ -34,7 +34,6 @@ export default defineEventHandler(async (event) => {
         return {
             status: 200,
             data: categoryFactory(
-                categoryEntity.id,
                 categoryEntity.title,
                 categoryEntity.description,
                 categoryEntity.slug

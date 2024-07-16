@@ -14,7 +14,7 @@ export const selectCategoryForArticle = async (
     const site = await getSiteById(siteId, db);
     const categories = await getCategories(site!, db);
 
-    const category = await selectCategoryForArticlePrompt(
+    const categorySelected = await selectCategoryForArticlePrompt(
         content!,
         categories,
         openAi
@@ -23,7 +23,7 @@ export const selectCategoryForArticle = async (
     await updateDraftCategory(
         draftId,
         siteId,
-        category.id!,
+        categorySelected.id!,
         db
     );
 };
