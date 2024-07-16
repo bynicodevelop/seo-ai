@@ -6,7 +6,7 @@ export type CategoryId = string;
 export type Category = IdType & {
     title: I18n;
     description: I18n;
-    slug: string;
+    slug: I18n;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -15,14 +15,14 @@ export function categoryFactory(
     id: ID,
     title: I18n,
     description: I18n,
-    slug: string,
+    slug: I18n,
 ): Category;
 
 export function categoryFactory(
     id: ID,
     title: I18n,
     description: I18n,
-    slug: string,
+    slug: I18n,
     createdAt: Date,
     updatedAt: Date
 ): Category;
@@ -31,7 +31,7 @@ export function categoryFactory(
     id: ID,
     title: I18n,
     description: I18n,
-    slug: string,
+    slug: I18n,
     createdAt?: Date,
     updatedAt?: Date
 ): Category {
