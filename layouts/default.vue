@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="space-y-6">
     <sections-navigation-component />
-    <main class="relative isolate ">
+    <main class="container mx-auto relative isolate ">
       <slot />
     </main>
-  <footer-component />
+    <sections-footer-component />
   </div>
 </template>
