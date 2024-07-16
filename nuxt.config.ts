@@ -27,10 +27,11 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    "@nuxtjs/tailwindcss",
+    "@nuxt/image",
+    "@nuxt/test-utils/module",
     "@nuxtjs/i18n",
     "@nuxtjs/mdc",
-    "@nuxt/image",
-    "@nuxt/test-utils/module"
+    "@nuxtjs/tailwindcss",
+    "nuxt-schema-org"
   ],
 })

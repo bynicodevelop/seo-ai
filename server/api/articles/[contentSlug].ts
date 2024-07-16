@@ -66,8 +66,8 @@ export default defineEventHandler(async (event) => {
             article,
             description,
             slug,
-            createdAt,
-            updatedAt
+            createdAt.toDate(),
+            updatedAt.toDate(),
         );
 
         return {
