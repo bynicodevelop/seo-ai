@@ -33,9 +33,7 @@ try {
 </script>
 
 <template>
-    <main>
-        <h1>
-            home
-        </h1>
+    <main class="mx-auto max-w-3xl">
+        <sections-latest-articles-component />
     </main>
 </template>

@@ -22,9 +22,15 @@ export default defineI18nLocale(async locale => {
                 },
                 message: 'Désolé, nous n’avons pas pu trouver la page que vous recherchez.',
                 backToHome: 'Retour à l’accueil'
+            },
+            categories: {
+                no_articles: 'Aucun article trouvé',
             }
         },
         components: {
+            latestArticle: {
+                title: 'Derniers articles'
+            },
             footer: {
                 all_rights_reserved: 'Tous droits réservés'
             }

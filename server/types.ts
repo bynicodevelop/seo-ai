@@ -8,6 +8,10 @@ export type LocaleQuery = {
     locale: locales;
 }
 
+export type LimitQuery = {
+    limit: string;
+}
+
 export type ApiResponse<T> = {
     status: number;
     data: T;

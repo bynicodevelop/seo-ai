@@ -1,3 +1,5 @@
+import categories from "~/server/api/categories";
+
 export default defineI18nLocale(async locale => {
     return {
         pages: {
@@ -22,9 +24,15 @@ export default defineI18nLocale(async locale => {
                 },
                 message: 'Sorry, we couldn’t find the page you’re looking for.',
                 backToHome: 'Back to home'
+            },
+            categories: {
+                no_articles: 'No articles found',
             }
         },
         components: {
+            latestArticle: {
+                title: 'Latest articles'
+            },
             footer: {
                 all_rights_reserved: 'All rights reserved'
             }

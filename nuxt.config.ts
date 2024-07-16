@@ -34,4 +34,10 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "nuxt-schema-org"
   ],
+
+  runtimeConfig: {
+    public: {
+      limitArticles: process.env.LIMIT_ARTICLES ?? 10
+    }
+  },
 })

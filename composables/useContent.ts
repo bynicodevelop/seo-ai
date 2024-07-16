@@ -13,21 +13,32 @@ const fetchCategory = async (domain: string, category: string, locale: locales):
     const { data } = await $fetch(`/api/categories/${category}?domain=${domain}&locale=${locale}`);
     return (data ?? {}) as Category;
 }
-const fetchContents = async (domain: string, category: string, locale: locales): Promise<Article[]> => {
-    const { data } = await $fetch(`/api/articles?domain=${domain}&categorySlug=${category}&locale=${locale}`);
+const fetchArticles = async (domain: string, category: string, locale: locales): Promise<Article[]> => {
+    const { data } = await $fetch(`/api/categories/${category}/articles?domain=${domain}&locale=${locale}`);
     return (data ?? []) as Article[];
 }
-const fetchContent = async (domain: string, category: string, content: string, locale: locales): Promise<Article> => {
+const fetchLatestArticles = async (domain: string, limit: number): Promise<{
+    article: Article,
+    category: Category
+}[]> => {
+    const { data } = await $fetch(`/api/articles?domain=${domain}&limit=${limit}`);
+    return (data ?? []) as {
+        article: Article,
+        category: Category
+    }[];
+}
+const fetchArticle = async (domain: string, category: string, content: string, locale: locales): Promise<Article> => {
     const { data } = await $fetch(`/api/articles/${content}?domain=${domain}&categorySlug=${category}&locale=${locale}`);
     return (data ?? {}) as Article;
 }
 
 export const useContent = () => {
     return {
-        fetchDomain,
+        fetchArticle,
+        fetchArticles,
         fetchCategories,
         fetchCategory,
-        fetchContents,
-        fetchContent
+        fetchDomain,
+        fetchLatestArticles
     }
 };
