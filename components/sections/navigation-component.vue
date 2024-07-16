@@ -13,7 +13,7 @@ const { data: categories } = await useAsyncData<Category[]>('categories', async 
 </script>
 
 <template>
-    <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <nav class="container mx-auto flex items-center justify-between py-6" aria-label="Global">
         <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5">
             <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
             {{ $translate(domain?.seo.title, locale) }}

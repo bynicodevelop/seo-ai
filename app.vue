@@ -1,11 +1,29 @@
 <script setup lang="ts">
+
 import type { Site } from '~/functions/src/shared';
 const { locale } = useI18n();
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchDomain } = useContent();
+const { getCanonical } = useUtils();
 
 const url = useRequestURL();
 const baseUrl = url.protocol + '//' + url.host
+const { locale } = useI18n();
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: getCanonical()
+    }
+  ]
+});
+
+useHead({
+  htmlAttrs: {
+    lang: locale.value,
+  },
+})
 
 try {
   const { data: domainData } = await useAsyncData<Site>('domain', async () => await fetchDomain($domain as string));
@@ -42,6 +60,7 @@ try {
     fatal: true
   });
 }
+
 </script>
 
 <template>
