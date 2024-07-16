@@ -35,9 +35,6 @@ const copyRightDate = new Date().getFullYear();
             <div class="flex flex-wrap space-x-4">
             </div>
           </div>
-          <div class="my-6 text-center">
-            <NuxtLink to="/">hello@seo.com</NuxtLink>
-          </div>
         </div>
         <div class="flex flex-col items-center p-4 w-full sm:w-1/2 md:flex-1 md:w-1/3 lg:items-start">
           <h2 class="font-bold text-primary-600 dark:text-primary-200 text-xl">
