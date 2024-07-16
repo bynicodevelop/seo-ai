@@ -26,7 +26,7 @@ export default defineI18nLocale(async locale => {
         },
         components: {
             footer: {
-                all_rights_reserved: 'Tous droits réservés',
+                all_rights_reserved: 'Tous droits réservés'
             }
         }
     }
