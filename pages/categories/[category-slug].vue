@@ -69,7 +69,9 @@ try {
         'message'
     )) {
         articles.value?.forEach(
-            article => {
+            (
+                article: Article
+            ) => {
                 articlesItems.push(
                     {
                         '@type': 'ListItem',
