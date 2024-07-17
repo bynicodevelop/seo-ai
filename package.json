@@ -23,7 +23,7 @@
     "postinstall": "nuxt prepare",
     "firebase:dump": "firebase emulators:export .data",
     "firebase:restore": "firebase emulators:start --import .data",
-    "test": "vitest",
+    "test": "vitest spec.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
