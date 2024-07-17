@@ -1,39 +1,23 @@
-export default defineI18nLocale(async locale => {
-    return {
-        pages: {
-            error: {
-                statusCode400: {
-                    title: 'Requête incorrecte',
+export default defineI18nLocale(
+    () => {
+        return {
+            pages: {
+                error: {
+                    statusCode400: { title: 'Requête incorrecte', },
+                    statusCode401: { title: 'Non autorisé', },
+                    statusCode403: { title: 'Interdit', },
+                    statusCode404: { title: 'Page non trouvée', },
+                    statusCode500: { title: 'Erreur interne du serveur', },
+                    other: { title: 'Une erreur est survenue', },
+                    message: 'Désolé, nous n’avons pas pu trouver la page que vous recherchez.',
+                    backToHome: 'Retour à l’accueil'
                 },
-                statusCode401: {
-                    title: 'Non autorisé',
-                },
-                statusCode403: {
-                    title: 'Interdit',
-                },
-                statusCode404: {
-                    title: 'Page non trouvée',
-                },
-                statusCode500: {
-                    title: 'Erreur interne du serveur',
-                },
-                other: {
-                    title: 'Une erreur est survenue',
-                },
-                message: 'Désolé, nous n’avons pas pu trouver la page que vous recherchez.',
-                backToHome: 'Retour à l’accueil'
+                categories: { no_articles: 'Aucun article trouvé', }
             },
-            categories: {
-                no_articles: 'Aucun article trouvé',
-            }
-        },
-        components: {
-            latestArticle: {
-                title: 'Derniers articles'
-            },
-            footer: {
-                all_rights_reserved: 'Tous droits réservés'
+            components: {
+                latestArticle: { title: 'Derniers articles' },
+                footer: { all_rights_reserved: 'Tous droits réservés' }
             }
         }
     }
-});
+);

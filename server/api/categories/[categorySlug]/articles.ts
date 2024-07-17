@@ -1,53 +1,76 @@
 // /server/api/getData.js
-import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
-import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION } from '~/functions/src/shared';
-import { DocumentData } from 'firebase-admin/firestore';
-import { db } from '~/server/firebase';
+import type { DocumentData } from 'firebase-admin/firestore';
 
-export default defineEventHandler(async (event) => {
+import type { Article } from '~/functions/src/shared';
+import {
+ articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION 
+} from '~/functions/src/shared';
+import { db } from '~/server/firebase';
+import type {
+ ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery 
+} from '~/server/types';
+
+export default defineEventHandler(
+async (
+event
+) => {
     const { categorySlug } = event.context.params as CategoryQuery;
-    const { domain, locale } = getQuery(event) as DomainQuery & LocaleQuery;
+    const {
+ domain, locale 
+} = getQuery(
+event
+) as DomainQuery & LocaleQuery;
 
     try {
-        const siteRef = await getSiteByDomain(domain, db);
+        const siteRef = await getSiteByDomain(
+domain,
+db
+);
 
         if (!siteRef) {
             return {
                 status: 404,
-                data: {
-                    message: 'Site not found'
-                }
+                data: { message: 'Site not found' }
             } as ApiResponse<ErrorResponse>
         }
 
         const categorySnapshot = await siteRef.ref
-            .collection(CATEGORY_COLLECTION)
-            .where(`slug.${locale}`, '==', categorySlug)
+            .collection(
+CATEGORY_COLLECTION
+)
+            .where(
+`slug.${locale}`,
+'==',
+categorySlug
+)
             .get();
 
         if (categorySnapshot.empty) {
             return {
                 status: 404,
-                data: {
-                    message: 'Category not found',
-                },
+                data: { message: 'Category not found', },
             } as ApiResponse<ErrorResponse>;
         }
 
-        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection(ARTICLE_COLLECTION).get();
+        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection(
+ARTICLE_COLLECTION
+).get();
 
         if (contentsSnapshot?.empty) {
             return {
                 status: 404,
-                data: {
-                    message: 'Contents not found',
-                },
+                data: { message: 'Contents not found', },
             } as ApiResponse<ErrorResponse>;
         }
 
 
-        const contents: Article[] = (contentsSnapshot?.docs ?? []).map((doc: DocumentData) => {
-            const { title, keywords, slug, article, description, createdAt, updatedAt } = doc.data();
+        const contents: Article[] = (contentsSnapshot?.docs ?? []).map(
+(
+doc: DocumentData
+) => {
+            const {
+ title, keywords, slug, article, description, createdAt, updatedAt 
+} = doc.data();
 
             return articleFactory(
                 title,
@@ -59,7 +82,8 @@ export default defineEventHandler(async (event) => {
                 createdAt,
                 updatedAt
             );
-        })
+        }
+)
 
         return {
             status: 200,
@@ -67,13 +91,14 @@ export default defineEventHandler(async (event) => {
         } as ApiResponse<Article[]>;
 
     } catch (error) {
-        console.log(error);
+        console.log(
+error
+);
 
         return {
             status: 500,
-            data: {
-                message: 'Error fetching categories data',
-            },
+            data: { message: 'Error fetching categories data', },
         } as ApiResponse<ErrorResponse>
     }
-});
+}
+);

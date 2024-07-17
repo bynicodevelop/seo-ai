@@ -1,15 +1,20 @@
 // /server/api/getData.js
-import { DomainQuery } from '~/server/types';
-import { MetaSeo, categoryFactory, createSite, siteFactory } from '~/functions/src/shared';
 import { db } from '../../firebase';
+import {
+ type MetaSeo, categoryFactory, createSite, siteFactory 
+} from '~/functions/src/shared';
+import type { DomainQuery } from '~/server/types';
 
-export default defineEventHandler(async (event) => {
-    const { domain } = getQuery(event) as DomainQuery;
+export default defineEventHandler(
+    async event => {
+        const { domain } = getQuery(
+            event
+        ) as DomainQuery;
 
-    try {
-        const siteRef = await createSite(
-            siteFactory(
-                domain,
+        try {
+            const siteRef = await createSite(
+                siteFactory(
+                    domain,
                 {
                     title: {
                         fr: 'Localhost - MagicApex',
@@ -20,72 +25,97 @@ export default defineEventHandler(async (event) => {
                         en: 'Localhost - MagicApex description',
                     },
                     keywords: {
-                        fr: ['MagicApex', 'localhost'],
-                        en: ['MagicApex', 'localhost'],
+                        fr: ['MagicApex',
+                            'localhost'],
+                        en: ['MagicApex',
+                            'localhost'],
                     },
                 } as MetaSeo,
-                ['fr', 'en'],
-            ),
-            db
-        );
+                ['fr',
+                    'en'],
+                ),
+                db
+            );
 
-        for (let i = 0; i < 5; i++) {
-            await siteRef
-                .collection('categories')
-                .doc(`category-${i}`)
-                .set(categoryFactory(
-                    `category-${i}`,
-                    {
-                        fr: `Catégorie ${i}`,
-                        en: `Category ${i}`,
-                    },
-                    {
-                        fr: `Description de la catégorie ${i}`,
-                        en: `Description of category ${i}`,
-                    },
-                    `category-${i}`
-                ));
-
-            for (let j = 0; j < 5; j++) {
+            for (let i = 0; i < 5; i++) {
                 await siteRef
-                    .collection('categories')
-                    .doc(`category-${i}`)
-                    .collection('contents')
-                    .doc(`content-${j}`)
-                    .set({
-                        title: {
-                            fr: `Article ${j}`,
-                            en: `Article ${j}`,
-                        },
-                        content: {
-                            fr: `Contenu de l'article ${j}`,
-                            en: `Content of article ${j}`,
-                        },
-                        slug: `article-${j}`,
-                        seo: {
-                            title: {
-                                fr: `Article ${j} - MagicApex`,
-                                en: `Article ${j} - MagicApex`,
+                    .collection(
+                        'categories'
+                    )
+                    .doc(
+                        `category-${i}`
+                    )
+                    .set(
+                        categoryFactory(
+                            `category-${i}`,
+                            {
+                                fr: `Catégorie ${i}`,
+                                en: `Category ${i}`,
                             },
-                            description: {
-                                fr: `Description de l'article ${j}`,
-                                en: `Description of article ${j}`,
+                            {
+                                fr: `Description de la catégorie ${i}`,
+                                en: `Description of category ${i}`,
+                            },
+                            `category-${i}`
+                        )
+                    );
+
+                for (let j = 0; j < 5; j++) {
+                    await siteRef
+                        .collection(
+                            'categories'
+                        )
+                        .doc(
+                            `category-${i}`
+                        )
+                        .collection(
+                            'contents'
+                        )
+                        .doc(
+                            `content-${j}`
+                        )
+                        .set(
+                            {
+                                title: {
+                                    fr: `Article ${j}`,
+                                    en: `Article ${j}`,
+                                },
+                                content: {
+                                    fr: `Contenu de l'article ${j}`,
+                                    en: `Content of article ${j}`,
+                                },
+                                slug: `article-${j}`,
+                                seo: {
+                                    title: {
+                                        fr: `Article ${j} - MagicApex`,
+                                        en: `Article ${j} - MagicApex`,
+                                    },
+                                    description: {
+                                        fr: `Description de l'article ${j}`,
+                                        en: `Description of article ${j}`,
+                                    }
+                                },
+                                excerpt: {
+                                    fr: `Description de l'article ${j}`,
+                                    en: `Description of article ${j}`,
+                                },
+                                createdAt: new Date(),
+                                updatedAt: new Date(),
                             }
-                        },
-                        excerpt: {
-                            fr: `Description de l'article ${j}`,
-                            en: `Description of article ${j}`,
-                        },
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                    });
+                        );
+                }
             }
+
+            return { success: true };
+        } catch (error) {
+            console.log(
+                error
+            );
+
+            return {
+ success: false,
+error: error 
+};
         }
-
-        return { success: true };
-    } catch (error) {
-        console.log(error);
-
-        return { success: false, error: error };
     }
-});
+);

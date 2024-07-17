@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import type { Article, locales } from '~/functions/src/shared';
+import type {
+ Article, locales 
+} from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const { params } = useRoute();
-const { categoryslug, articleslug } = params as { categoryslug: string, articleslug: string };
+const {
+ categoryslug, articleslug 
+} = params as { categoryslug: string, articleslug: string };
 
-const { $domain, $translate } = useNuxtApp() as any;
+const {
+ $domain, $translate 
+} = useNuxtApp() as unknown as { $domain: string, $translate: Function };
 const { fetchArticle } = useContent();
 
-const article = ref<Article | null>(null);
+const article = ref<Article | null>(
+    null
+);
 
 try {
     const { data: contentData } = await useAsyncData<Article>(
@@ -23,32 +31,49 @@ try {
 
     article.value = contentData.value;
 
-    useHead({
-        title: $translate(article.value?.title, locale.value),
-        meta: [
-            {
-                name: 'description',
-                content: $translate(article.value?.description, locale.value),
-            },
-            {
-                name: "keywords",
-                content: $translate(article.value?.keywords, locale.value),
-            }
-        ],
-    });
+    useHead(
+        {
+            title: $translate(
+                article.value?.title,
+                locale.value
+            ),
+            meta: [
+                {
+                    name: 'description',
+                    content: $translate(
+                        article.value?.description,
+                        locale.value
+                    ),
+                },
+                {
+                    name: 'keywords',
+                    content: $translate(
+                        article.value?.keywords,
+                        locale.value
+                    ),
+                }
+            ],
+        }
+    );
 
-    useSchemaOrg([
-        defineArticle({
-            'datePublished': article.value?.createdAt,
-            'dateModified': article.value?.updatedAt,
-        })
-    ]);
+    useSchemaOrg(
+        [
+            defineArticle(
+                {
+                    'datePublished': article.value?.createdAt,
+                    'dateModified': article.value?.updatedAt,
+                }
+            )
+        ]
+    );
 } catch (error) {
-    throw createError({
-        statusCode: 404,
-        message: 'Content not found',
-        fatal: true
-    })
+    throw createError(
+        {
+            statusCode: 404,
+            message: 'Content not found',
+            fatal: true
+        }
+    )
 }
 </script>
 <template>

@@ -1,4 +1,4 @@
-import type { I18n } from "./i18n";
+import type { I18n } from './i18n';
 
 export type MetaSeo = {
     title: I18n;

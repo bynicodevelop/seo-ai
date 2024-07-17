@@ -1,4 +1,4 @@
-import { locales } from "./i18n";
+import type { locales } from './i18n';
 
 export type Config = {
     domain: string;
@@ -37,6 +37,6 @@ export function configFactory(
         description,
         locales,
         keywords: keywords || [],
-        categories: categories || [] as any
+        categories: categories || [] as unknown as [{ [key: string]: string }]
     }
 }

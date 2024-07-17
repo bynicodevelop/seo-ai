@@ -1,29 +1,51 @@
-import { DocumentData, Firestore } from "firebase-admin/firestore";
-import type { Config } from "../types/config";
-import { SiteDomain, SiteEntity, siteFactoryEntity, SiteId, type Site } from "../types/site";
-import { configFactory } from "../types";
-import { SITE_BUILDER_COLLECTION, SITE_COLLECTION } from "./types";
+import type {
+    DocumentData, Firestore, QueryDocumentSnapshot
+} from 'firebase-admin/firestore';
 
-export const initSite = async (config: Config, db: Firestore): Promise<void> => {
-    const { domain, sitename, description, keywords, locales, categories } = config;
+import {
+    SITE_BUILDER_COLLECTION, SITE_COLLECTION
+} from './types';
+import { configFactory, siteFactoryEntity } from '../types';
+import type { Config } from '../types/config';
+import type {
+    SiteDomain, SiteId, Site,
+    SiteEntity
+} from '../types/site';
 
-    const url = new URL(domain);
+export const initSite = async (
+    config: Config, db: Firestore
+): Promise<void> => {
+    const {
+        domain, sitename, description, keywords, locales, categories
+    } = config;
 
-    await db.collection(SITE_BUILDER_COLLECTION).add(
+    const url = new URL(
+        domain
+    );
+
+    await db.collection(
+        SITE_BUILDER_COLLECTION
+    ).add(
         configFactory(
             url.hostname,
             sitename,
             description,
             locales,
             keywords ?? [],
-            categories ?? [] as any
+            categories ?? [] as unknown as [{ [key: string]: string }]
         )
     );
 };
 
-export const createSite = async (site: Site, db: Firestore): Promise<DocumentData> => {
-    return await db.collection(SITE_COLLECTION)
-        .add(site);
+export const createSite = async (
+    site: Site, db: Firestore
+): Promise<DocumentData> => {
+    return await db.collection(
+        SITE_COLLECTION
+    )
+        .add(
+            site
+        );
 };
 
 export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<SiteEntity | null> => {

@@ -1,8 +1,11 @@
-import { Firestore } from "firebase-admin/firestore";
-import OpenAI from "openai";
-import { articleFactory, convertDraftToArticle, DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
-import { selectCategoryForArticlePrompt } from "../shared/prompts/select-category-for-article";
-import { info } from "firebase-functions/logger";
+import type { Firestore } from 'firebase-admin/firestore';
+import { info } from 'firebase-functions/logger';
+import type OpenAI from 'openai';
+
+import {
+ articleFactory, convertDraftToArticle, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type Site, type SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo 
+} from '../shared';
+import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
 import { formatingSlug } from "./slug";
 
 export const selectCategoryForArticle = async (
@@ -12,8 +15,14 @@ export const selectCategoryForArticle = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(siteId, db);
-    const categories = await getCategories(site!, db);
+    const site = await getSiteById(
+        siteId,
+        db
+    );
+    const categories = await getCategories(
+site!,
+db
+    );
 
     const categorySelected = await selectCategoryForArticlePrompt(
         content!,
@@ -51,7 +60,10 @@ export const generateSeo = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const seo = await generateSeoFromArticle(article, openAi);
+    const seo = await generateSeoFromArticle(
+        article,
+        openAi
+    );
 
     await updateDraftSeo(
         draftId,
@@ -84,12 +96,38 @@ export const translate = async (
     const languages = site!.locales;
 
     // TODO: Tester dans un Promise.all
-    const titleTranslated = await translatePrompt(languages, title, openAi);
-    const keywordsTranslated = await translatePrompt(languages, keywords.join(', '), openAi);
-    const descriptionTranslated = await translatePrompt(languages, description, openAi);
-    const summaryTranslated = await translatePrompt(languages, summary, openAi);
-    const articleTranslated = await translatePrompt(languages, article, openAi);
-    const slugTranslated = await translatePrompt(languages, slug, openAi);
+    const titleTranslated = await translatePrompt(
+        languages,
+        title,
+        openAi
+    );
+    const keywordsTranslated = await translatePrompt(
+        languages,
+        keywords.join(
+            ', '
+        ),
+        openAi
+    );
+    const descriptionTranslated = await translatePrompt(
+        languages,
+        description,
+        openAi
+    );
+    const summaryTranslated = await translatePrompt(
+        languages,
+        summary,
+        openAi
+    );
+    const articleTranslated = await translatePrompt(
+        languages,
+        article,
+        openAi
+    );
+    const slugTranslated = await translatePrompt(
+        languages,
+        slug,
+        openAi
+    );
 
     await updateDraftArticle(
         draftId,
@@ -111,12 +149,19 @@ export const moveDraftToArticle = async (
     siteId: SiteId,
     db: Firestore
 ) => {
-    info(`Moving draft ${draftId} to article in site ${siteId}`);
+    info(
+        `Moving draft ${draftId} to article in site ${siteId}`
+    );
 
-    const site = await getSiteById(siteId, db);
+    const site = await getSiteById(
+        siteId,
+        db
+    );
 
     if (!site) {
-        throw new Error("Site not found");
+        throw new Error(
+            'Site not found'
+        );
     }
 
     await convertDraftToArticle(
@@ -125,5 +170,7 @@ export const moveDraftToArticle = async (
         db
     );
 
-    info(`Draft ${draftId} moved to article in site ${siteId}`);
+    info(
+        `Draft ${draftId} moved to article in site ${siteId}`
+    );
 }

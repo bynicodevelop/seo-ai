@@ -1,14 +1,22 @@
 // /server/api/getData.js
 import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
-import { Article, articleFactory, getSiteByDomain, getCategoryBySlug, getArticleBySlug } from '~/functions/src/shared';
+import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION, getCategoryBySlug, getArticleBySlug } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
-export default defineEventHandler(async (event) => {
-    const { contentSlug } = event.context.params as { contentSlug: string };
-    const { domain, categorySlug, locale } = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
+export default defineEventHandler(
+    async event => {
+        const { contentSlug } = event.context.params as { contentSlug: string };
+        const {
+            domain, categorySlug, locale
+        } = getQuery(
+            event
+        ) as DomainQuery & CategoryQuery & LocaleQuery;
 
-    try {
-        const siteRef = await getSiteByDomain(domain, db);
+        try {
+            const siteRef = await getSiteByDomain(
+                domain,
+                db
+            );
 
         if (!siteRef) {
             return {
@@ -57,11 +65,10 @@ export default defineEventHandler(async (event) => {
     } catch (error) {
         console.log(error);
 
-        return {
-            status: 500,
-            data: {
-                message: 'Error fetching categories data',
-            },
-        } as ApiResponse<ErrorResponse>
+            return {
+                status: 500,
+                data: { message: 'Error fetching categories data', },
+            } as ApiResponse<ErrorResponse>
+        }
     }
-});
+);

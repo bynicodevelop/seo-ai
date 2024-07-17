@@ -1,24 +1,39 @@
-import { DocumentData, Firestore } from "firebase-admin/firestore";
-import { Category, CategoryEntity, categoryFactoryEntity, locales, SiteEntity } from "../types";
-import { CATEGORY_COLLECTION } from "./types";
-import { getSiteByDomain } from "./site";
-import { error } from "firebase-functions/logger";
+import type {
+    DocumentData, Firestore
+} from 'firebase-admin/firestore';
+import { error } from 'firebase-functions/logger';
+
+import { getSiteByDomain } from './site';
+import { CATEGORY_COLLECTION } from './types';
+import {
+    type Category, CategoryEntity, categoryFactory, categoryFactoryEntity, locales, type Site,
+    SiteEntity
+} from '../types';
 
 export const createCategories = async (site: SiteEntity, categories: Category[], db: Firestore): Promise<void> => {
     try {
         const batch = db.batch();
 
-        const siteByDomain = await getSiteByDomain(site.domain, db);
+        const siteByDomain = await getSiteByDomain(
+            site.domain,
+            db
+        );
 
         categories.forEach((category) => {
             let ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
 
-            batch.set(ref, category);
-        });
+                batch.set(
+                    ref,
+                    category
+                );
+            }
+        );
 
         await batch.commit();
     } catch (e) {
-        error(e);
+        error(
+            e
+        );
         throw e;
     }
 }
@@ -61,7 +76,9 @@ export const getCategories = async (site: SiteEntity, db: Firestore): Promise<Ca
             );
         });
     } catch (e) {
-        error(e);
+        error(
+            e
+        );
         throw e;
     }
 }
@@ -97,7 +114,9 @@ export const getCategoryBySlug = async (site: SiteEntity, categorySlug: string, 
             slug
         );
     } catch (e) {
-        error(e);
+        error(
+            e
+        );
         throw e;
     }
 }

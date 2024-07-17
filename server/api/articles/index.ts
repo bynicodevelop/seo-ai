@@ -2,18 +2,26 @@ import { ApiResponse, DomainQuery, ErrorResponse, LimitQuery } from '~/server/ty
 import { Article, getSiteByDomain, Category, getLatestArticles } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
-export default defineEventHandler(async (event) => {
-    const { domain, limit } = getQuery(event) as DomainQuery & LimitQuery;
+export default defineEventHandler(
+async (
+event
+) => {
+    const {
+ domain, limit 
+} = getQuery(
+event
+) as DomainQuery & LimitQuery;
 
     try {
-        const siteRef = await getSiteByDomain(domain, db);
+        const siteRef = await getSiteByDomain(
+            domain,
+            db
+        );
 
         if (!siteRef) {
             return {
                 status: 404,
-                data: {
-                    message: 'Site not found'
-                }
+                data: { message: 'Site not found' }
             } as ApiResponse<ErrorResponse>
         }
 
@@ -28,13 +36,14 @@ export default defineEventHandler(async (event) => {
         }[]>;
 
     } catch (error) {
-        console.log(error);
+        console.log(
+            error
+        );
 
         return {
             status: 500,
-            data: {
-                message: 'Error fetching categories data',
-            },
+            data: { message: 'Error fetching categories data', },
         } as ApiResponse<ErrorResponse>
     }
-});
+}
+);

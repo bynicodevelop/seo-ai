@@ -1,15 +1,22 @@
-import { ChatCompletionMessageParam } from "openai/resources";
-import { Category } from "../types";
-import { addMessages, callOpenAI } from "../ai";
-import OpenAI from "openai";
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
 
-const promptSelectCategoryForArticle = (categories: Category[]): string => `
+import {
+ addMessages, callOpenAI 
+} from '../ai';
+import type { Category } from '../types';
+
+const promptSelectCategoryForArticle = (
+    categories: Category[]
+): string => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO.
 Vous devez sélectionner une catégorie pour un article.
 
 1. Analysez la description du futur article qui sera fournie un peu plus bas.
 
-2. Analysez la liste des catégories suivantes : ${JSON.stringify(categories)}
+2. Analysez la liste des catégories suivantes : ${JSON.stringify(
+        categories
+    )}
 
 3. Sélectionnez la catégorie qui correspond le mieux à la description de l'article.
 
@@ -25,8 +32,18 @@ export const selectCategoryForArticlePrompt = async (content: string, categories
 }> => {
     const messages: ChatCompletionMessageParam[] = [];
 
-    addMessages(messages, 'assistant', promptSelectCategoryForArticle(categories));
-    addMessages(messages, 'user', content);
+    addMessages(
+        messages,
+        'assistant',
+        promptSelectCategoryForArticle(
+            categories
+        )
+    );
+    addMessages(
+        messages,
+        'user',
+        content
+    );
 
     return await callOpenAI<{
         id: string;

@@ -1,8 +1,13 @@
-import { ChatCompletionMessageParam } from "openai/resources";
-import OpenAI from "openai";
-import { addMessages, callOpenAI } from "../ai/open-ai";
-import { Category } from "../types";
-import { error, info } from "firebase-functions/logger";
+import {
+ error, info 
+} from 'firebase-functions/logger';
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
+
+import {
+ addMessages, callOpenAI 
+} from '../ai/open-ai';
+import type { Category } from '../types';
 
 const promptCreateCategories = () => `Agissez en tant qu'expert SEO. 
 Vous devez pour un trouver une liste de catégories optimisé pour le SEO dans le cadre de la création d'un blog.
@@ -41,13 +46,17 @@ Voici la structure du format JSON attendue :
 ]
 }`;
 
-const promptTranslateCategories = (codelang: string[]) => `
+const promptTranslateCategories = (
+    codelang: string[]
+) => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO.
 Vous savez prendre le contexte en compte dans votre traduction.
 Vous savez faire le rapprochement entre un code de langue (ex : fr, en...) et une langue (ex : fr c'est français).
 Vous allez recevoir un contenu texte uniquement à traduire en fonction d'une liste de codes langue.
 Gardez la mise en forme s'il y en a une.
-Voici les codes langue que vous devez prendre en compte : ${codelang.join(', ')}.
+Voici les codes langue que vous devez prendre en compte : ${codelang.join(
+        ', '
+    )}.
 Vous retournez le contenu au format JSON qui est un objet code langue associé au contenu traduit.
 
 Important : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
@@ -75,7 +84,9 @@ Voici un exemple de format attendu :
 }
 `;
 
-export const generateCategoriesPrompt = async (content: object, openai: OpenAI): Promise<{
+export const generateCategoriesPrompt = async (
+    content: object, openai: OpenAI
+): Promise<{
     [key: string]: [
         {
             title: string;
@@ -84,13 +95,23 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
         }
     ]
 }> => {
-    info('Generating categories');
+    info(
+        'Generating categories'
+    );
 
     try {
         const messages: ChatCompletionMessageParam[] = [];
 
-        addMessages(messages, 'assistant', promptCreateCategories());
-        addMessages(messages, 'user', content);
+        addMessages(
+            messages,
+            'assistant',
+            promptCreateCategories()
+        );
+        addMessages(
+            messages,
+            'user',
+            content
+        );
 
         const result = await callOpenAI<{
             [key: string]: [
@@ -100,36 +121,64 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
                     description: string;
                 }
             ]
-        }>(messages, openai);
+        }>(
+            messages,
+            openai
+        );
 
-        info('Categories generated');
+        info(
+            'Categories generated'
+        );
 
         return result;
     } catch (err) {
-        error(err);
+        error(
+            err
+        );
         throw err;
     }
 }
 
-export const translateCategoriesPrompt = async (codeLang: string[], content: object, openai: OpenAI): Promise<{
+export const translateCategoriesPrompt = async (
+    codeLang: string[], content: object, openai: OpenAI
+): Promise<{
     [key: string]: Category[]
 }> => {
-    info('Translating categories');
+    info(
+        'Translating categories'
+    );
     try {
         const messages: ChatCompletionMessageParam[] = [];
 
-        addMessages(messages, 'assistant', promptTranslateCategories(codeLang));
-        addMessages(messages, 'user', content);
+        addMessages(
+            messages,
+            'assistant',
+            promptTranslateCategories(
+                codeLang
+            )
+        );
+        addMessages(
+            messages,
+            'user',
+            content
+        );
 
         const result = await callOpenAI<{
             [key: string]: Category[]
-        }>(messages, openai);
+        }>(
+            messages,
+            openai
+        );
 
-        info('Categories translated');
+        info(
+            'Categories translated'
+        );
 
         return result;
     } catch (err) {
-        error(err);
+        error(
+            err
+        );
         throw err;
     }
 }
