@@ -1,8 +1,12 @@
+import axios from 'axios';
+import { load } from 'cheerio';
 import * as admin from 'firebase-admin';
 import type {
     DocumentData, QueryDocumentSnapshot
 } from 'firebase-admin/firestore';
-import { info } from 'firebase-functions/logger';
+import {
+    error, info
+} from 'firebase-functions/logger';
 import { defineString } from 'firebase-functions/params';
 import {
     onDocumentCreated, onDocumentWritten
@@ -11,10 +15,11 @@ import {
     first, isEmpty
 } from 'lodash';
 
+import type {
+    ArticlePrompt, Category, Draft, I18n, locales, Site
+} from './shared';
 import {
-    type ArticlePrompt,
-    articlePromptFactory,
-    type Category, categoryFactory, createCategories, createSite, type Draft, DRAFT_STATUS, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
+    articlePromptFactory, categoryFactory, createCategories, createSite, DRAFT_STATUS, generateCategoriesPrompt, initOpentAI, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
 import { formatingSlug } from './utils';
 import {
@@ -251,5 +256,44 @@ export const onDraftCreated = onDocumentWritten(
                 db
             )
         }
+    }
+);
+
+export const onDataCreated = onDocumentWritten(
+    'data/{dataId}',
+    async (event) => {
+        const { dataId } = event.params;
+        const {
+            urls,
+            contents
+        } = event.data?.after.data() as { urls: string[], contents: string[] };
+
+        if (!urls && contents && contents.length > 0) {
+            return;
+        }
+
+        try {
+            const texts = await Promise.all(urls.map(async (url) => {
+                const response = await axios.get(url);
+                const selector = await load(response.data);
+                return selector('body #centerCol').text().replace(
+                    /[\n\t]/g,
+                    ' '
+                );
+            }));
+
+            await admin.firestore().collection('data').doc(dataId).set(
+                { contents: texts },
+                { merge: true }
+            );
+        } catch (e) {
+            error(e);
+            return
+        }
+
+        info(
+            'Data created',
+            urls
+        );
     }
 );
