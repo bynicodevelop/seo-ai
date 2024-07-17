@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const contents = await getLatestArticles(siteRef, +limit, db);
-
+        
         return {
             status: 200,
             data: contents,
