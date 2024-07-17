@@ -12,8 +12,8 @@ const copyRightDate = new Date().getFullYear();
 </script>
 
 <template>
-  <footer class="container mx-auto space-x-10 flex flex-wrap relative items-center">
-    <div class="flex flex-col text-center md:flex-col lg:w-1/3 lg:text-left space-y-2">
+  <footer class="container mx-auto space-x-10 relative items-center grid grid-cols-3">
+    <div class="flex flex-col text-center md:flex-col lg:text-left space-y-2 col-span-3 lg:col-span-1">
       <h6 class="text-lg">
         <NuxtLink to="/">
           {{ $translate(site?.seo.title, locale) }}
@@ -21,7 +21,7 @@ const copyRightDate = new Date().getFullYear();
       </h6>
       <p>{{ $translate(site?.seo.description, locale) }}</p>
     </div>
-    <div class="flex flex-col items-center lg:w-1/3 lg:items-start">
+    <div class="flex flex-col items-center col-span-3 lg:col-span-2">
       <p class="text-sm text-center">
         &copy; {{ copyRightDate }} - {{ $t('components.footer.all_rights_reserved') }} - {{
           $translate(site?.seo.title, locale) }}

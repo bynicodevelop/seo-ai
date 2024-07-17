@@ -6,14 +6,14 @@ const { params } = useRoute();
 const { categoryslug, articleslug } = params as { categoryslug: string, articleslug: string };
 
 const { $domain, $translate } = useNuxtApp() as any;
-const { fetchContent } = useContent();
+const { fetchArticle } = useContent();
 
 const article = ref<Article | null>(null);
 
 try {
     const { data: contentData } = await useAsyncData<Article>(
         'article',
-        async () => await fetchContent(
+        async () => await fetchArticle(
             $domain as string,
             categoryslug as string,
             articleslug as string,
@@ -52,7 +52,7 @@ try {
 }
 </script>
 <template>
-    <main class="mx-auto max-w-3xl p-4">
+    <main class="mx-auto max-w-3xl">
         <h1 class="text-3xl font-bold text-gray-800">
             {{ $translate(article?.title, locale) }}
         </h1>
