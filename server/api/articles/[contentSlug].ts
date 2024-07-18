@@ -8,14 +8,11 @@ import type {
     ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery
 } from '~/server/types';
 
-export default defineEventHandler(
-    async event => {
+export default defineEventHandler(async event => {
         const { contentSlug } = event.context.params as { contentSlug: string };
         const {
             domain, categorySlug, locale
-        } = getQuery(
-            event
-        ) as DomainQuery & CategoryQuery & LocaleQuery;
+        } = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
 
         try {
             const siteRef = await getSiteByDomain(
@@ -71,14 +68,11 @@ export default defineEventHandler(
                 ),
             } as ApiResponse<Article>;
         } catch (error) {
-            console.log(
-                error
-            );
+            console.log(error);
 
             return {
                 status: 500,
                 data: { message: 'Error fetching categories data', },
             } as ApiResponse<ErrorResponse>
         }
-    }
-);
+    });

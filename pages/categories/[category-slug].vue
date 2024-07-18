@@ -17,12 +17,8 @@ const {
     fetchCategory, fetchArticles
 } = useContent();
 
-const category = ref<Category | null>(
-    null
-);
-const articles = ref<Article[] | null>(
-    []
-);
+const category = ref<Category | null>(null);
+const articles = ref<Article[] | null>([]);
 
 try {
     const { data: categoryData } = await useAsyncData<Category>(
@@ -45,8 +41,7 @@ try {
     category.value = categoryData.value;
     articles.value = contentsData.value;
 
-    useHead(
-        {
+    useHead({
             title: $translate(
                 category.value?.title,
                 locale.value
@@ -60,20 +55,13 @@ try {
                     ),
                 },
             ],
-        }
-    );
+        });
 
     const articlesItems: {}[] = [];
 
-    if (!articles.value?.hasOwnProperty(
-        'message'
-    )) {
-        articles.value?.forEach(
-            (
-                article: Article
-            ) => {
-                articlesItems.push(
-                    {
+    if (!articles.value?.hasOwnProperty('message')) {
+        articles.value?.forEach((article: Article) => {
+                articlesItems.push({
                         '@type': 'ListItem',
                         'position': articlesItems.length + 1,
                         'url': `${$domain}/${categoryslug}/${$translate(
@@ -84,37 +72,25 @@ try {
                             article.title,
                             locale.value
                         ),
-                    }
-                );
-            }
-        );
+                    });
+            });
     }
 
-    useSchemaOrg(
-        [
-            defineItemList(
-                {
+    useSchemaOrg([
+            defineItemList({
                     '@type': 'ItemList',
                     'itemListElement': articlesItems,
-                }
-            ),
-            defineWebPage(
-                { '@type': 'CollectionPage' }
-            ),
-        ]
-    )
+                }),
+            defineWebPage({ '@type': 'CollectionPage' }),
+        ])
 } catch (error) {
-    console.log(
-        error
-    );
+    console.log(error);
 
-    throw createError(
-        {
+    throw createError({
             statusCode: 404,
             message: 'Category not found',
             fatal: true
-        }
-    );
+        });
 }
 </script>
 

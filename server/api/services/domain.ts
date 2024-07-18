@@ -5,11 +5,8 @@ import {
 } from '~/functions/src/shared';
 import type { DomainQuery } from '~/server/types';
 
-export default defineEventHandler(
-    async event => {
-        const { domain } = getQuery(
-            event
-        ) as DomainQuery;
+export default defineEventHandler(async event => {
+        const { domain } = getQuery(event) as DomainQuery;
 
         try {
             const siteRef = await createSite(
@@ -39,14 +36,9 @@ export default defineEventHandler(
 
             for (let i = 0; i < 5; i++) {
                 await siteRef
-                    .collection(
-                        'categories'
-                    )
-                    .doc(
-                        `category-${i}`
-                    )
-                    .set(
-                        categoryFactory(
+                    .collection('categories')
+                    .doc(`category-${i}`)
+                    .set(categoryFactory(
                             `category-${i}`,
                             {
                                 fr: `Catégorie ${i}`,
@@ -57,25 +49,15 @@ export default defineEventHandler(
                                 en: `Description of category ${i}`,
                             },
                             `category-${i}`
-                        )
-                    );
+                        ));
 
                 for (let j = 0; j < 5; j++) {
                     await siteRef
-                        .collection(
-                            'categories'
-                        )
-                        .doc(
-                            `category-${i}`
-                        )
-                        .collection(
-                            'contents'
-                        )
-                        .doc(
-                            `content-${j}`
-                        )
-                        .set(
-                            {
+                        .collection('categories')
+                        .doc(`category-${i}`)
+                        .collection('contents')
+                        .doc(`content-${j}`)
+                        .set({
                                 title: {
                                     fr: `Article ${j}`,
                                     en: `Article ${j}`,
@@ -101,21 +83,17 @@ export default defineEventHandler(
                                 },
                                 createdAt: new Date(),
                                 updatedAt: new Date(),
-                            }
-                        );
+                            });
                 }
             }
 
             return { success: true };
         } catch (error) {
-            console.log(
-                error
-            );
+            console.log(error);
 
             return {
  success: false,
 error: error 
 };
         }
-    }
-);
+    });

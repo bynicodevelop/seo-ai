@@ -2,13 +2,11 @@ import type OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources';
 
 import {
- addMessages, callOpenAI 
+    addMessages, callOpenAI
 } from '../ai/open-ai';
 import type { I18n } from '../types/i18n';
 
-const promptAssistant = (
-    codelang: string[]
-) => `
+const promptAssistant = (codelang: string[]) => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO. 
 Vous savez prendre le contexte en compte dans votre traduction.
 Vous savez faire le rapprochement entre un code de langue (ex : fr, en...) et une langue (ex : fr c'est français).
@@ -21,9 +19,7 @@ Voici un exemple de format attendu :
 "fr": "contenu traduit...",
 "en": "..."
 }
-Voici les codes langues : ${codelang.join(
-        ', '
-    )}
+Voici les codes langues : ${codelang.join(', ')}
 Attendez que le contenu à traduire vous soit donné.
 `;
 
@@ -35,9 +31,7 @@ export const translatePrompt = async (
     addMessages(
         messages,
         'assistant',
-        promptAssistant(
-            codeLang
-        )
+        promptAssistant(codeLang)
     );
     addMessages(
         messages,

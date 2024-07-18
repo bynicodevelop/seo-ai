@@ -21,44 +21,30 @@ export const initSite = async (
         domain, sitename, description, keywords, locales, categories
     } = config;
 
-    const url = new URL(
-        domain
-    );
+    const url = new URL(domain);
 
-    await db.collection(
-        SITE_BUILDER_COLLECTION
-    ).add(
-        configFactory(
+    await db.collection(SITE_BUILDER_COLLECTION).add(configFactory(
             url.hostname,
             sitename,
             description,
             locales,
             keywords ?? [],
             categories ?? [] as unknown as [{ [key: string]: string }]
-        )
-    );
+        ));
 };
 
 export const createSite = async (
     site: Site, db: Firestore
 ): Promise<DocumentData> => {
-    return await db.collection(
-        SITE_COLLECTION
-    )
-        .add(
-            site
-        );
+    return await db.collection(SITE_COLLECTION)
+        .add(site);
 };
 
 export const getSiteById = async (
     siteId: SiteId, db: Firestore
 ): Promise<SiteEntity | null> => {
-    const snapshot = await db.collection(
-        SITE_COLLECTION
-    )
-        .doc(
-            siteId
-        )
+    const snapshot = await db.collection(SITE_COLLECTION)
+        .doc(siteId)
         .get();
 
     if (!snapshot.exists) {
@@ -83,17 +69,13 @@ export const getSiteById = async (
 export const getSiteByDomain = async (
     domain: SiteDomain, db: Firestore
 ): Promise<SiteEntity | null> => {
-    const queryDocumentSnapshot = await db.collection(
-        SITE_COLLECTION
-    )
+    const queryDocumentSnapshot = await db.collection(SITE_COLLECTION)
         .where(
             'domain',
             '==',
             domain
         )
-        .limit(
-            1
-        )
+        .limit(1)
         .get();
 
     if (queryDocumentSnapshot.empty) {

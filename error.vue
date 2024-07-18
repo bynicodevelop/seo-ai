@@ -3,9 +3,7 @@ const error = useError();
 const localePath = useLocalePath();
 
 const redirect = () => {
-    location.href = localePath(
-        '/'
-    );
+    location.href = localePath('/');
 };
 </script>
 

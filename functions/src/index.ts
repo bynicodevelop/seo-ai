@@ -1,16 +1,13 @@
 import * as admin from 'firebase-admin';
 import type {
     DocumentData, QueryDocumentSnapshot
-    DocumentData, QueryDocumentSnapshot
 } from 'firebase-admin/firestore';
 import { info } from 'firebase-functions/logger';
 import { defineString } from 'firebase-functions/params';
 import {
     onDocumentCreated, onDocumentWritten
-    onDocumentCreated, onDocumentWritten
 } from 'firebase-functions/v2/firestore';
 import {
-    first, isEmpty
     first, isEmpty
 } from 'lodash';
 
@@ -25,21 +22,15 @@ import { formatingSlug } from "./utils";
 admin.initializeApp();
 
 // firebase functions:secrets:set OPENAI_API
-const openAIKey = defineString(
-    'OPENAI_API'
-);
+const openAIKey = defineString('OPENAI_API');
 
 export const onSiteBuilder = onDocumentCreated(
     'site_builder/{builderId}',
     async event => {
-        info(
-            'Site builder triggered'
-        );
+        info('Site builder triggered');
 
         const db = admin.firestore();
-        const openAi = initOpentAI(
-            openAIKey.value()
-        );
+        const openAi = initOpentAI(openAIKey.value());
 
         const data = event.data as QueryDocumentSnapshot;
 
@@ -51,12 +42,8 @@ export const onSiteBuilder = onDocumentCreated(
 
         const defaultCategories = [];
 
-        if (isEmpty(
-            categories
-        )) {
-            info(
-                'No categories found, generating categories'
-            );
+        if (isEmpty(categories)) {
+            info('No categories found, generating categories');
 
             const generateCategories = await generateCategoriesPrompt(
                 {
@@ -126,55 +113,67 @@ export const onSiteBuilder = onDocumentCreated(
 
             let translatedDescription: I18n;
 
-            if (typeof description === 'string') {
-                translatedDescription = await translatePrompt(
-                    defaultTranslate,
-                    description,
-                    openAi
-                );
-            } else {
-                translatedDescription = defaultTranslate.reduce(
+        if (typeof description === 'string') {
+            translatedDescription = await translatePrompt(
+                defaultTranslate,
+                description,
+                openAi
+            );
+        } else {
+            translatedDescription = defaultTranslate.reduce(
+                (
+                    acc: {
+                        [key: string]: string;
+                    }, lang: string
+                ) => {
+                    acc[lang] = description[lang];
+                    return acc;
+                },
+                {}
+            );
+        }
+
+        info('Translating keywords');
+        let translatedKeywords: I18n = {};
+        let convertKeywords: I18n = {};
+
+        if (typeof keywords === 'string') {
+            translatedKeywords = await translatePrompt(
+                defaultTranslate,
+                keywords,
+                openAi
+            );
+        } else {
+            convertKeywords = await translatePrompt(
+                defaultTranslate,
+                keywords.join(', '),
+                openAi
+            );
+        }
+
+        for (const lang in convertKeywords) {
+            translatedKeywords[lang] = (convertKeywords[lang] as string).split(', ').map(keyword => keyword.trim());
+        }
+
+        const dataSite: Site = siteFactory(
+            domain,
+            {
+                title: defaultTranslate.reduce(
                     (
                         acc: {
                             [key: string]: string;
                         }, lang: string
                     ) => {
-                        acc[lang] = description[lang];
+                        acc[lang] = sitename;
                         return acc;
                     },
                     {}
-                );
-            }
-
-            const dataSite: Site = siteFactory(
-                domain,
-                {
-                    title: defaultTranslate.reduce(
-                        (
-                            acc: {
-                                [key: string]: string;
-                            }, lang: string
-                        ) => {
-                            acc[lang] = sitename;
-                            return acc;
-                        },
-                        {}
-                    ),
-                    description: translatedDescription,
-                    keywords: defaultTranslate.reduce(
-                        (
-                            acc: {
-                                [key: string]: string;
-                            }, lang: string
-                        ) => {
-                            acc[lang] = keywords;
-                            return acc;
-                        },
-                        {}
-                    ),
-                },
-                defaultTranslate
-            );
+                ),
+                description: translatedDescription,
+                keywords: translatedKeywords,
+            },
+            defaultTranslate
+        );
 
             info(
                 'Creating site'
@@ -211,9 +210,7 @@ export const onDraftCreated = onDocumentWritten(
     'sites/{siteId}/drafts/{draftId}',
     async event => {
         const db = admin.firestore();
-        const openAi = initOpentAI(
-            openAIKey.value()
-        );
+        const openAi = initOpentAI(openAIKey.value());
         const {
             siteId, draftId
         } = event.params;

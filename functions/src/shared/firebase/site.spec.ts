@@ -26,17 +26,11 @@ describe(
                 let mockCollection: Mock<any, any>;
                 let db: Firestore;
 
-                beforeEach(
-                    () => {
-                        mockAdd = vi.fn().mockResolvedValue(
-                            { id: '12345' }
-                        );
-                        mockCollection = vi.fn().mockReturnValue(
-                            { add: mockAdd, }
-                        );
+                beforeEach(() => {
+                        mockAdd = vi.fn().mockResolvedValue({ id: '12345' });
+                        mockCollection = vi.fn().mockReturnValue({ add: mockAdd, });
                         db = { collection: mockCollection, } as unknown as Firestore;
-                    }
-                );
+                    });
 
                 it(
                     'Doit initialiser un site avec toutes les données',
@@ -62,15 +56,8 @@ describe(
                             db
                         );
 
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_BUILDER_COLLECTION
-                        );
-                        expect(
-                            mockAdd
-                        ).toHaveBeenCalledWith(
-                            {
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_BUILDER_COLLECTION);
+                        expect(mockAdd).toHaveBeenCalledWith({
                                 domain: 'localhost',
                                 sitename: 'Test Site',
                                 description: 'This is a test site',
@@ -84,8 +71,7 @@ describe(
                                         name: 'Category 1'
                                     }
                                 ]
-                            }
-                        );
+                            });
                     }
                 );
 
@@ -105,15 +91,8 @@ describe(
                             db
                         );
 
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_BUILDER_COLLECTION
-                        );
-                        expect(
-                            mockAdd
-                        ).toHaveBeenCalledWith(
-                            {
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_BUILDER_COLLECTION);
+                        expect(mockAdd).toHaveBeenCalledWith({
                                 domain: 'localhost',
                                 sitename: 'Test Site',
                                 description: 'This is a test site',
@@ -121,8 +100,7 @@ describe(
                                     'fr'],
                                 keywords: [],
                                 categories: []
-                            }
-                        );
+                            });
                     }
                 );
             }
@@ -134,12 +112,8 @@ describe(
                 it(
                     'Doit créer un site',
                     async () => {
-                        const mockAdd = vi.fn().mockResolvedValue(
-                            { id: '12345' }
-                        );
-                        const mockCollection = vi.fn().mockReturnValue(
-                            { add: mockAdd, }
-                        );
+                        const mockAdd = vi.fn().mockResolvedValue({ id: '12345' });
+                        const mockCollection = vi.fn().mockReturnValue({ add: mockAdd, });
 
                         // Mock Firestore instance
                         const db = { collection: mockCollection, } as unknown as Firestore;
@@ -158,15 +132,8 @@ describe(
                         );
 
                         // Assertions
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_COLLECTION
-                        );
-                        expect(
-                            mockAdd
-                        ).toHaveBeenCalledWith(
-                            {
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockAdd).toHaveBeenCalledWith({
                                 domain: 'http://localhost',
                                 seo: {
                                     title: { fr: 'Test', },
@@ -174,8 +141,7 @@ describe(
                                     keywords: { fr: ['test'], },
                                 },
                                 locales: ['fr'],
-                            }
-                        );
+                            });
                     }
                 );
             }
@@ -189,21 +155,15 @@ describe(
                 it(
                     'Doit retourner un site existant par son ID',
                     async () => {
-                        const mockGet = vi.fn().mockResolvedValue(
-{
+                        const mockGet = vi.fn().mockResolvedValue({
     exists: true,
     data: () => ({
  id: '12345',
 domain: 'localhost' 
 })
-} as unknown as DocumentSnapshot<DocumentData>
-                        );
-                        const mockDoc = vi.fn().mockReturnValue(
-                            { get: mockGet, }
-                        );
-                        const mockCollection = vi.fn().mockReturnValue(
-                            { doc: mockDoc, }
-                        );
+} as unknown as DocumentSnapshot<DocumentData>);
+                        const mockDoc = vi.fn().mockReturnValue({ get: mockGet, });
+                        const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc, });
 
                         // Mock Firestore instance
                         const db = { collection: mockCollection, } as unknown as Firestore;
@@ -214,44 +174,22 @@ domain: 'localhost'
                         );
 
                         // Assertions
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_COLLECTION
-                        );
-                        expect(
-                            mockDoc
-                        ).toHaveBeenCalledWith(
-                            siteId
-                        );
-                        expect(
-                            mockGet
-                        ).toHaveBeenCalled();
-                        expect(
-                            result
-                        ).toEqual(
-                            {
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockDoc).toHaveBeenCalledWith(siteId);
+                        expect(mockGet).toHaveBeenCalled();
+                        expect(result).toEqual({
                                 exists: true,
-                                data: expect.any(
-                                    Function
-                                )
-                            }
-                        );
+                                data: expect.any(Function)
+                            });
                     }
                 );
 
                 it(
                     'Doit retourner null si le site n\'existe pas',
                     async () => {
-                        const mockGet = vi.fn().mockResolvedValue(
-{ exists: false, } as unknown as DocumentSnapshot<DocumentData>
-                        );
-                        const mockDoc = vi.fn().mockReturnValue(
-                            { get: mockGet, }
-                        );
-                        const mockCollection = vi.fn().mockReturnValue(
-                            { doc: mockDoc, }
-                        );
+                        const mockGet = vi.fn().mockResolvedValue({ exists: false, } as unknown as DocumentSnapshot<DocumentData>);
+                        const mockDoc = vi.fn().mockReturnValue({ get: mockGet, });
+                        const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc, });
 
                         // Mock Firestore instance
                         const db = { collection: mockCollection, } as unknown as Firestore;
@@ -262,22 +200,10 @@ domain: 'localhost'
                         );
 
                         // Assertions
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_COLLECTION
-                        );
-                        expect(
-                            mockDoc
-                        ).toHaveBeenCalledWith(
-                            siteId
-                        );
-                        expect(
-                            mockGet
-                        ).toHaveBeenCalled();
-                        expect(
-                            result
-                        ).toBeNull();
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockDoc).toHaveBeenCalledWith(siteId);
+                        expect(mockGet).toHaveBeenCalled();
+                        expect(result).toBeNull();
                     }
                 );
             }
@@ -295,22 +221,12 @@ domain: 'localhost'
  id: '12345',
 data: () => ({ domain: 'localhost' }) 
 }] as unknown as QueryDocumentSnapshot[];
-                        const mockGet = vi.fn().mockResolvedValue(
-{
+                        const mockGet = vi.fn().mockResolvedValue({
     empty: false,
     docs: mockDocs,
-} as unknown as QuerySnapshot
-                        );
-                        const mockWhere = vi.fn().mockReturnValue(
-                            {
-                                limit: vi.fn().mockReturnValue(
-                                    { get: mockGet, }
-                                ),
-                            }
-                        );
-                        const mockCollection = vi.fn().mockReturnValue(
-                            { where: mockWhere, }
-                        );
+} as unknown as QuerySnapshot);
+                        const mockWhere = vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ get: mockGet, }), });
+                        const mockCollection = vi.fn().mockReturnValue({ where: mockWhere, });
 
                         // Mock Firestore instance
                         const db = { collection: mockCollection, } as unknown as Firestore;
@@ -321,48 +237,26 @@ data: () => ({ domain: 'localhost' })
                         );
 
                         // Assertions
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_COLLECTION
-                        );
-                        expect(
-                            mockWhere
-                        ).toHaveBeenCalledWith(
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockWhere).toHaveBeenCalledWith(
                             'domain',
                             '==',
                             domain
                         );
-                        expect(
-                            mockGet
-                        ).toHaveBeenCalled();
-                        expect(
-                            result
-                        ).toEqual(
-                            mockDocs[0]
-                        );
+                        expect(mockGet).toHaveBeenCalled();
+                        expect(result).toEqual(mockDocs[0]);
                     }
                 );
 
                 it(
                     'Doit retourner null si aucun site n\'existe pour le domaine',
                     async () => {
-                        const mockGet = vi.fn().mockResolvedValue(
-{
+                        const mockGet = vi.fn().mockResolvedValue({
     empty: true,
     docs: [],
-} as unknown as QuerySnapshot
-                        );
-                        const mockWhere = vi.fn().mockReturnValue(
-                            {
-                                limit: vi.fn().mockReturnValue(
-                                    { get: mockGet, }
-                                ),
-                            }
-                        );
-                        const mockCollection = vi.fn().mockReturnValue(
-                            { where: mockWhere, }
-                        );
+} as unknown as QuerySnapshot);
+                        const mockWhere = vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ get: mockGet, }), });
+                        const mockCollection = vi.fn().mockReturnValue({ where: mockWhere, });
 
                         // Mock Firestore instance
                         const db = { collection: mockCollection, } as unknown as Firestore;
@@ -373,24 +267,14 @@ data: () => ({ domain: 'localhost' })
                         );
 
                         // Assertions
-                        expect(
-                            mockCollection
-                        ).toHaveBeenCalledWith(
-                            SITE_COLLECTION
-                        );
-                        expect(
-                            mockWhere
-                        ).toHaveBeenCalledWith(
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockWhere).toHaveBeenCalledWith(
                             'domain',
                             '==',
                             domain
                         );
-                        expect(
-                            mockGet
-                        ).toHaveBeenCalled();
-                        expect(
-                            result
-                        ).toBeNull();
+                        expect(mockGet).toHaveBeenCalled();
+                        expect(result).toBeNull();
                     }
                 );
             }

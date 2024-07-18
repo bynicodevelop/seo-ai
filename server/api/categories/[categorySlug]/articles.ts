@@ -10,16 +10,11 @@ import type {
  ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery 
 } from '~/server/types';
 
-export default defineEventHandler(
-async (
-event
-) => {
+export default defineEventHandler(async (event) => {
     const { categorySlug } = event.context.params as CategoryQuery;
     const {
  domain, locale 
-} = getQuery(
-event
-) as DomainQuery & LocaleQuery;
+} = getQuery(event) as DomainQuery & LocaleQuery;
 
     try {
         const siteRef = await getSiteByDomain(
@@ -35,9 +30,7 @@ db
         }
 
         const categorySnapshot = await siteRef.ref
-            .collection(
-CATEGORY_COLLECTION
-)
+            .collection(CATEGORY_COLLECTION)
             .where(
 `slug.${locale}`,
 '==',
@@ -52,9 +45,7 @@ categorySlug
             } as ApiResponse<ErrorResponse>;
         }
 
-        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection(
-ARTICLE_COLLECTION
-).get();
+        const contentsSnapshot = await categorySnapshot.docs[0]?.ref.collection(ARTICLE_COLLECTION).get();
 
         if (contentsSnapshot?.empty) {
             return {
@@ -64,10 +55,7 @@ ARTICLE_COLLECTION
         }
 
 
-        const contents: Article[] = (contentsSnapshot?.docs ?? []).map(
-(
-doc: DocumentData
-) => {
+        const contents: Article[] = (contentsSnapshot?.docs ?? []).map((doc: DocumentData) => {
             const {
  title, keywords, slug, article, description, createdAt, updatedAt 
 } = doc.data();
@@ -82,8 +70,7 @@ doc: DocumentData
                 createdAt,
                 updatedAt
             );
-        }
-)
+        })
 
         return {
             status: 200,
@@ -91,14 +78,11 @@ doc: DocumentData
         } as ApiResponse<Article[]>;
 
     } catch (error) {
-        console.log(
-error
-);
+        console.log(error);
 
         return {
             status: 500,
             data: { message: 'Error fetching categories data', },
         } as ApiResponse<ErrorResponse>
     }
-}
-);
+});

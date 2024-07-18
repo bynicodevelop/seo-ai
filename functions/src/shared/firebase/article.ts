@@ -22,9 +22,7 @@ export const createArticleToCategory = async (
     site: SiteId | DocumentData,
     db: Firestore
 ) => {
-    info(
-        `Creating article in category ${categoryId} in site ${site}`
-    )
+    info(`Creating article in category ${categoryId} in site ${site}`)
     try {
         let siteRef;
 
@@ -38,31 +36,19 @@ export const createArticleToCategory = async (
         }
 
         if (!siteRef) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
         await siteRef.ref
-            .collection(
-                CATEGORY_COLLECTION
-            )
-            .doc(
-                categoryId
-            )
-            .collection(
-                ARTICLE_COLLECTION
-            )
-            .add(
-                {
+            .collection(CATEGORY_COLLECTION)
+            .doc(categoryId)
+            .collection(ARTICLE_COLLECTION)
+            .add({
                     ...article,
                     siteId: siteRef.id,
-                }
-            );
+                });
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 };
@@ -73,9 +59,7 @@ export const getLatestArticles = async (
     article: Article,
     category: Category
 }[]> => {
-    info(
-        'Fetching latest articles from site'
-    );
+    info('Fetching latest articles from site');
     try {
         let siteRef;
 
@@ -89,14 +73,10 @@ export const getLatestArticles = async (
         }
 
         if (!siteRef) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        const articlesSnapshot = await db.collectionGroup(
-            ARTICLE_COLLECTION
-        )
+        const articlesSnapshot = await db.collectionGroup(ARTICLE_COLLECTION)
             .orderBy(
                 'createdAt',
                 'desc'
@@ -106,16 +86,10 @@ export const getLatestArticles = async (
                 '==',
                 siteRef.id
             )
-            .limit(
-                limit
-            )
+            .limit(limit)
             .get();
 
-        return Promise.all(
-            articlesSnapshot.docs.map(
-                async (
-                    doc: DocumentData
-                ): Promise<{
+        return Promise.all(articlesSnapshot.docs.map(async (doc: DocumentData): Promise<{
                     article: Article,
                     category: Category
                 }> => {
@@ -145,34 +119,21 @@ export const getLatestArticles = async (
                             slugCategory
                         )
                     }
-                }
-            )
-        );
+                }));
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 };
 
-export const getArticlesByCategory = async (
-    categoryEntity: CategoryEntity,
-): Promise<ArticleEntity[]> => {
-    info(
-        `Getting articles in category ${categoryEntity.id} in site`
-    )
+export const getArticlesByCategory = async (categoryEntity: CategoryEntity,): Promise<ArticleEntity[]> => {
+    info(`Getting articles in category ${categoryEntity.id} in site`)
     try {
         const articles = await categoryEntity.ref!
-            .collection(
-                ARTICLE_COLLECTION
-            )
+            .collection(ARTICLE_COLLECTION)
             .get();
 
-        return articles.docs.map(
-            (
-                doc: DocumentData
-            ) => {
+        return articles.docs.map((doc: DocumentData) => {
                 const data = doc.data();
 
                 return articleFactoryEntity(
@@ -187,12 +148,9 @@ export const getArticlesByCategory = async (
                     data.createdAt,
                     data.updatedAt
                 );
-            }
-        );
+            });
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -203,22 +161,16 @@ export const getArticleBySlug = async (
     articleSlug: string,
     locale: locales
 ): Promise<Article | null> => {
-    info(
-        `Getting article by slug ${articleSlug} in category ${categoryEntity.id}`
-    )
+    info(`Getting article by slug ${articleSlug} in category ${categoryEntity.id}`)
     try {
         const articleSnapshot = await categoryEntity.ref!
-            .collection(
-                ARTICLE_COLLECTION
-            )
+            .collection(ARTICLE_COLLECTION)
             .where(
                 `slug.${locale}`,
                 '==',
                 articleSlug
             )
-            .limit(
-                1
-            )
+            .limit(1)
             .get();
 
         if (articleSnapshot.empty) {
@@ -249,9 +201,7 @@ export const getArticleBySlug = async (
             updatedAt
         );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }

@@ -14,9 +14,7 @@ const {
 } = useNuxtApp() as unknown as { $domain: string, $translate: Function };
 const { fetchArticle } = useContent();
 
-const article = ref<Article | null>(
-    null
-);
+const article = ref<Article | null>(null);
 
 try {
     const { data: contentData } = await useAsyncData<Article>(
@@ -31,8 +29,7 @@ try {
 
     article.value = contentData.value;
 
-    useHead(
-        {
+    useHead({
             title: $translate(
                 article.value?.title,
                 locale.value
@@ -53,27 +50,20 @@ try {
                     ),
                 }
             ],
-        }
-    );
+        });
 
-    useSchemaOrg(
-        [
-            defineArticle(
-                {
+    useSchemaOrg([
+            defineArticle({
                     'datePublished': article.value?.createdAt,
                     'dateModified': article.value?.updatedAt,
-                }
-            )
-        ]
-    );
+                })
+        ]);
 } catch (error) {
-    throw createError(
-        {
+    throw createError({
             statusCode: 404,
             message: 'Content not found',
             fatal: true
-        }
-    )
+        })
 }
 </script>
 <template>

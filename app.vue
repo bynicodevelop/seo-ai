@@ -14,13 +14,10 @@ const baseUrl = url.protocol + '//' + url.host;
 try {
     const { data: domainData } = await useAsyncData<Site>(
         'domain',
-        async () => await fetchDomain(
-$domain as string
-        )
+        async () => await fetchDomain($domain as string)
     );
 
-    useHead(
-        {
+    useHead({
             htmlAttrs: { lang: locale.value, },
             title: $translate(
                 domainData.value?.seo.title,
@@ -43,8 +40,7 @@ $domain as string
                 }
             ],
             templateParams: { schemaOrg: { host: baseUrl, } },
-        }
-    );
+        });
 
     const organization = {
         name: $translate(
@@ -53,25 +49,17 @@ $domain as string
         ),
     }
 
-    useSchemaOrg(
-        [
-            defineOrganization(
-                organization
-            ),
-        ]
-    );
+    useSchemaOrg([
+            defineOrganization(organization),
+        ]);
 } catch (error) {
-    console.log(
-        error
-    );
+    console.log(error);
 
-    throw createError(
-        {
+    throw createError({
             statusCode: 404,
             message: 'Domain not found',
             fatal: true
-        }
-    );
+        });
 }
 </script>
 

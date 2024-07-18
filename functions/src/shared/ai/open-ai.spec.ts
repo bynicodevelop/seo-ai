@@ -17,14 +17,10 @@ describe(
                     'user',
                     'Hello'
                 );
-                expect(
-                    messages
-                ).toEqual(
-                    [{
+                expect(messages).toEqual([{
  role: 'user',
 content: 'Hello' 
-}]
-                );
+}]);
             }
         );
 
@@ -42,18 +38,14 @@ content: 'Hello'
                     'user',
                     'Hello'
                 );
-                expect(
-                    messages
-                ).toEqual(
-                    [{
+                expect(messages).toEqual([{
  role: 'assistant',
 content: 'Hello' 
 },
                         {
  role: 'user',
 content: 'Hello' 
-}]
-                );
+}]);
             }
         );
     }

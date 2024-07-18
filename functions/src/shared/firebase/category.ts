@@ -23,26 +23,18 @@ export const createCategories = async (
             db
         );
 
-        categories.forEach(
-            (
-                category
-            ) => {
-                const ref = siteByDomain!.ref!.collection(
-                    CATEGORY_COLLECTION
-                ).doc();
+        categories.forEach((category) => {
+                const ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
 
                 batch.set(
                     ref,
                     category
                 );
-            }
-        );
+            });
 
         await batch.commit();
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -76,14 +68,9 @@ export const getCategories = async (
             return [];
         }
 
-        const categories = await siteByDomain!.ref!.collection(
-            CATEGORY_COLLECTION
-        ).get();
+        const categories = await siteByDomain!.ref!.collection(CATEGORY_COLLECTION).get();
 
-        return categories.docs.map(
-            (
-                doc: DocumentData
-            ) => {
+        return categories.docs.map((doc: DocumentData) => {
                 const {
                     title, description, slug
                 } = doc.data();
@@ -95,12 +82,9 @@ export const getCategories = async (
                     description,
                     slug
                 );
-            }
-        );
+            });
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -125,17 +109,13 @@ export const getCategoryBySlug = async (
         }
 
         const categories = await siteByDomain!.ref!
-            .collection(
-                CATEGORY_COLLECTION
-            )
+            .collection(CATEGORY_COLLECTION)
             .where(
                 `slug.${locale}`,
                 '==',
                 categorySlug
             )
-            .limit(
-                1
-            )
+            .limit(1)
             .get();
 
         const doc = categories.docs[0] as DocumentData;
@@ -151,9 +131,7 @@ export const getCategoryBySlug = async (
             slug
         );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }

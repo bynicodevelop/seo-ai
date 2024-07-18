@@ -12,21 +12,15 @@ const {
     fetchCategories, fetchDomain
 } = useContent();
 
-const show = ref(
-    false
-);
+const show = ref(false);
 
 const { data: domain } = await useAsyncData<Site>(
     'domain',
-    async () => await fetchDomain(
-        $domain as string
-    )
+    async () => await fetchDomain($domain as string)
 );
 const { data: categories } = await useAsyncData<Category[]>(
     'categories',
-    async () => await fetchCategories(
-        $domain as string
-    )
+    async () => await fetchCategories($domain as string)
 );
 </script>
 

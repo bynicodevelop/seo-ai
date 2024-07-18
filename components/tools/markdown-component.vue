@@ -4,23 +4,19 @@ import type { MDCParserResult } from '@nuxtjs/mdc';
 const { locale } = useI18n();
 const { $translate } = useNuxtApp() as unknown as { $translate: Function };
 
-const props = defineProps(
-    {
+const props = defineProps({
         content: {
             type: String,
             required: true,
         },
-    }
-);
+    });
 
 const { data: ast } = await useAsyncData(
     'markdown',
-    () => parseMarkdown(
-        $translate(
+    () => parseMarkdown($translate(
             props.content,
             locale.value
-        )
-    )
+        ))
 ) as { data: Partial<MDCParserResult> };
 
 </script>

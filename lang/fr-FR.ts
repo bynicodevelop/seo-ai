@@ -1,5 +1,4 @@
-export default defineI18nLocale(
-    () => {
+export default defineI18nLocale(() => {
         return {
             pages: {
                 error: {
@@ -19,5 +18,4 @@ export default defineI18nLocale(
                 footer: { all_rights_reserved: 'Tous droits réservés' }
             }
         }
-    }
-);
+    });

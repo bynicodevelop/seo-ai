@@ -1,6 +1,4 @@
-export const promptMetadataCreateSite = (
-    config: { [key: string]: string }
-) => `
+export const promptMetadataCreateSite = (config: { [key: string]: string }) => `
 Agissez en tant qu'expert SEO. 
 Sur la base d'informations au format JSON donnés ci-dessous, vous allez configurer :
 
@@ -18,7 +16,5 @@ Sur la base d'informations au format JSON donnés ci-dessous, vous allez configu
 \`\`\`
 
 Voici les informations qui te sont fourni pour ta tâche : 
-${JSON.stringify(
-        config
-    )}
+${JSON.stringify(config)}
 `;

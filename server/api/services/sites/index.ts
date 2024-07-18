@@ -3,8 +3,7 @@ import {
  initSite, type Config 
 } from '~/functions/src/shared';
 
-export default defineEventHandler(
-    async event => {
+export default defineEventHandler(async event => {
         const {
             domain,
             sitename,
@@ -12,9 +11,7 @@ export default defineEventHandler(
             description,
             locales,
             categories
-        } = await readBody(
-            event
-        ) as Config;
+        } = await readBody(event) as Config;
 
         await initSite(
             {
@@ -29,5 +26,4 @@ export default defineEventHandler(
         );
 
         return { message: 'Site created' }
-    }
-);
+    });

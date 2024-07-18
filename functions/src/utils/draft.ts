@@ -117,9 +117,7 @@ export const translate = async (
     );
     const keywordsTranslated = await translatePrompt(
         languages,
-        keywords.join(
-            ', '
-        ),
+        keywords.join(', '),
         openAi
     );
     const descriptionTranslated = await translatePrompt(
@@ -163,9 +161,7 @@ export const moveDraftToArticle = async (
     siteId: SiteId,
     db: Firestore
 ) => {
-    info(
-        `Moving draft ${draftId} to article in site ${siteId}`
-    );
+    info(`Moving draft ${draftId} to article in site ${siteId}`);
 
     const site = await getSiteById(
         siteId,
@@ -173,9 +169,7 @@ export const moveDraftToArticle = async (
     );
 
     if (!site) {
-        throw new Error(
-            'Site not found'
-        );
+        throw new Error('Site not found');
     }
 
     await convertDraftToArticle(
@@ -184,7 +178,5 @@ export const moveDraftToArticle = async (
         db
     );
 
-    info(
-        `Draft ${draftId} moved to article in site ${siteId}`
-    );
+    info(`Draft ${draftId} moved to article in site ${siteId}`);
 }

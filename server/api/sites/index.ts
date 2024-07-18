@@ -6,11 +6,8 @@ import type {
     ApiResponse, DomainQuery, ErrorResponse
 } from '~/server/types';
 
-export default defineEventHandler(
-    async event => {
-        const { domain } = getQuery(
-            event
-        ) as DomainQuery;
+export default defineEventHandler(async event => {
+        const { domain } = getQuery(event) as DomainQuery;
 
     try {
         const site = await getSiteByDomain(
@@ -39,5 +36,4 @@ db
                 data: { message: 'Error fetching domain data' }
             } as ApiResponse<ErrorResponse>
         }
-    }
-);
+    });

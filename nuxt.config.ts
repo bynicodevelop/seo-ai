@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig(
-  {
+export default defineNuxtConfig({
     compatibilityDate: '2024-07-09',
     devtools: { enabled: true },
 
@@ -39,5 +38,4 @@ export default defineNuxtConfig(
     ],
 
     runtimeConfig: { public: { limitArticles: process.env.LIMIT_ARTICLES ?? 10 } },
-  }
-)
+  })

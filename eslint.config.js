@@ -1,10 +1,9 @@
 import { createConfigForNuxt } from '@nuxt/eslint-config/flat'
 
 export default createConfigForNuxt()
-  .prepend(
-    {
+  .prepend({
       rules: {
-        'function-paren-newline': ['error', { 'minItems': 1 }],
+        'function-paren-newline': ['error', { 'minItems': 2 }],
         'function-call-argument-newline': ['error', 'always'],
         'import/order': ['error', {
           'groups': [['builtin', 'external', 'internal']],
@@ -38,8 +37,7 @@ export default createConfigForNuxt()
         'object-property-newline': ['error', { 'allowAllPropertiesOnSameLine': false }],
         'quotes': ['error', 'single'],
       }
-    }
-  )
+    })
   .override(
     'nuxt/typescript/rules',
     {

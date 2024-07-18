@@ -1,8 +1,4 @@
-export default defineNuxtPlugin(
-    nuxtApp => nuxtApp.provide(
+export default defineNuxtPlugin(nuxtApp => nuxtApp.provide(
         'domain',
-        useRequestHeader(
-            'x-forwarded-host'
-        ) || 'localhost'
-    )
-);
+        useRequestHeader('x-forwarded-host') || 'localhost'
+    ));

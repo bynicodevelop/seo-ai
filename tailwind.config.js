@@ -3,9 +3,7 @@ export default {
     content: [],
     theme: {},
     plugins: [
-        require(
-            '@tailwindcss/typography'
-        ),
+        require('@tailwindcss/typography'),
     ],
 }
 

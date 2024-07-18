@@ -20,9 +20,7 @@ Votre tâche n'est pas de rédiger un article.
 
 Voici la thématique du site : ${siteContent}
 
-Voici les mots clés majeurs : ${keywords.join(
-        ', '
-    )}
+Voici les mots clés majeurs : ${keywords.join(', ')}
 
 Voici le contenu à analyser : ${content}
 `;

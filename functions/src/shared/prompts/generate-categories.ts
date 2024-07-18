@@ -46,17 +46,13 @@ Voici la structure du format JSON attendue :
 ]
 }`;
 
-const promptTranslateCategories = (
-    codelang: string[]
-) => `
+const promptTranslateCategories = (codelang: string[]) => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO.
 Vous savez prendre le contexte en compte dans votre traduction.
 Vous savez faire le rapprochement entre un code de langue (ex : fr, en...) et une langue (ex : fr c'est français).
 Vous allez recevoir un contenu texte uniquement à traduire en fonction d'une liste de codes langue.
 Gardez la mise en forme s'il y en a une.
-Voici les codes langue que vous devez prendre en compte : ${codelang.join(
-        ', '
-    )}.
+Voici les codes langue que vous devez prendre en compte : ${codelang.join(', ')}.
 Vous retournez le contenu au format JSON qui est un objet code langue associé au contenu traduit.
 
 Important : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
@@ -95,9 +91,7 @@ export const generateCategoriesPrompt = async (
         }
     ]
 }> => {
-    info(
-        'Generating categories'
-    );
+    info('Generating categories');
 
     try {
         const messages: ChatCompletionMessageParam[] = [];
@@ -126,15 +120,11 @@ export const generateCategoriesPrompt = async (
             openai
         );
 
-        info(
-            'Categories generated'
-        );
+        info('Categories generated');
 
         return result;
     } catch (err) {
-        error(
-            err
-        );
+        error(err);
         throw err;
     }
 }
@@ -144,18 +134,14 @@ export const translateCategoriesPrompt = async (
 ): Promise<{
     [key: string]: Category[]
 }> => {
-    info(
-        'Translating categories'
-    );
+    info('Translating categories');
     try {
         const messages: ChatCompletionMessageParam[] = [];
 
         addMessages(
             messages,
             'assistant',
-            promptTranslateCategories(
-                codeLang
-            )
+            promptTranslateCategories(codeLang)
         );
         addMessages(
             messages,
@@ -170,15 +156,11 @@ export const translateCategoriesPrompt = async (
             openai
         );
 
-        info(
-            'Categories translated'
-        );
+        info('Categories translated');
 
         return result;
     } catch (err) {
-        error(
-            err
-        );
+        error(err);
         throw err;
     }
 }

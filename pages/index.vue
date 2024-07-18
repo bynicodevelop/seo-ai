@@ -10,13 +10,10 @@ const { fetchDomain } = useContent();
 try {
     const { data: domainData } = await useAsyncData<Site>(
         'domain',
-        async () => await fetchDomain(
-            $domain as string
-        )
+        async () => await fetchDomain($domain as string)
     );
 
-    useHead(
-        {
+    useHead({
             title: $translate(
                 domainData.value?.seo.title,
                 locale.value
@@ -31,26 +28,19 @@ try {
                     ),
                 },
             ],
-        }
-    );
+        });
 
-    useSchemaOrg(
-        [
+    useSchemaOrg([
             defineWebPage(),
-        ]
-    );
+        ]);
 } catch (error) {
-    console.log(
-        error
-    );
+    console.log(error);
 
-    throw createError(
-        {
+    throw createError({
             statusCode: 404,
             message: 'Domain not found',
             fatal: true
-        }
-    );
+        });
 }
 </script>
 

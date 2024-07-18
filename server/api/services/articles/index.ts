@@ -2,12 +2,9 @@ import { db } from '../../../firebase';
 import { createDraft } from '~/functions/src/shared';
 import type  { ArticleQuery } from '~/server/types';
 
-export default defineEventHandler(
-    async event => {
+export default defineEventHandler(async event => {
         const method = event.method;
-        const body = await readBody(
-            event
-        ) as ArticleQuery;
+        const body = await readBody(event) as ArticleQuery;
 
         if (method !== 'POST') {
             return {
@@ -33,5 +30,4 @@ export default defineEventHandler(
             status: 201,
             body: 'Created'
         }
-    }
-);
+    });

@@ -9,16 +9,11 @@ import type {
 } from '~/server/types';
 
 
-export default defineEventHandler(
-    async (
-        event
-    ) => {
+export default defineEventHandler(async (event) => {
         const { categorySlug } = event.context.params as { categorySlug: string };
         const {
             domain, locale
-        } = getQuery(
-            event
-        ) as DomainQuery & LocaleQuery;
+        } = getQuery(event) as DomainQuery & LocaleQuery;
 
         try {
             const siteRef = await getSiteByDomain(
@@ -56,14 +51,11 @@ export default defineEventHandler(
                 ),
             } as ApiResponse<Category>;
         } catch (error) {
-            console.log(
-                error
-            );
+            console.log(error);
 
             return {
                 status: 500,
                 data: { message: 'Error fetching category data', },
             } as ApiResponse<ErrorResponse>
         }
-    }
-);
+    });

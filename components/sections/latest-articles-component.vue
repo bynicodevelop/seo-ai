@@ -12,9 +12,7 @@ const { fetchLatestArticles } = useContent();
 const articles = ref<{
     article: Article,
     category: Category
-}[]>(
-    []
-);
+}[]>([]);
 
 try {
     const { data: latestArticles } = await useAsyncData<{
@@ -30,17 +28,13 @@ try {
 
     articles.value = latestArticles.value || [];
 } catch (error) {
-    console.log(
-        error
-    );
+    console.log(error);
 
-    throw createError(
-        {
+    throw createError({
             statusCode: 404,
             message: 'Articles not found',
             fatal: true
-        }
-    );
+        });
 }
 </script>
 

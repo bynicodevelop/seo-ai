@@ -27,20 +27,14 @@ export const createDraft = async (
     );
 
     if (!siteRef) {
-        throw new Error(
-            'Site not found'
-        );
+        throw new Error('Site not found');
     }
 
-    return await siteRef.ref!.collection(
-DRAFT_COLLECTION
-)
-        .add(
-{
+    return await siteRef.ref!.collection(DRAFT_COLLECTION)
+        .add({
             content,
             status: 'DRAFT'
-        }
-);
+        });
 }
 
 export const updateDraft = async (
@@ -59,23 +53,15 @@ db
         }
 
         if (!siteRef) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        await siteRef.ref.collection(
-            DRAFT_COLLECTION
-        ).doc(
-            draftId
-        ).set(
+        await siteRef.ref.collection(DRAFT_COLLECTION).doc(draftId).set(
             data,
             { merge: true }
         );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 };
@@ -85,22 +71,14 @@ export const updateDraftArticleContent = async (
     site: SiteEntity,
     article: string,
 ) => {
-    info(
-`Updating draft article content for draft ${draftId} in site ${site.id!}`
-);
+    info(`Updating draft article content for draft ${draftId} in site ${site.id!}`);
 
     try {
         if (!site) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        await site.ref!.collection(
-DRAFT_COLLECTION
-).doc(
-draftId
-).set(
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
 {
             article,
             status: 'ARTICLE_CREATED'
@@ -108,9 +86,7 @@ draftId
 { merge: true }
 );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -125,9 +101,7 @@ export const updateDraftSeo = async (
     slug: string,
     db: Firestore
 ) => {
-    info(
-        `Updating draft SEO for draft ${draftId} in site ${siteId}`
-    );
+    info(`Updating draft SEO for draft ${draftId} in site ${siteId}`);
 
     try {
         const site = await getSiteById(
@@ -136,16 +110,10 @@ export const updateDraftSeo = async (
         );
 
         if (!site) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        await site.ref!.collection(
-DRAFT_COLLECTION
-).doc(
-draftId
-).set(
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
 {
             title,
             keywords,
@@ -157,9 +125,7 @@ draftId
 { merge: true }
 );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -170,9 +136,7 @@ export const updateDraftArticle = async (
     article: Article,
     db: Firestore
 ): Promise<void> => {
-    info(
-        `Updating draft article for draft ${draftId} in site ${siteId}`
-    );
+    info(`Updating draft article for draft ${draftId} in site ${siteId}`);
 
     try {
         const site = await getSiteById(
@@ -181,16 +145,10 @@ export const updateDraftArticle = async (
         );
 
         if (!site) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        await site.ref!.collection(
-DRAFT_COLLECTION
-).doc(
-draftId
-).set(
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
 {
             publishableArticle: article,
             status: 'READY_FOR_PUBLISHING'
@@ -198,9 +156,7 @@ draftId
 { merge: true }
 );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 };
@@ -211,9 +167,7 @@ export const updateDraftCategory = async (
     categoryId: string,
     db: Firestore
 ): Promise<void> => {
-    info(
-        `Updating draft category for draft ${draftId} in site ${siteId}`
-    );
+    info(`Updating draft category for draft ${draftId} in site ${siteId}`);
 
     try {
         const site = await getSiteById(
@@ -222,16 +176,10 @@ export const updateDraftCategory = async (
         );
 
         if (!site) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        await site.ref!.collection(
-DRAFT_COLLECTION
-).doc(
-draftId
-).set(
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
 {
             categoryId,
             status: 'CATEGORY_SELECTED'
@@ -239,9 +187,7 @@ draftId
 { merge: true }
 );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 };
@@ -251,9 +197,7 @@ export const getDraftById = async (
     site: SiteId | DocumentData,
     db: Firestore
 ): Promise<Draft> => {
-    info(
-        `Getting draft ${draftId} in site`
-    );
+    info(`Getting draft ${draftId} in site`);
 
     try {
         let siteRef;
@@ -268,21 +212,13 @@ db
         }
 
         if (!siteRef) {
-            throw new Error(
-                'Site not found'
-            );
+            throw new Error('Site not found');
         }
 
-        const draft = await siteRef!.ref.collection(
-            DRAFT_COLLECTION
-        ).doc(
-            draftId
-        ).get();
+        const draft = await siteRef!.ref.collection(DRAFT_COLLECTION).doc(draftId).get();
 
         if (!draft.exists) {
-            throw new Error(
-                'Draft not found'
-            );
+            throw new Error('Draft not found');
         }
 
         const {
@@ -312,9 +248,7 @@ db
             status,
         );
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -324,9 +258,7 @@ export const convertDraftToArticle = async (
     site: SiteId | DocumentData,
     db: Firestore
 ) => {
-    info(
-        `Converting draft ${draftId} to article`
-    );
+    info(`Converting draft ${draftId} to article`);
 
     const {
  categoryId, publishableArticle 

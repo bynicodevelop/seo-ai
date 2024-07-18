@@ -15,12 +15,10 @@ defineProps<{
     }
 }>();
 
-const haveSlug = (
-    article: {
+const haveSlug = (article: {
         article: Article,
         category: Category
-    }
-): boolean => !!article.article.slug && !!article.category.slug;
+    }): boolean => !!article.article.slug && !!article.category.slug;
 </script>
 
 <template>

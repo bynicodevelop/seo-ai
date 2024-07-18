@@ -7,34 +7,26 @@ const {
 } = useNuxtApp();
 const { fetchDomain } = useContent();
 
-const siteRef = ref<Site | null>(
-null
-);
+const siteRef = ref<Site | null>(null);
 
 const copyRightDate = new Date().getFullYear();
 
 try {
   const { data: site } = await useAsyncData<Site>(
     'domain',
-    async () => await fetchDomain(
-      $domain as string
-    )
+    async () => await fetchDomain($domain as string)
   );
 
   siteRef.value = site.value;
 
 } catch (error) {
-  console.log(
-error
-);
+  console.log(error);
 
-  throw createError(
-{
+  throw createError({
     statusCode: 404,
     message: 'Domain not found',
     fatal: true
-  }
-);
+  });
 }
 
 </script>
