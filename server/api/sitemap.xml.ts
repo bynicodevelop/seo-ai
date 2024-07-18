@@ -1,8 +1,3 @@
-
-import type {
-    DocumentData, QueryDocumentSnapshot
-} from 'firebase-admin/firestore';
-
 import { db } from '../firebase';
 import {
     getArticlesByCategory, getCategories, getSiteByDomain

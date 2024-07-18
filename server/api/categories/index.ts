@@ -1,12 +1,11 @@
-// /server/api/getData.js
-import type { DocumentSnapshot } from 'firebase-admin/firestore';
+import type { DocumentData } from 'firebase-admin/firestore';
 
 import { db } from '../../firebase';
 import {
- type Category, categoryFactory, getSiteByDomain 
+    type Category, categoryFactory, getSiteByDomain
 } from '~/functions/src/shared';
 import type {
- ApiResponse, DomainQuery, ErrorResponse 
+    ApiResponse, DomainQuery, ErrorResponse
 } from '~/server/types';
 
 export default defineEventHandler(
@@ -28,24 +27,24 @@ export default defineEventHandler(
                 } as ApiResponse<ErrorResponse>
             }
 
-            const snapshot = await siteRef.ref.collection(
+            const snapshot = await siteRef.ref!.collection(
                 'categories'
             ).get();
 
-        const categories: Category[] = snapshot.docs.map(
-(
-doc: any
-) => {
-            const {
- title, slug, description 
-} = doc.data() as Category;
-            return categoryFactory(
-                title,
-                description,
-                slug
+            const categories: Category[] = snapshot.docs.map(
+                (
+                    doc: DocumentData
+                ) => {
+                    const {
+                        title, slug, description
+                    } = doc.data() as Category;
+                    return categoryFactory(
+                        title,
+                        description,
+                        slug
+                    );
+                }
             );
-        }
-);
 
             return {
                 status: 200,

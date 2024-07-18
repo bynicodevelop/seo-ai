@@ -1,13 +1,16 @@
 import * as admin from 'firebase-admin';
 import type {
     DocumentData, QueryDocumentSnapshot
+    DocumentData, QueryDocumentSnapshot
 } from 'firebase-admin/firestore';
 import { info } from 'firebase-functions/logger';
 import { defineString } from 'firebase-functions/params';
 import {
     onDocumentCreated, onDocumentWritten
+    onDocumentCreated, onDocumentWritten
 } from 'firebase-functions/v2/firestore';
 import {
+    first, isEmpty
     first, isEmpty
 } from 'lodash';
 

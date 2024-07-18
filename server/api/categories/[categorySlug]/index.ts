@@ -2,9 +2,7 @@
 import { db } from '../../../firebase';
 import type { Category } from '~/functions/src/shared';
 import {
-    categoryFactory, getSiteByDomain
-    , CATEGORY_COLLECTION,
-    getCategoryBySlug
+    categoryFactory, getSiteByDomain, getCategoryBySlug
 } from '~/functions/src/shared';
 import type {
     ApiResponse, DomainQuery, ErrorResponse, LocaleQuery

@@ -159,30 +159,40 @@ export const getLatestArticles = async (
 export const getArticlesByCategory = async (
     categoryEntity: CategoryEntity,
 ): Promise<ArticleEntity[]> => {
-    info(`Getting articles in category ${categoryEntity.id} in site`)
+    info(
+        `Getting articles in category ${categoryEntity.id} in site`
+    )
     try {
         const articles = await categoryEntity.ref!
-            .collection(ARTICLE_COLLECTION)
+            .collection(
+                ARTICLE_COLLECTION
+            )
             .get();
 
-        return articles.docs.map((doc: any) => {
-            const data = doc.data();
+        return articles.docs.map(
+            (
+                doc: DocumentData
+            ) => {
+                const data = doc.data();
 
-            return articleFactoryEntity(
-                doc.ref,
-                doc.id,
-                data.title,
-                data.keywords,
-                data.description,
-                data.article,
-                data.summary,
-                data.slug,
-                data.createdAt,
-                data.updatedAt
-            );
-        });
+                return articleFactoryEntity(
+                    doc.ref,
+                    doc.id,
+                    data.title,
+                    data.keywords,
+                    data.description,
+                    data.article,
+                    data.summary,
+                    data.slug,
+                    data.createdAt,
+                    data.updatedAt
+                );
+            }
+        );
     } catch (e) {
-        error(e);
+        error(
+            e
+        );
         throw e;
     }
 }
@@ -193,12 +203,22 @@ export const getArticleBySlug = async (
     articleSlug: string,
     locale: locales
 ): Promise<Article | null> => {
-    info(`Getting article by slug ${articleSlug} in category ${categoryEntity.id}`)
+    info(
+        `Getting article by slug ${articleSlug} in category ${categoryEntity.id}`
+    )
     try {
         const articleSnapshot = await categoryEntity.ref!
-            .collection(ARTICLE_COLLECTION)
-            .where(`slug.${locale}`, '==', articleSlug)
-            .limit(1)
+            .collection(
+                ARTICLE_COLLECTION
+            )
+            .where(
+                `slug.${locale}`,
+                '==',
+                articleSlug
+            )
+            .limit(
+                1
+            )
             .get();
 
         if (articleSnapshot.empty) {
@@ -229,7 +249,9 @@ export const getArticleBySlug = async (
             updatedAt
         );
     } catch (e) {
-        error(e);
+        error(
+            e
+        );
         throw e;
     }
 }

@@ -5,12 +5,12 @@ import { error } from 'firebase-functions/logger';
 
 import { getSiteByDomain } from './site';
 import { CATEGORY_COLLECTION } from './types';
-import {
+import type {
     CategoryEntity, locales,
     SiteEntity,
-    Category,
-    categoryFactoryEntity
+    Category
 } from '../types';
+import { categoryFactoryEntity } from '../types';
 
 export const createCategories = async (
     site: SiteEntity, categories: Category[], db: Firestore
@@ -82,7 +82,7 @@ export const getCategories = async (
 
         return categories.docs.map(
             (
-                doc: any
+                doc: DocumentData
             ) => {
                 const {
                     title, description, slug
