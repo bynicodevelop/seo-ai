@@ -1,6 +1,13 @@
-import { ApiResponse, DomainQuery, ErrorResponse, LimitQuery } from '~/server/types';
-import { Article, getSiteByDomain, Category, getLatestArticles } from '~/functions/src/shared';
 import { db } from '../../firebase';
+import type {
+ Article, Category 
+} from '~/functions/src/shared';
+import {
+ getSiteByDomain, getLatestArticles 
+} from '~/functions/src/shared';
+import type {
+ ApiResponse, DomainQuery, ErrorResponse, LimitQuery 
+} from '~/server/types';
 
 export default defineEventHandler(
 async (
@@ -25,7 +32,11 @@ event
             } as ApiResponse<ErrorResponse>
         }
 
-        const contents = await getLatestArticles(siteRef, +limit, db);
+        const contents = await getLatestArticles(
+siteRef,
++limit,
+db
+);
         
         return {
             status: 200,

@@ -6,11 +6,15 @@ import { error } from 'firebase-functions/logger';
 import { getSiteByDomain } from './site';
 import { CATEGORY_COLLECTION } from './types';
 import {
-    type Category, CategoryEntity, categoryFactory, categoryFactoryEntity, locales, type Site,
-    SiteEntity
+    CategoryEntity, locales,
+    SiteEntity,
+    Category,
+    categoryFactoryEntity
 } from '../types';
 
-export const createCategories = async (site: SiteEntity, categories: Category[], db: Firestore): Promise<void> => {
+export const createCategories = async (
+    site: SiteEntity, categories: Category[], db: Firestore
+): Promise<void> => {
     try {
         const batch = db.batch();
 
@@ -19,8 +23,13 @@ export const createCategories = async (site: SiteEntity, categories: Category[],
             db
         );
 
-        categories.forEach((category) => {
-            let ref = siteByDomain!.ref!.collection(CATEGORY_COLLECTION).doc();
+        categories.forEach(
+            (
+                category
+            ) => {
+                const ref = siteByDomain!.ref!.collection(
+                    CATEGORY_COLLECTION
+                ).doc();
 
                 batch.set(
                     ref,
@@ -48,12 +57,17 @@ export const createCategories = async (site: SiteEntity, categories: Category[],
  * @param db 
  * @returns 
  */
-export const getCategories = async (site: SiteEntity, db: Firestore): Promise<CategoryEntity[]> => {
+export const getCategories = async (
+    site: SiteEntity, db: Firestore
+): Promise<CategoryEntity[]> => {
     try {
         let siteByDomain;
 
         if ((site)!.ref === undefined) {
-            siteByDomain = await getSiteByDomain(site.domain, db);
+            siteByDomain = await getSiteByDomain(
+                site.domain,
+                db
+            );
         } else {
             siteByDomain = site as SiteEntity;
         }
@@ -62,19 +76,27 @@ export const getCategories = async (site: SiteEntity, db: Firestore): Promise<Ca
             return [];
         }
 
-        const categories = await siteByDomain!.ref!.collection(CATEGORY_COLLECTION).get();
+        const categories = await siteByDomain!.ref!.collection(
+            CATEGORY_COLLECTION
+        ).get();
 
-        return categories.docs.map((doc: any) => {
-            const { title, description, slug } = doc.data();
+        return categories.docs.map(
+            (
+                doc: any
+            ) => {
+                const {
+                    title, description, slug
+                } = doc.data();
 
-            return categoryFactoryEntity(
-                doc.ref,
-                doc.id,
-                title,
-                description,
-                slug
-            );
-        });
+                return categoryFactoryEntity(
+                    doc.ref,
+                    doc.id,
+                    title,
+                    description,
+                    slug
+                );
+            }
+        );
     } catch (e) {
         error(
             e
@@ -83,12 +105,17 @@ export const getCategories = async (site: SiteEntity, db: Firestore): Promise<Ca
     }
 }
 
-export const getCategoryBySlug = async (site: SiteEntity, categorySlug: string, locale: locales, db: Firestore): Promise<CategoryEntity | null> => {
+export const getCategoryBySlug = async (
+    site: SiteEntity, categorySlug: string, locale: locales, db: Firestore
+): Promise<CategoryEntity | null> => {
     try {
         let siteByDomain;
 
         if ((site as SiteEntity)!.ref === undefined) {
-            siteByDomain = await getSiteByDomain(site.domain, db);
+            siteByDomain = await getSiteByDomain(
+                site.domain,
+                db
+            );
         } else {
             siteByDomain = site as SiteEntity;
         }
@@ -98,13 +125,23 @@ export const getCategoryBySlug = async (site: SiteEntity, categorySlug: string, 
         }
 
         const categories = await siteByDomain!.ref!
-            .collection(CATEGORY_COLLECTION)
-            .where(`slug.${locale}`, '==', categorySlug)
-            .limit(1)
+            .collection(
+                CATEGORY_COLLECTION
+            )
+            .where(
+                `slug.${locale}`,
+                '==',
+                categorySlug
+            )
+            .limit(
+                1
+            )
             .get();
 
         const doc = categories.docs[0] as DocumentData;
-        const { title, description, slug } = doc.data();
+        const {
+            title, description, slug
+        } = doc.data();
 
         return categoryFactoryEntity(
             doc.ref,

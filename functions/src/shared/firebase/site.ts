@@ -1,11 +1,13 @@
 import type {
-    DocumentData, Firestore, QueryDocumentSnapshot
+    DocumentData, Firestore
 } from 'firebase-admin/firestore';
 
 import {
     SITE_BUILDER_COLLECTION, SITE_COLLECTION
 } from './types';
-import { configFactory, siteFactoryEntity } from '../types';
+import {
+    configFactory, siteFactoryEntity
+} from '../types';
 import type { Config } from '../types/config';
 import type {
     SiteDomain, SiteId, Site,
@@ -48,16 +50,24 @@ export const createSite = async (
         );
 };
 
-export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<SiteEntity | null> => {
-    const snapshot = await db.collection(SITE_COLLECTION)
-        .doc(siteId)
+export const getSiteById = async (
+    siteId: SiteId, db: Firestore
+): Promise<SiteEntity | null> => {
+    const snapshot = await db.collection(
+        SITE_COLLECTION
+    )
+        .doc(
+            siteId
+        )
         .get();
 
     if (!snapshot.exists) {
         return null;
     }
 
-    const { domain, seo, locales, createdAt, updatedAt } = snapshot.data() as DocumentData;
+    const {
+        domain, seo, locales, createdAt, updatedAt
+    } = snapshot.data() as DocumentData;
 
     return siteFactoryEntity(
         snapshot.ref,
@@ -70,10 +80,20 @@ export const getSiteById = async (siteId: SiteId, db: Firestore): Promise<SiteEn
     );
 }
 
-export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promise<SiteEntity | null> => {
-    const queryDocumentSnapshot = await db.collection(SITE_COLLECTION)
-        .where("domain", "==", domain)
-        .limit(1)
+export const getSiteByDomain = async (
+    domain: SiteDomain, db: Firestore
+): Promise<SiteEntity | null> => {
+    const queryDocumentSnapshot = await db.collection(
+        SITE_COLLECTION
+    )
+        .where(
+            'domain',
+            '==',
+            domain
+        )
+        .limit(
+            1
+        )
         .get();
 
     if (queryDocumentSnapshot.empty) {
@@ -82,7 +102,9 @@ export const getSiteByDomain = async (domain: SiteDomain, db: Firestore): Promis
 
     const snapshot = queryDocumentSnapshot.docs[0] as DocumentData;
 
-    const { seo, locales, createdAt, updatedAt } = snapshot.data() as DocumentData;
+    const {
+        seo, locales, createdAt, updatedAt
+    } = snapshot.data() as DocumentData;
 
     return siteFactoryEntity(
         snapshot.ref,

@@ -3,7 +3,7 @@ import { info } from 'firebase-functions/logger';
 import type OpenAI from 'openai';
 
 import {
- articleFactory, convertDraftToArticle, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type Site, type SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo 
+    articleFactory, convertDraftToArticle, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo
 } from '../shared';
 import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
 import { formatingSlug } from "./slug";
@@ -20,8 +20,8 @@ export const selectCategoryForArticle = async (
         db
     );
     const categories = await getCategories(
-site!,
-db
+        site!,
+        db
     );
 
     const categorySelected = await selectCategoryForArticlePrompt(
@@ -45,12 +45,23 @@ export const generateArticle = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(siteId, db);
+    const site = await getSiteById(
+        siteId,
+        db
+    );
 
     // TODO: généré le cas d'erreur
     // Ajouter un status erreur en BDD
-    const article = await generateArticleFromContent(content, site!, openAi);
-    await updateDraftArticleContent(draftId, site!, article);
+    const article = await generateArticleFromContent(
+        content,
+        site!,
+        openAi
+    );
+    await updateDraftArticleContent(
+        draftId,
+        site!,
+        article
+    );
 };
 
 export const generateSeo = async (
@@ -89,7 +100,10 @@ export const translate = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(siteId, db);
+    const site = await getSiteById(
+        siteId,
+        db
+    );
 
     // TODO: généré le cas d'erreur
     // Ajouter un status erreur en BDD

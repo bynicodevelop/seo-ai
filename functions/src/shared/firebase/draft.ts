@@ -1,10 +1,20 @@
-import { DocumentData, DocumentReference, Firestore } from "firebase-admin/firestore";
-import { error, info } from "firebase-functions/logger";
-import { Draft, draftFactory, DraftId, SiteEntity, SiteId } from "../types";
-import { Article } from "../types/article";
-import { getSiteByDomain, getSiteById } from "./site";
-import { DRAFT_COLLECTION } from "./types";
-import { createArticleToCategory } from "./article";
+import type {
+ DocumentData, DocumentReference, Firestore 
+} from 'firebase-admin/firestore';
+import {
+ error, info 
+} from 'firebase-functions/logger';
+
+import { createArticleToCategory } from './article';
+import {
+ getSiteByDomain, getSiteById 
+} from './site';
+import { DRAFT_COLLECTION } from './types';
+import type {
+ Draft, DraftId, SiteEntity, SiteId 
+} from '../types';
+import { draftFactory } from '../types';
+import type { Article } from '../types/article';
 
 export const createDraft = async (
     domainId: SiteId,
@@ -22,11 +32,15 @@ export const createDraft = async (
         );
     }
 
-    return await siteRef.ref!.collection(DRAFT_COLLECTION)
-        .add({
+    return await siteRef.ref!.collection(
+DRAFT_COLLECTION
+)
+        .add(
+{
             content,
             status: 'DRAFT'
-        });
+        }
+);
 }
 
 export const updateDraft = async (
@@ -71,7 +85,9 @@ export const updateDraftArticleContent = async (
     site: SiteEntity,
     article: string,
 ) => {
-    info(`Updating draft article content for draft ${draftId} in site ${site.id!}`);
+    info(
+`Updating draft article content for draft ${draftId} in site ${site.id!}`
+);
 
     try {
         if (!site) {
@@ -80,10 +96,17 @@ export const updateDraftArticleContent = async (
             );
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(
+DRAFT_COLLECTION
+).doc(
+draftId
+).set(
+{
             article,
             status: 'ARTICLE_CREATED'
-        }, { merge: true });
+        },
+{ merge: true }
+);
     } catch (e) {
         error(
             e
@@ -118,14 +141,21 @@ export const updateDraftSeo = async (
             );
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(
+DRAFT_COLLECTION
+).doc(
+draftId
+).set(
+{
             title,
             keywords,
             description,
             summary,
             slug,
             status: 'SEO_OPTIMIZED'
-        }, { merge: true });
+        },
+{ merge: true }
+);
     } catch (e) {
         error(
             e
@@ -156,10 +186,17 @@ export const updateDraftArticle = async (
             );
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(
+DRAFT_COLLECTION
+).doc(
+draftId
+).set(
+{
             publishableArticle: article,
             status: 'READY_FOR_PUBLISHING'
-        }, { merge: true });
+        },
+{ merge: true }
+);
     } catch (e) {
         error(
             e
@@ -190,10 +227,17 @@ export const updateDraftCategory = async (
             );
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set({
+        await site.ref!.collection(
+DRAFT_COLLECTION
+).doc(
+draftId
+).set(
+{
             categoryId,
             status: 'CATEGORY_SELECTED'
-        }, { merge: true });
+        },
+{ merge: true }
+);
     } catch (e) {
         error(
             e

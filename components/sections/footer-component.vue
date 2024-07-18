@@ -7,7 +7,9 @@ const {
 } = useNuxtApp();
 const { fetchDomain } = useContent();
 
-const siteRef = ref<Site | null>(null);
+const siteRef = ref<Site | null>(
+null
+);
 
 const copyRightDate = new Date().getFullYear();
 
@@ -22,13 +24,17 @@ try {
   siteRef.value = site.value;
 
 } catch (error) {
-  console.log(error);
+  console.log(
+error
+);
 
-  throw createError({
+  throw createError(
+{
     statusCode: 404,
     message: 'Domain not found',
     fatal: true
-  });
+  }
+);
 }
 
 </script>

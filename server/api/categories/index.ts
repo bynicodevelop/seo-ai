@@ -32,14 +32,20 @@ export default defineEventHandler(
                 'categories'
             ).get();
 
-        const categories: Category[] = snapshot.docs.map((doc: any) => {
-            const { title, slug, description } = doc.data() as Category;
+        const categories: Category[] = snapshot.docs.map(
+(
+doc: any
+) => {
+            const {
+ title, slug, description 
+} = doc.data() as Category;
             return categoryFactory(
                 title,
                 description,
                 slug
             );
-        });
+        }
+);
 
             return {
                 status: 200,

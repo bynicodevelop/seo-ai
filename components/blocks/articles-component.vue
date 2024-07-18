@@ -24,9 +24,7 @@ const haveSlug = (
 </script>
 
 <template>
-    <article
-v-if="haveSlug(article)"
-class="space-y-2">
+    <article v-if="haveSlug(article)" class="space-y-2">
         <h2 class="text-lg font-semibold">
             <nuxt-link
                 :to="localePath(`/${$translate(article.category.slug, locale)}/${$translate(article.article.slug, locale)}`)">

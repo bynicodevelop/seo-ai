@@ -13,14 +13,15 @@ export default defineEventHandler(
         ) as DomainQuery;
 
     try {
-        const site = await getSiteByDomain(domain, db);
+        const site = await getSiteByDomain(
+domain,
+db
+);
 
         if (site === null) {
             return {
                 status: 404,
-                data: {
-                    message: 'Site not found'
-                }
+                data: { message: 'Site not found' }
             } as ApiResponse<ErrorResponse>
         }
 

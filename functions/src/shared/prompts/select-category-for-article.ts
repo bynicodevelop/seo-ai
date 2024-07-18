@@ -27,7 +27,9 @@ Retourner la propriété id de la catégorie sélectionnée au format JSON suiva
 }
 `;
 
-export const selectCategoryForArticlePrompt = async (content: string, categories: Category[], openai: OpenAI): Promise<{
+export const selectCategoryForArticlePrompt = async (
+content: string, categories: Category[], openai: OpenAI
+): Promise<{
     id: string;
 }> => {
     const messages: ChatCompletionMessageParam[] = [];
@@ -47,5 +49,8 @@ export const selectCategoryForArticlePrompt = async (content: string, categories
 
     return await callOpenAI<{
         id: string;
-    }>(messages, openai);
+    }>(
+messages,
+openai
+);
 }

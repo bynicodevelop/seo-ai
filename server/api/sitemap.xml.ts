@@ -1,11 +1,11 @@
 
 import type {
- DocumentData, QueryDocumentSnapshot 
+    DocumentData, QueryDocumentSnapshot
 } from 'firebase-admin/firestore';
 
 import { db } from '../firebase';
 import {
- getArticlesByCategory, getCategories, getSiteByDomain 
+    getArticlesByCategory, getCategories, getSiteByDomain
 } from '~/functions/src/shared';
 
 export default defineEventHandler(
@@ -14,10 +14,16 @@ export default defineEventHandler(
         const domain = (event.req.headers['x-forwarded-host'] || 'localhost') as string;
         const baseUrl = `${protocol}://${domain}`;
 
-  const siteRef = await getSiteByDomain(domain, db);
-  const { locales } = siteRef!;
+        const siteRef = await getSiteByDomain(
+            domain,
+            db
+        );
+        const { locales } = siteRef!;
 
-  const categories = await getCategories(siteRef!, db);
+        const categories = await getCategories(
+            siteRef!,
+            db
+        );
 
         const categoriesPages = categories.map(
             category => {
@@ -36,8 +42,14 @@ export default defineEventHandler(
             }
         ).flat();
 
-  const articlesPages = (await Promise.all(categories.map(async (category) => {
-    const articles = await getArticlesByCategory(category, db);
+        const articlesPages = (await Promise.all(
+            categories.map(
+                async (
+                    category
+                ) => {
+                    const articles = await getArticlesByCategory(
+                        category
+                    );
 
                     return locales.map(
                         (
@@ -60,13 +72,13 @@ export default defineEventHandler(
         )).flat();
 
         const allPages = [...categoriesPages,
-            ...articlesPages];
+        ...articlesPages];
 
         const sitemapContent = `
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
         ${allPages.map(
-        page => `
+            page => `
           <url>
             <loc>${baseUrl}${page.url}</loc>
             <lastmod>${page.lastmod}</lastmod>
@@ -74,9 +86,9 @@ export default defineEventHandler(
             <priority>${page.priority}</priority>
           </url>
         `
-    ).join(
-        ''
-    )}
+        ).join(
+            ''
+        )}
       </urlset>
     `.trim();
 

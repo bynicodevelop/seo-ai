@@ -13,7 +13,7 @@ import {
     articleFactory, articleFactoryEntity, categoryFactory
 } from '../types';
 import type {
-    Article, Category, CategoryEntity, CategoryId, locales, SiteId
+    Article, ArticleEntity, Category, CategoryEntity, CategoryId, locales, SiteId
 } from '../types';
 
 export const createArticleToCategory = async (
@@ -140,7 +140,7 @@ export const getLatestArticles = async (
                             updatedAt
                         ),
                         category: categoryFactory(
-                                    titleCategory,
+                            titleCategory,
                             descriptionCategory,
                             slugCategory
                         )
@@ -157,48 +157,16 @@ export const getLatestArticles = async (
 };
 
 export const getArticlesByCategory = async (
-    site: SiteId | DocumentData,
-    categoryId: CategoryId,
-    db: Firestore
-): Promise<Article[]> => {
-    info(
-        `Getting articles in category ${categoryId} in site`
-    )
+    categoryEntity: CategoryEntity,
+): Promise<ArticleEntity[]> => {
+    info(`Getting articles in category ${categoryEntity.id} in site`)
     try {
-        let siteRef;
-
-        if ((site as DocumentData)!.ref === undefined) {
-            siteRef = await getSiteById(
-                site as SiteId,
-                db
-            );
-        } else {
-            siteRef = site as DocumentData;
-        }
-
-        if (!siteRef) {
-            throw new Error(
-                'Site not found'
-            );
-        }
-
-        const articles = await siteRef.ref
-            .collection(
-                CATEGORY_COLLECTION
-            )
-            .doc(
-                categoryId
-            )
-            .collection(
-                ARTICLE_COLLECTION
-            )
+        const articles = await categoryEntity.ref!
+            .collection(ARTICLE_COLLECTION)
             .get();
 
-        return articles.docs.map(
-            (
-                doc: DocumentData
-            ) => {
-                const data = doc.data();
+        return articles.docs.map((doc: any) => {
+            const data = doc.data();
 
             return articleFactoryEntity(
                 doc.ref,
@@ -211,12 +179,10 @@ export const getArticlesByCategory = async (
                 data.slug,
                 data.createdAt,
                 data.updatedAt
-            )
+            );
         });
     } catch (e) {
-        error(
-            e
-        );
+        error(e);
         throw e;
     }
 }
@@ -225,8 +191,7 @@ export const getArticlesByCategory = async (
 export const getArticleBySlug = async (
     categoryEntity: CategoryEntity,
     articleSlug: string,
-    locale: locales,
-    db: Firestore
+    locale: locales
 ): Promise<Article | null> => {
     info(`Getting article by slug ${articleSlug} in category ${categoryEntity.id}`)
     try {

@@ -1,6 +1,9 @@
-import { I18n } from "./i18n";
-import { IdType, Reference } from "./common";
-import { DocumentReference } from "firebase-admin/firestore";
+import type { DocumentReference } from 'firebase-admin/firestore';
+
+import type {
+ IdType, Reference 
+} from './common';
+import type { I18n } from './i18n';
 
 export type Article = {
     title: I18n;

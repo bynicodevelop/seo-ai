@@ -1,6 +1,9 @@
-import { DocumentReference } from "firebase-admin/firestore";
-import { ID, IdType, Reference } from "./common";
-import { I18n } from "./i18n";
+import type { DocumentReference } from 'firebase-admin/firestore';
+
+import type {
+ ID, IdType, Reference 
+} from './common';
+import type { I18n } from './i18n';
 
 export type CategoryId = string;
 

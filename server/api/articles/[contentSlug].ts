@@ -1,7 +1,12 @@
 // /server/api/getData.js
-import { ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
-import { Article, articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION, getCategoryBySlug, getArticleBySlug } from '~/functions/src/shared';
 import { db } from '../../firebase';
+import type { Article } from '~/functions/src/shared';
+import {
+    articleFactory, getSiteByDomain, getCategoryBySlug, getArticleBySlug
+} from '~/functions/src/shared';
+import type {
+    ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery
+} from '~/server/types';
 
 export default defineEventHandler(
     async event => {
@@ -18,52 +23,57 @@ export default defineEventHandler(
                 db
             );
 
-        if (!siteRef) {
+            if (!siteRef) {
+                return {
+                    status: 404,
+                    data: { message: 'Site not found' }
+                } as ApiResponse<ErrorResponse>
+            }
+
+            const categoryEntity = await getCategoryBySlug(
+                siteRef,
+                categorySlug,
+                locale,
+                db
+            );
+
+            if (categoryEntity === null) {
+                return {
+                    status: 404,
+                    data: { message: 'Category not found', },
+                } as ApiResponse<ErrorResponse>;
+            }
+
+            const contentSnapshot = await getArticleBySlug(
+                categoryEntity,
+                contentSlug,
+                locale
+            );
+
+            if (contentSnapshot === null) {
+                return {
+                    status: 404,
+                    data: { message: 'Content not found', },
+                } as ApiResponse<ErrorResponse>;
+            }
+
             return {
-                status: 404,
-                data: {
-                    message: 'Site not found'
-                }
-            } as ApiResponse<ErrorResponse>
-        }
-
-        const categoryEntity = await getCategoryBySlug(siteRef, categorySlug, locale, db);
-
-        if (categoryEntity === null) {
-            return {
-                status: 404,
-                data: {
-                    message: 'Category not found',
-                },
-            } as ApiResponse<ErrorResponse>;
-        }
-
-        const contentSnapshot = await getArticleBySlug(categoryEntity, contentSlug, locale, db);
-
-        if (contentSnapshot === null) {
-            return {
-                status: 404,
-                data: {
-                    message: 'Content not found',
-                },
-            } as ApiResponse<ErrorResponse>;
-        }
-
-        return {
-            status: 200,
-            data: articleFactory(
-                contentSnapshot.title,
-                contentSnapshot.keywords,
-                contentSnapshot.description,
-                contentSnapshot.article,
-                contentSnapshot.summary,
-                contentSnapshot.slug,
-                contentSnapshot.createdAt!,
-                contentSnapshot.updatedAt!
-            ),
-        } as ApiResponse<Article>;
-    } catch (error) {
-        console.log(error);
+                status: 200,
+                data: articleFactory(
+                    contentSnapshot.title,
+                    contentSnapshot.keywords,
+                    contentSnapshot.description,
+                    contentSnapshot.article,
+                    contentSnapshot.summary,
+                    contentSnapshot.slug,
+                    contentSnapshot.createdAt!,
+                    contentSnapshot.updatedAt!
+                ),
+            } as ApiResponse<Article>;
+        } catch (error) {
+            console.log(
+                error
+            );
 
             return {
                 status: 500,
