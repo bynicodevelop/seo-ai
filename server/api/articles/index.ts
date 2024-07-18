@@ -1,5 +1,5 @@
 import { ApiResponse, DomainQuery, ErrorResponse, LimitQuery } from '~/server/types';
-import { Article, getSiteByDomain, getLatestArticles, Category } from '~/functions/src/shared';
+import { Article, getSiteByDomain, Category, getLatestArticles } from '~/functions/src/shared';
 import { db } from '../../firebase';
 
 export default defineEventHandler(async (event) => {
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const contents = await getLatestArticles(siteRef, +limit, db);
-
+        
         return {
             status: 200,
             data: contents,

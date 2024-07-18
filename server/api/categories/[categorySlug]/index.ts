@@ -1,5 +1,5 @@
 // /server/api/getData.js
-import { categoryFactory, getSiteByDomain, Category, CATEGORY_COLLECTION } from '~/functions/src/shared';
+import { categoryFactory, getSiteByDomain, Category, getCategoryBySlug } from '~/functions/src/shared';
 import { db } from '../../../firebase';
 import { ApiResponse, DomainQuery, ErrorResponse, LocaleQuery } from '~/server/types';
 
@@ -20,11 +20,9 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>
         }
 
-        const doc = await siteRef.ref.collection(CATEGORY_COLLECTION)
-            .where(`slug.${locale}`, '==', categorySlug)
-            .get();
+        const categoryEntity = await getCategoryBySlug(siteRef, categorySlug, locale, db);
 
-        if (doc.empty) {
+        if (categoryEntity === null) {
             return {
                 status: 404,
                 data: {
@@ -33,20 +31,13 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>;
         }
 
-        const docData = doc.docs[0];
-
-        const { title, description, slug } = docData!.data() as Category;
-
-        const category: Category = categoryFactory(
-            docData!.id,
-            title,
-            description,
-            slug
-        );
-
         return {
             status: 200,
-            data: category,
+            data: categoryFactory(
+                categoryEntity.title,
+                categoryEntity.description,
+                categoryEntity.slug
+            ),
         } as ApiResponse<Category>;
     } catch (error) {
         console.log(error);

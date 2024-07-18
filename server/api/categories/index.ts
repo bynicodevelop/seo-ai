@@ -18,12 +18,11 @@ export default defineEventHandler(async (event) => {
             } as ApiResponse<ErrorResponse>
         }
 
-        const snapshot = await siteRef.ref.collection('categories').get();
+        const snapshot = await siteRef.ref!.collection('categories').get();
 
         const categories: Category[] = snapshot.docs.map((doc: any) => {
             const { title, slug, description } = doc.data() as Category;
             return categoryFactory(
-                doc.id,
                 title,
                 description,
                 slug

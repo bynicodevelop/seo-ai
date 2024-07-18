@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { Site } from "../types";
+import { SiteEntity } from "../types";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { addMessages, callOpenAI } from "../ai";
 
@@ -43,7 +43,7 @@ Accroche : Commencez par une question ou une statistique intéressante qui attir
 Développement : Rédigez le corps de l'article en suivant une structure logique et fluide avec des sous-titres pour une meilleure lecture.
 `;
 
-export const generateArticleFromContent = async (content: string, site: Site, openai: OpenAI): Promise<string> => {
+export const generateArticleFromContent = async (content: string, site: SiteEntity, openai: OpenAI): Promise<string> => {
     const messages: ChatCompletionMessageParam[] = [];
 
     addMessages(messages, 'assistant', promptGenerateContent(
