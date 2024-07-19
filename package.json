@@ -5,6 +5,7 @@
   "scripts": {
     "bootstrap": "npm i && npm i --prefix functions",
     "clean": "rm -rf .firebase .nuxt .output node_modules functions/node_modules functions/lib firebase-debug.log ui-debug.log",
+    "reset": "npm-run-all --sequential clean bootstrap",
     "dev": "npm-run-all --parallel build:functions:watch dev:nuxt firebase:start",
     "dev:restore": "npm-run-all --parallel build:functions:watch dev:nuxt firebase:restore",
     "firebase:start": "firebase emulators:start",
