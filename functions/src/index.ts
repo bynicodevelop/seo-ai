@@ -59,7 +59,6 @@ export const onSiteBuilder = onDocumentCreated(
                 defaultTranslate,
                 generateCategories.categories,
                 openAi
-
             );
 
             defaultCategories.push(...translatedCategories.categories.map((category) => ({
@@ -98,91 +97,93 @@ export const onSiteBuilder = onDocumentCreated(
                     })));
                 }
             }
+        }
 
-            let translatedDescription: I18n;
+        info('Translating site description and keywords');
+        let translatedDescription: I18n;
 
-            if (typeof description === 'string') {
-                translatedDescription = await translatePrompt(
-                    defaultTranslate,
-                    description,
-                    openAi
-                );
-            } else {
-                translatedDescription = defaultTranslate.reduce(
+        if (typeof description === 'string') {
+            translatedDescription = await translatePrompt(
+                defaultTranslate,
+                description,
+                openAi
+            );
+        } else {
+            translatedDescription = defaultTranslate.reduce(
+                (
+                    acc: {
+                        [key: string]: string;
+                    }, lang: string
+                ) => {
+                    acc[lang] = description[lang];
+                    return acc;
+                },
+                {}
+            );
+        }
+
+        info('Translating keywords');
+        let translatedKeywords: I18n = {};
+        let convertKeywords: I18n = {};
+
+        if (typeof keywords === 'string') {
+            translatedKeywords = await translatePrompt(
+                defaultTranslate,
+                keywords,
+                openAi
+            );
+        } else {
+            convertKeywords = await translatePrompt(
+                defaultTranslate,
+                keywords.join(', '),
+                openAi
+            );
+        }
+
+        for (const lang in convertKeywords) {
+            translatedKeywords[lang] = (convertKeywords[lang] as string).split(', ').map(keyword => keyword.trim());
+        }
+
+        const dataSite: Site = siteFactory(
+            domain,
+            {
+                title: defaultTranslate.reduce(
                     (
                         acc: {
                             [key: string]: string;
                         }, lang: string
                     ) => {
-                        acc[lang] = description[lang];
+                        acc[lang] = sitename;
                         return acc;
                     },
                     {}
-                );
-            }
+                ),
+                description: translatedDescription,
+                keywords: translatedKeywords,
+            },
+            defaultTranslate
+        );
 
-            info('Translating keywords');
-            let translatedKeywords: I18n = {};
-            let convertKeywords: I18n = {};
+        info('Creating site');
+        await createSite(
+            dataSite,
+            db
+        );
 
-            if (typeof keywords === 'string') {
-                translatedKeywords = await translatePrompt(
-                    defaultTranslate,
-                    keywords,
-                    openAi
-                );
-            } else {
-                convertKeywords = await translatePrompt(
-                    defaultTranslate,
-                    keywords.join(', '),
-                    openAi
-                );
-            }
+        info('Creating categories');
+        await createCategories(
+            dataSite,
+            defaultCategories.map(category => (
+                categoryFactory(
+                    category.title,
+                    category.description,
+                    category.slug
+                ))),
+            db
+        );
 
-            for (const lang in convertKeywords) {
-                translatedKeywords[lang] = (convertKeywords[lang] as string).split(', ').map(keyword => keyword.trim());
-            }
+        info('Site created');
 
-            const dataSite: Site = siteFactory(
-                domain,
-                {
-                    title: defaultTranslate.reduce(
-                        (
-                            acc: {
-                                [key: string]: string;
-                            }, lang: string
-                        ) => {
-                            acc[lang] = sitename;
-                            return acc;
-                        },
-                        {}
-                    ),
-                    description: translatedDescription,
-                    keywords: translatedKeywords,
-                },
-                defaultTranslate
-            );
-
-            info('Creating site');
-            await createSite(
-                dataSite,
-                db
-            );
-
-            info('Creating categories');
-            await createCategories(
-                dataSite,
-                defaultCategories.map(category => (
-                    categoryFactory(
-                        category.title,
-                        category.description,
-                        category.slug
-                    ))),
-                db
-            );
-
-            info('Site created');
-        }
     }
 );
 
