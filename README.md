@@ -371,12 +371,13 @@ npm run deploy:firebase
 
 ### Formattage des branches
 
-Format de création de branche `(feat|chore|test|refactor)/ID_ISSUE/NAME`
+Format de création de branche `(feat|chore|test|refactor|doc)/ID_ISSUE/NAME`
 
 - `feat` : Ajout de fonctionnalité
 - `chore` : Divers modifications sans rapport direct avec la fonctionnalité ou correctifs
 - `test` : Ajout de tests
 - `refactor` : Travraux de refactorisation de code
+- `doc` : Travraux de documentation
 
 ### Rédaction des commits
 
@@ -385,18 +386,21 @@ Un commit doit avoir quelques données pour mettre le maillage entre un commit e
 Commit simple : 
 
 ```
-(feat|chore|test|refactor): #ID_ISSUE - MESSAGE
+(feat|chore|test|refactor|doc): #ID_ISSUE - MESSAGE
 ```
 
 Commit avec précisions (avec une ligne vide) : 
 
 ```
-(feat|chore|test|refactor): #ID_ISSUE - MESSAGE
+(feat|chore|test|refactor|doc): #ID_ISSUE - MESSAGE
 
 MESSAGE DE PRÉCISIONS
 ```
 
-Le `#ID_ISSUE` permettra de faire le lien avec le ticket associé au commit.
+**Précision**
+
+- Le `#ID_ISSUE` permettra de faire le lien avec le ticket associé au commit.
+- Pas de parenthèse pour le mot clé du commit (ex: `feat: #1 - Commentaire`)
 
 
 ## Lexite & Aide
