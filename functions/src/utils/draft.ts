@@ -2,11 +2,11 @@ import type { Firestore } from 'firebase-admin/firestore';
 import { info } from 'firebase-functions/logger';
 import type OpenAI from 'openai';
 
+import { formatingSlug } from './slug';
 import {
     articleFactory, convertDraftToArticle, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo
 } from '../shared';
 import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
-import { formatingSlug } from "./slug";
 
 export const selectCategoryForArticle = async (
     content: string,

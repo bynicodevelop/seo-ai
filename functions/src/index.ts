@@ -14,10 +14,10 @@ import {
 import {
     type Category, categoryFactory, createCategories, createSite, type Draft, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
+import { formatingSlug } from './utils';
 import {
     generateArticle, generateSeo, moveDraftToArticle, selectCategoryForArticle, translate
 } from './utils/draft';
-import { formatingSlug } from "./utils";
 
 admin.initializeApp();
 
@@ -77,24 +77,12 @@ export const onSiteBuilder = onDocumentCreated(
                     slug: formatingSlug(category.slug)
                 })));
             } else {
-                if (first<Category>(
-                    categories
-                ) && defaultTranslate.find(
-                    lang => first<Category>(
-                        categories
-                    )?.title[lang]
-                )) {
-                    info(
-                        'Categories found, translating categories'
-                    );
+                if (first<Category>(categories) && defaultTranslate.find(lang => first<Category>(categories)?.title[lang])) {
+                    info('Categories found, translating categories');
 
-                    defaultCategories.push(
-                        ...categories
-                    );
+                    defaultCategories.push(...categories);
                 } else {
-                    info(
-                        'Categories found, generating categories'
-                    );
+                    info('Categories found, generating categories');
 
                     const translatedCategories = await translateCategoriesPrompt(
                         defaultTranslate,
@@ -113,95 +101,87 @@ export const onSiteBuilder = onDocumentCreated(
 
             let translatedDescription: I18n;
 
-        if (typeof description === 'string') {
-            translatedDescription = await translatePrompt(
-                defaultTranslate,
-                description,
-                openAi
-            );
-        } else {
-            translatedDescription = defaultTranslate.reduce(
-                (
-                    acc: {
-                        [key: string]: string;
-                    }, lang: string
-                ) => {
-                    acc[lang] = description[lang];
-                    return acc;
-                },
-                {}
-            );
-        }
-
-        info('Translating keywords');
-        let translatedKeywords: I18n = {};
-        let convertKeywords: I18n = {};
-
-        if (typeof keywords === 'string') {
-            translatedKeywords = await translatePrompt(
-                defaultTranslate,
-                keywords,
-                openAi
-            );
-        } else {
-            convertKeywords = await translatePrompt(
-                defaultTranslate,
-                keywords.join(', '),
-                openAi
-            );
-        }
-
-        for (const lang in convertKeywords) {
-            translatedKeywords[lang] = (convertKeywords[lang] as string).split(', ').map(keyword => keyword.trim());
-        }
-
-        const dataSite: Site = siteFactory(
-            domain,
-            {
-                title: defaultTranslate.reduce(
+            if (typeof description === 'string') {
+                translatedDescription = await translatePrompt(
+                    defaultTranslate,
+                    description,
+                    openAi
+                );
+            } else {
+                translatedDescription = defaultTranslate.reduce(
                     (
                         acc: {
                             [key: string]: string;
                         }, lang: string
                     ) => {
-                        acc[lang] = sitename;
+                        acc[lang] = description[lang];
                         return acc;
                     },
                     {}
-                ),
-                description: translatedDescription,
-                keywords: translatedKeywords,
-            },
-            defaultTranslate
-        );
+                );
+            }
 
-            info(
-                'Creating site'
+            info('Translating keywords');
+            let translatedKeywords: I18n = {};
+            let convertKeywords: I18n = {};
+
+            if (typeof keywords === 'string') {
+                translatedKeywords = await translatePrompt(
+                    defaultTranslate,
+                    keywords,
+                    openAi
+                );
+            } else {
+                convertKeywords = await translatePrompt(
+                    defaultTranslate,
+                    keywords.join(', '),
+                    openAi
+                );
+            }
+
+            for (const lang in convertKeywords) {
+                translatedKeywords[lang] = (convertKeywords[lang] as string).split(', ').map(keyword => keyword.trim());
+            }
+
+            const dataSite: Site = siteFactory(
+                domain,
+                {
+                    title: defaultTranslate.reduce(
+                        (
+                            acc: {
+                                [key: string]: string;
+                            }, lang: string
+                        ) => {
+                            acc[lang] = sitename;
+                            return acc;
+                        },
+                        {}
+                    ),
+                    description: translatedDescription,
+                    keywords: translatedKeywords,
+                },
+                defaultTranslate
             );
+
+            info('Creating site');
             await createSite(
                 dataSite,
                 db
             );
 
-            info(
-                'Creating categories'
-            );
+            info('Creating categories');
             await createCategories(
                 dataSite,
-                defaultCategories.map(
-                    category => (
-                        categoryFactory(
-                            category.title,
-                            category.description,
-                            category.slug
-                        ))
-                ),
+                defaultCategories.map(category => (
+                    categoryFactory(
+                        category.title,
+                        category.description,
+                        category.slug
+                    ))),
                 db
             );
 
-            info(
-                'Site created'
-            );
+            info('Site created');
         }
     }
 );
