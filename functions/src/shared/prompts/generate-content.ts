@@ -71,7 +71,7 @@ const promptGenerateContentSeo = () => `Agissez en tant rédacteur de contenu sp
 
 7. Formatez votre réponse en JSON de la façon suivante :
 
-Attention : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
+Important : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
 
 {
 "title": "string",

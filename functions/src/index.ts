@@ -5,6 +5,7 @@ import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/fire
 import { first, isEmpty } from "lodash";
 import { Category, categoryFactory, createCategories, createSite, Draft, generateCategoriesPrompt, I18n, initOpentAI, locales, Site, siteFactory, translateCategoriesPrompt, translatePrompt } from './shared';
 import { generateArticle, generateSeo, moveDraftToArticle, selectCategoryForArticle, translate } from "./utils/draft";
+import { formatingSlug } from "./utils";
 
 admin.initializeApp();
 
@@ -48,13 +49,17 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
         defaultCategories.push(...translatedCategories.categories.map((category) => ({
             title: category.title,
             description: category.description,
-            slug: category.slug,
+            slug: formatingSlug(category.slug)
         })));
     } else {
         if (first<Category>(categories) && defaultTranslate.find((lang) => first<Category>(categories)?.title[lang])) {
             info('Categories found, translating categories');
 
-            defaultCategories.push(...categories);
+            defaultCategories.push(...categories.map((category: Category) => ({
+                title: category.title,
+                description: category.description,
+                slug: formatingSlug(category.slug)
+            })));
         } else {
             info('Categories found, generating categories');
 
@@ -65,7 +70,11 @@ export const onSiteBuilder = onDocumentCreated('site_builder/{builderId}', async
 
             );
 
-            defaultCategories.push(...translatedCategories.categories);
+            defaultCategories.push(...translatedCategories.categories.map((category) => ({
+                title: category.title,
+                description: category.description,
+                slug: formatingSlug(category.slug)
+            })));
         }
     }
 

@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { articleFactory, convertDraftToArticle, DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, SiteId, translatePrompt, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo } from "../shared";
 import { selectCategoryForArticlePrompt } from "../shared/prompts/select-category-for-article";
 import { info } from "firebase-functions/logger";
+import { formatingSlug } from "./slug";
 
 export const selectCategoryForArticle = async (
     content: string,
@@ -99,7 +100,7 @@ export const translate = async (
             descriptionTranslated,
             articleTranslated,
             summaryTranslated,
-            slugTranslated,
+            formatingSlug(slugTranslated)
         ),
         db
     );

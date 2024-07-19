@@ -49,6 +49,9 @@ Vous allez recevoir un contenu texte uniquement à traduire en fonction d'une li
 Gardez la mise en forme s'il y en a une.
 Voici les codes langue que vous devez prendre en compte : ${codelang.join(', ')}.
 Vous retournez le contenu au format JSON qui est un objet code langue associé au contenu traduit.
+
+Important : Le slug doit être en minuscules et ne doit pas contenir d'espaces ni de caractères spéciaux.
+
 Voici un exemple de format attendu :
 
 {
@@ -60,7 +63,7 @@ Voici un exemple de format attendu :
 "en": "..."
 },
         slug: {
-"fr": "contenu traduit...",
+"fr": "contenu-traduit",
 "en": "..."
         },
         description: {
