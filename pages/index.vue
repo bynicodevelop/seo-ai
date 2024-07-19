@@ -73,7 +73,13 @@ try {
 </script>
 
 <template>
-    <main class="mx-auto max-w-3xl">
+    <main>
         <sections-latest-articles-component />
     </main>
 </template>
+
+<style scoped lang="scss">
+main {
+    @apply mx-auto max-w-3xl;
+}
+</style>
