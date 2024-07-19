@@ -12,9 +12,10 @@ import {
 import {
     SITE_BUILDER_COLLECTION, SITE_COLLECTION
 } from './types';
-import {
+import type {
     ID,
-    MetaSeo,
+    MetaSeo 
+,
     siteFactoryEntity,
     type Config, type SiteDomain, type SiteId
 } from '../types';
@@ -156,7 +157,9 @@ describe(
                 const siteId: SiteId = '12345';
                 const date = new Date();
 
-                it('Doit retourner un site existant par son ID', async () => {
+                it(
+'Doit retourner un site existant par son ID',
+async () => {
                     const mockGet = vi.fn().mockResolvedValue({
                         exists: true,
                         id: '12345',
@@ -174,7 +177,10 @@ describe(
 
                     const db = { collection: mockCollection } as unknown as Firestore;
 
-                    const result = await getSiteById('12345' as SiteId, db);
+                    const result = await getSiteById(
+'12345' as SiteId,
+db
+);
 
                     expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
                     expect(mockDoc).toHaveBeenCalledWith('12345');
@@ -189,7 +195,8 @@ describe(
                         date,
                         date
                     ));
-                });
+                }
+);
 
                 it(
                     'Doit retourner null si le site n\'existe pas',
