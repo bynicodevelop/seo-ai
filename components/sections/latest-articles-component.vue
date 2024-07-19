@@ -39,7 +39,7 @@ try {
 </script>
 
 <template>
-    <section class="space-y-4">
+    <section v-if="articles && articles.length > 0" class="space-y-4">
         <h5>{{ $t('components.latestArticle.title') }}</h5>
         <blocks-articles-component
 v-for="(article, index) in articles"
