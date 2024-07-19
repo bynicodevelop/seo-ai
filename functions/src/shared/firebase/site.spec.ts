@@ -1,19 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
- DocumentData, DocumentSnapshot, Firestore, QueryDocumentSnapshot, QuerySnapshot 
+    DocumentData, DocumentReference, DocumentSnapshot, Firestore, QueryDocumentSnapshot, QuerySnapshot
 } from 'firebase-admin/firestore';
 import {
- describe, it, expect, vi, beforeEach, type Mock 
+    describe, it, expect, vi, beforeEach, type Mock
 } from 'vitest';
 
 import {
- createSite, getSiteByDomain, getSiteById, initSite 
+    createSite, getSiteByDomain, getSiteById, initSite
 } from './site';
 import {
- SITE_BUILDER_COLLECTION, SITE_COLLECTION 
+    SITE_BUILDER_COLLECTION, SITE_COLLECTION
 } from './types';
-import type {
- Config, SiteDomain, SiteId 
+import {
+    ID,
+    MetaSeo,
+    siteFactoryEntity,
+    type Config, type SiteDomain, type SiteId
 } from '../types';
 
 describe(
@@ -27,10 +30,10 @@ describe(
                 let db: Firestore;
 
                 beforeEach(() => {
-                        mockAdd = vi.fn().mockResolvedValue({ id: '12345' });
-                        mockCollection = vi.fn().mockReturnValue({ add: mockAdd, });
-                        db = { collection: mockCollection, } as unknown as Firestore;
-                    });
+                    mockAdd = vi.fn().mockResolvedValue({ id: '12345' });
+                    mockCollection = vi.fn().mockReturnValue({ add: mockAdd, });
+                    db = { collection: mockCollection, } as unknown as Firestore;
+                });
 
                 it(
                     'Doit initialiser un site avec toutes les données',
@@ -58,20 +61,20 @@ describe(
 
                         expect(mockCollection).toHaveBeenCalledWith(SITE_BUILDER_COLLECTION);
                         expect(mockAdd).toHaveBeenCalledWith({
-                                domain: 'localhost',
-                                sitename: 'Test Site',
-                                description: 'This is a test site',
-                                locales: ['en',
-                                    'fr'],
-                                keywords: ['test',
-                                    'site'],
-                                categories: [
-                                    {
-                                        id: 'cat1',
-                                        name: 'Category 1'
-                                    }
-                                ]
-                            });
+                            domain: 'localhost',
+                            sitename: 'Test Site',
+                            description: 'This is a test site',
+                            locales: ['en',
+                                'fr'],
+                            keywords: ['test',
+                                'site'],
+                            categories: [
+                                {
+                                    id: 'cat1',
+                                    name: 'Category 1'
+                                }
+                            ]
+                        });
                     }
                 );
 
@@ -93,14 +96,14 @@ describe(
 
                         expect(mockCollection).toHaveBeenCalledWith(SITE_BUILDER_COLLECTION);
                         expect(mockAdd).toHaveBeenCalledWith({
-                                domain: 'localhost',
-                                sitename: 'Test Site',
-                                description: 'This is a test site',
-                                locales: ['en',
-                                    'fr'],
-                                keywords: [],
-                                categories: []
-                            });
+                            domain: 'localhost',
+                            sitename: 'Test Site',
+                            description: 'This is a test site',
+                            locales: ['en',
+                                'fr'],
+                            keywords: [],
+                            categories: []
+                        });
                     }
                 );
             }
@@ -134,14 +137,14 @@ describe(
                         // Assertions
                         expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
                         expect(mockAdd).toHaveBeenCalledWith({
-                                domain: 'http://localhost',
-                                seo: {
-                                    title: { fr: 'Test', },
-                                    description: { fr: 'Test', },
-                                    keywords: { fr: ['test'], },
-                                },
-                                locales: ['fr'],
-                            });
+                            domain: 'http://localhost',
+                            seo: {
+                                title: { fr: 'Test', },
+                                description: { fr: 'Test', },
+                                keywords: { fr: ['test'], },
+                            },
+                            locales: ['fr'],
+                        });
                     }
                 );
             }
@@ -151,38 +154,42 @@ describe(
             'getSiteById',
             () => {
                 const siteId: SiteId = '12345';
+                const date = new Date();
 
-                it(
-                    'Doit retourner un site existant par son ID',
-                    async () => {
-                        const mockGet = vi.fn().mockResolvedValue({
-    exists: true,
-    data: () => ({
- id: '12345',
-domain: 'localhost' 
-})
-} as unknown as DocumentSnapshot<DocumentData>);
-                        const mockDoc = vi.fn().mockReturnValue({ get: mockGet, });
-                        const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc, });
+                it('Doit retourner un site existant par son ID', async () => {
+                    const mockGet = vi.fn().mockResolvedValue({
+                        exists: true,
+                        id: '12345',
+                        ref: {}, // mock reference object
+                        data: () => ({
+                            domain: 'localhost',
+                            seo: {} as MetaSeo,
+                            locales: [],
+                            createdAt: date,
+                            updatedAt: date
+                        })
+                    } as unknown as DocumentSnapshot<DocumentData>);
+                    const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
+                    const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc });
 
-                        // Mock Firestore instance
-                        const db = { collection: mockCollection, } as unknown as Firestore;
+                    const db = { collection: mockCollection } as unknown as Firestore;
 
-                        const result = await getSiteById(
-                            siteId,
-                            db
-                        );
+                    const result = await getSiteById('12345' as SiteId, db);
 
-                        // Assertions
-                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
-                        expect(mockDoc).toHaveBeenCalledWith(siteId);
-                        expect(mockGet).toHaveBeenCalled();
-                        expect(result).toEqual({
-                                exists: true,
-                                data: expect.any(Function)
-                            });
-                    }
-                );
+                    expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                    expect(mockDoc).toHaveBeenCalledWith('12345');
+                    expect(mockGet).toHaveBeenCalled();
+
+                    expect(result).toEqual(siteFactoryEntity(
+                        {} as any,
+                        '12345',
+                        'localhost',
+                        {} as MetaSeo,
+                        [],
+                        date,
+                        date
+                    ));
+                });
 
                 it(
                     'Doit retourner null si le site n\'existe pas',
@@ -213,18 +220,28 @@ domain: 'localhost'
             'getSiteByDomain',
             () => {
                 const domain: SiteDomain = 'localhost';
+                const date = new Date();
 
                 it(
                     'Doit retourner un site existant par son domaine',
                     async () => {
                         const mockDocs = [{
- id: '12345',
-data: () => ({ domain: 'localhost' }) 
-}] as unknown as QueryDocumentSnapshot[];
+                            id: '12345',
+                            exists: true,
+                            ref: {},
+                            data: () => ({
+                                createdAt: date,
+                                domain: 'localhost',
+                                locales: [],
+                                seo: {} as MetaSeo,
+                                updatedAt: date,
+                            }),
+                        }] as unknown as QueryDocumentSnapshot[];
                         const mockGet = vi.fn().mockResolvedValue({
-    empty: false,
-    docs: mockDocs,
-} as unknown as QuerySnapshot);
+                            empty: false,
+                            docs: mockDocs,
+                        } as unknown as QuerySnapshot);
+
                         const mockWhere = vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ get: mockGet, }), });
                         const mockCollection = vi.fn().mockReturnValue({ where: mockWhere, });
 
@@ -243,8 +260,18 @@ data: () => ({ domain: 'localhost' })
                             '==',
                             domain
                         );
+
                         expect(mockGet).toHaveBeenCalled();
-                        expect(result).toEqual(mockDocs[0]);
+
+                        expect(result).toEqual(siteFactoryEntity(
+                            {} as DocumentReference,
+                            '12345' as ID,
+                            domain,
+                            {} as MetaSeo,
+                            [],
+                            date,
+                            date
+                        ));
                     }
                 );
 
@@ -252,9 +279,9 @@ data: () => ({ domain: 'localhost' })
                     'Doit retourner null si aucun site n\'existe pour le domaine',
                     async () => {
                         const mockGet = vi.fn().mockResolvedValue({
-    empty: true,
-    docs: [],
-} as unknown as QuerySnapshot);
+                            empty: true,
+                            docs: [],
+                        } as unknown as QuerySnapshot);
                         const mockWhere = vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ get: mockGet, }), });
                         const mockCollection = vi.fn().mockReturnValue({ where: mockWhere, });
 
