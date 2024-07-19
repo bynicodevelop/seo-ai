@@ -1,5 +1,7 @@
 # SEO-AI
 
+SEO-AI est un projet de création de site et génération de contenu optimisé pour le SEO 100% géré par intélligence artificielle.
+
 ## Techno
 
 - Nuxt 3 
@@ -364,6 +366,38 @@ Pour juste déployer le projet.
 ```batch
 npm run deploy:firebase
 ```
+
+## Règles github
+
+### Formattage des branches
+
+Format de création de branche `(feat|chore|test|refactor)/ID_ISSUE/NAME`
+
+- `feat` : Ajout de fonctionnalité
+- `chore` : Divers modifications sans rapport direct avec la fonctionnalité ou correctifs
+- `test` : Ajout de tests
+- `refactor` : Travraux de refactorisation de code
+
+### Rédaction des commits
+
+Un commit doit avoir quelques données pour mettre le maillage entre un commit et un ticket.
+
+Commit simple : 
+
+```
+(feat|chore|test|refactor): #ID_ISSUE - MESSAGE
+```
+
+Commit avec précisions (avec une ligne vide) : 
+
+```
+(feat|chore|test|refactor): #ID_ISSUE - MESSAGE
+
+MESSAGE DE PRÉCISIONS
+```
+
+Le `#ID_ISSUE` permettra de faire le lien avec le ticket associé au commit.
+
 
 ## Lexite & Aide
 
