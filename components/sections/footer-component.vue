@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Site } from '~/functions/src/shared';
 
+const localePath = useLocalePath();
 const { locale } = useI18n();
 const { $domain, $translate } = useNuxtApp() as any;
 const { fetchDomain } = useContent();
@@ -29,7 +30,7 @@ try {
   <footer class="container mx-auto space-x-10 relative items-center grid grid-cols-3">
     <div class="flex flex-col text-center md:flex-col lg:text-left space-y-2 col-span-3 lg:col-span-1">
       <h6 class="text-lg">
-        <NuxtLink to="/">
+        <NuxtLink :to="localePath('/')">
           {{ $translate(siteRef?.seo.title, locale) }}
         </NuxtLink>
       </h6>
