@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import type { Category, Article } from '~/functions/src/shared';
+import type {
+    Category, Article
+} from '~/functions/src/shared';
+
 const localePath = useLocalePath();
 const { locale } = useI18n();
-const { $translate } = useNuxtApp() as any;
+const { $translate } = useNuxtApp() as unknown as {
+    $translate: Function
+};
 defineProps<{
     article: {
         article: Article,
@@ -11,9 +16,9 @@ defineProps<{
 }>();
 
 const haveSlug = (article: {
-    article: Article,
-    category: Category
-}) => article.article.slug && article.category.slug;
+        article: Article,
+        category: Category
+    }): boolean => !!article.article.slug && !!article.category.slug;
 </script>
 
 <template>

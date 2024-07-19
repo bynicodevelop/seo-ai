@@ -2,14 +2,20 @@
 import type { Site } from '~/functions/src/shared';
 
 const { locale } = useI18n();
-const { $domain, $translate } = useNuxtApp() as any;
+const {
+  $domain, $translate
+} = useNuxtApp();
 const { fetchDomain } = useContent();
 
 const siteRef = ref<Site | null>(null);
+
 const copyRightDate = new Date().getFullYear();
 
 try {
-  const { data: site } = await useAsyncData<Site>('domain', async () => await fetchDomain($domain as string));
+  const { data: site } = await useAsyncData<Site>(
+    'domain',
+    async () => await fetchDomain($domain as string)
+  );
 
   siteRef.value = site.value;
 

@@ -1,9 +1,14 @@
-import OpenAI from "openai";
-import { SiteEntity } from "../types";
-import { ChatCompletionMessageParam } from "openai/resources";
-import { addMessages, callOpenAI } from "../ai";
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
 
-const promptGenerateContent = (siteDescription: string, keywords: string) => `
+import {
+ addMessages, callOpenAI 
+} from '../ai';
+import type { SiteEntity } from '../types';
+
+const promptGenerateContent = (
+    siteDescription: string, keywords: string
+) => `
 Agissez en tant rédacteur de contenu spécialisé dans le SEO.
 Votre tâche est de rédiger un article de blog optimisé pour le SEO.
 
@@ -43,16 +48,30 @@ Accroche : Commencez par une question ou une statistique intéressante qui attir
 Développement : Rédigez le corps de l'article en suivant une structure logique et fluide avec des sous-titres pour une meilleure lecture.
 `;
 
-export const generateArticleFromContent = async (content: string, site: SiteEntity, openai: OpenAI): Promise<string> => {
+export const generateArticleFromContent = async (
+content: string, site: SiteEntity, openai: OpenAI
+): Promise<string> => {
     const messages: ChatCompletionMessageParam[] = [];
 
-    addMessages(messages, 'assistant', promptGenerateContent(
+    addMessages(
+        messages,
+        'assistant',
+        promptGenerateContent(
         site.seo.description.fr as string,
         site.seo.keywords?.fr as string
-    ));
-    addMessages(messages, 'user', content);
+        )
+    );
+    addMessages(
+        messages,
+        'user',
+        content
+    );
 
-    return await callOpenAI<string>(messages, openai, 'text');
+    return await callOpenAI<string>(
+        messages,
+        openai,
+        'text'
+    );
 };
 
 const promptGenerateContentSeo = () => `Agissez en tant rédacteur de contenu spécialisé dans le SEO. Votre tâche est de rédiger les éléments associés à un article.
@@ -81,7 +100,9 @@ Important : Le slug doit être en minuscules et ne doit pas contenir d'espaces n
 "summary": "string"
 }`;
 
-export const generateSeoFromArticle = async (article: string, openai: OpenAI): Promise<{
+export const generateSeoFromArticle = async (
+    article: string, openai: OpenAI
+): Promise<{
     description: string,
     keywords: string[],
     slug: string,
@@ -90,8 +111,16 @@ export const generateSeoFromArticle = async (article: string, openai: OpenAI): P
 }> => {
     const messages: ChatCompletionMessageParam[] = [];
 
-    addMessages(messages, 'assistant', promptGenerateContentSeo());
-    addMessages(messages, 'user', article as string);
+    addMessages(
+        messages,
+        'assistant',
+        promptGenerateContentSeo()
+    );
+    addMessages(
+        messages,
+        'user',
+article as string
+    );
 
     return await callOpenAI<{
         description: string,
@@ -99,5 +128,8 @@ export const generateSeoFromArticle = async (article: string, openai: OpenAI): P
         slug: string,
         summary: string,
         title: string
-    }>(messages, openai);
+    }>(
+        messages,
+        openai
+    );
 };

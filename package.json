@@ -23,9 +23,12 @@
     "postinstall": "nuxt prepare",
     "firebase:dump": "firebase emulators:export .data",
     "firebase:restore": "firebase emulators:start --import .data",
-    "test": "vitest"
+    "test": "vitest spec.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@nuxt/eslint": "^0.3.13",
     "@nuxt/image": "^1.7.0",
     "@nuxtjs/i18n": "^8.3.1",
     "@nuxtjs/mdc": "^0.8.3",
@@ -39,11 +42,13 @@
     "vue": "latest"
   },
   "devDependencies": {
+    "@nuxt/eslint-config": "^0.3.13",
     "@nuxt/test-utils": "^3.13.1",
     "@tailwindcss/typography": "^0.5.13",
     "@types/lodash": "^4.17.6",
     "@unhead/schema-org": "^1.9.16",
     "@vue/test-utils": "^2.4.6",
+    "eslint": "^9.7.0",
     "vitest": "^1.6.0"
   }
 }

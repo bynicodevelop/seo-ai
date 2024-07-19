@@ -1,4 +1,4 @@
-import { DocumentReference } from "firebase-admin/firestore";
+import type { DocumentReference } from 'firebase-admin/firestore';
 
 export type ID = string | undefined;
 

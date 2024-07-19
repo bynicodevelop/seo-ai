@@ -1,4 +1,4 @@
-import { Article } from "./article";
+import type { Article } from './article';
 
 /**
  * The status of a draft.

@@ -1,4 +1,6 @@
-export const promptMetadataFromContent = (siteContent: string, keywords: string[], content: string): string => `
+export const promptMetadataFromContent = (
+    siteContent: string, keywords: string[], content: string
+): string => `
 Agissez en tant qu'expert SEO.
 Vous allez avoir des informations sur le site où des contenus seront rédigés.
 Vous allez analyser le contenu en dessous dans le but d'extraire des information pour optimiser le SEO d'un futur article.

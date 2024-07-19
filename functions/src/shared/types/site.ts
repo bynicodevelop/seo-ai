@@ -1,7 +1,10 @@
-import { DocumentReference } from "firebase-admin/firestore";
-import { locales } from "./i18n";
-import type { MetaSeo } from "./meta-seo";
-import { ID, IdType, Reference } from "./common";
+import type { DocumentReference } from 'firebase-admin/firestore';
+
+import type {
+ ID, IdType, Reference 
+} from './common';
+import type { locales } from './i18n';
+import type { MetaSeo } from './meta-seo';
 
 export type SiteId = string;
 export type SiteDomain = string;

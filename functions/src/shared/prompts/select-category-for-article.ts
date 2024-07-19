@@ -1,7 +1,10 @@
-import { ChatCompletionMessageParam } from "openai/resources";
-import { Category } from "../types";
-import { addMessages, callOpenAI } from "../ai";
-import OpenAI from "openai";
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
+
+import {
+ addMessages, callOpenAI 
+} from '../ai';
+import type { Category } from '../types';
 
 const promptSelectCategoryForArticle = (categories: Category[]): string => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO.
@@ -20,15 +23,28 @@ Retourner la propriété id de la catégorie sélectionnée au format JSON suiva
 }
 `;
 
-export const selectCategoryForArticlePrompt = async (content: string, categories: Category[], openai: OpenAI): Promise<{
+export const selectCategoryForArticlePrompt = async (
+content: string, categories: Category[], openai: OpenAI
+): Promise<{
     id: string;
 }> => {
     const messages: ChatCompletionMessageParam[] = [];
 
-    addMessages(messages, 'assistant', promptSelectCategoryForArticle(categories));
-    addMessages(messages, 'user', content);
+    addMessages(
+        messages,
+        'assistant',
+        promptSelectCategoryForArticle(categories)
+    );
+    addMessages(
+        messages,
+        'user',
+        content
+    );
 
     return await callOpenAI<{
         id: string;
-    }>(messages, openai);
+    }>(
+messages,
+openai
+);
 }

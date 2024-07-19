@@ -1,8 +1,13 @@
-import { ChatCompletionMessageParam } from "openai/resources";
-import OpenAI from "openai";
-import { addMessages, callOpenAI } from "../ai/open-ai";
-import { Category } from "../types";
-import { error, info } from "firebase-functions/logger";
+import {
+ error, info 
+} from 'firebase-functions/logger';
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
+
+import {
+ addMessages, callOpenAI 
+} from '../ai/open-ai';
+import type { Category } from '../types';
 
 const promptCreateCategories = () => `Agissez en tant qu'expert SEO. 
 Vous devez pour un trouver une liste de catégories optimisé pour le SEO dans le cadre de la création d'un blog.
@@ -75,7 +80,9 @@ Voici un exemple de format attendu :
 }
 `;
 
-export const generateCategoriesPrompt = async (content: object, openai: OpenAI): Promise<{
+export const generateCategoriesPrompt = async (
+    content: object, openai: OpenAI
+): Promise<{
     [key: string]: [
         {
             title: string;
@@ -89,8 +96,16 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
     try {
         const messages: ChatCompletionMessageParam[] = [];
 
-        addMessages(messages, 'assistant', promptCreateCategories());
-        addMessages(messages, 'user', content);
+        addMessages(
+            messages,
+            'assistant',
+            promptCreateCategories()
+        );
+        addMessages(
+            messages,
+            'user',
+            content
+        );
 
         const result = await callOpenAI<{
             [key: string]: [
@@ -100,7 +115,10 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
                     description: string;
                 }
             ]
-        }>(messages, openai);
+        }>(
+            messages,
+            openai
+        );
 
         info('Categories generated');
 
@@ -111,19 +129,32 @@ export const generateCategoriesPrompt = async (content: object, openai: OpenAI):
     }
 }
 
-export const translateCategoriesPrompt = async (codeLang: string[], content: object, openai: OpenAI): Promise<{
+export const translateCategoriesPrompt = async (
+    codeLang: string[], content: object, openai: OpenAI
+): Promise<{
     [key: string]: Category[]
 }> => {
     info('Translating categories');
     try {
         const messages: ChatCompletionMessageParam[] = [];
 
-        addMessages(messages, 'assistant', promptTranslateCategories(codeLang));
-        addMessages(messages, 'user', content);
+        addMessages(
+            messages,
+            'assistant',
+            promptTranslateCategories(codeLang)
+        );
+        addMessages(
+            messages,
+            'user',
+            content
+        );
 
         const result = await callOpenAI<{
             [key: string]: Category[]
-        }>(messages, openai);
+        }>(
+            messages,
+            openai
+        );
 
         info('Categories translated');
 
