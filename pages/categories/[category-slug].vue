@@ -144,7 +144,6 @@ try {
                 }" />
             </template>
 
-
             <div v-else class="empty-content">
                 <p>{{ $t('pages.categories.no_articles') }}</p>
             </div>
