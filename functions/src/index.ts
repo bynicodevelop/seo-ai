@@ -21,7 +21,10 @@ import type {
 import {
     articlePromptFactory, categoryFactory, createCategories, createSite, DRAFT_STATUS, generateCategoriesPrompt, initOpentAI, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
-import { formatingSlug } from './utils';
+import { resumeContentPrompt } from './shared/prompts/resume';
+import {
+    cleanContentToString, formatingSlug
+} from './utils';
 import {
     generateArticle, moveDraftToArticle, selectCategoryForArticle, translate
 } from './utils/draft';
@@ -273,17 +276,35 @@ export const onDataCreated = onDocumentWritten(
         }
 
         try {
-            const texts = await Promise.all(urls.map(async (url) => {
+            const texts = await Promise.all(urls!.map(async (url) => {
                 const response = await axios.get(url);
                 const selector = await load(response.data);
-                return selector('body #centerCol').text().replace(
-                    /[\n\t]/g,
-                    ' '
-                );
+
+                let content = selector('body article').text();
+
+                if (isEmpty(content)) {
+                    content = selector('body main').text();
+                }
+
+                if (isEmpty(content)) {
+                    content = selector('body').text()
+                }
+
+                return content;
             }));
 
+            const contents = texts.map((text: string) => cleanContentToString(text));
+
+            const resumes = await resumeContentPrompt(
+                contents,
+                openAi
+            );
+
             await admin.firestore().collection('data').doc(dataId).set(
-                { contents: texts },
+                {
+                    contents,
+                    resumes
+                },
                 { merge: true }
             );
         } catch (e) {
