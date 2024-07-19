@@ -127,12 +127,12 @@ try {
 </script>
 
 <template>
-    <main class="space-y-6 mx-auto max-w-3xl">
+    <main>
         <header>
-            <h3 class="text-base font-semibold leading-6 text-gray-900">
+            <h3>
                 {{ $translate(category?.title, locale) }}
             </h3>
-            <p class="mt-1 text-sm text-gray-500">
+            <p>
                 {{ $translate(category?.description, locale) }}
             </p>
         </header>
@@ -145,9 +145,39 @@ try {
             </template>
 
 
-            <div v-else class="flex items-center justify-center h-36">
-                <p class="text-gray-500">{{ $t('pages.categories.no_articles') }}</p>
+            <div v-else class="empty-content">
+                <p>{{ $t('pages.categories.no_articles') }}</p>
             </div>
         </section>
     </main>
 </template>
+
+<style scoped lang="scss">
+main {
+    @apply grid lg:grid-cols-6;
+
+    header {
+        @apply lg:col-span-2;
+
+        h3 {
+            @apply text-base font-semibold leading-6 text-gray-900;
+        }
+
+        p {
+            @apply mt-1 text-sm text-gray-500;
+        }
+    }
+
+    section {
+        @apply lg:col-span-3 lg:col-start-4;
+
+        .empty-content {
+            @apply flex items-center justify-center h-36;
+
+            p {
+                @apply text-gray-500;
+            }
+        }
+    }
+}
+</style>
