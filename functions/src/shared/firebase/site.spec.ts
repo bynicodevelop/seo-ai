@@ -12,10 +12,9 @@ import {
 import {
     SITE_BUILDER_COLLECTION, SITE_COLLECTION
 } from './types';
-import type {
-    ID,
-    MetaSeo 
-,
+import {
+    type ID,
+    type MetaSeo,
     siteFactoryEntity,
     type Config, type SiteDomain, type SiteId
 } from '../types';
@@ -158,45 +157,45 @@ describe(
                 const date = new Date();
 
                 it(
-'Doit retourner un site existant par son ID',
-async () => {
-                    const mockGet = vi.fn().mockResolvedValue({
-                        exists: true,
-                        id: '12345',
-                        ref: {}, // mock reference object
-                        data: () => ({
-                            domain: 'localhost',
-                            seo: {} as MetaSeo,
-                            locales: [],
-                            createdAt: date,
-                            updatedAt: date
-                        })
-                    } as unknown as DocumentSnapshot<DocumentData>);
-                    const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
-                    const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc });
+                    'Doit retourner un site existant par son ID',
+                    async () => {
+                        const mockGet = vi.fn().mockResolvedValue({
+                            exists: true,
+                            id: '12345',
+                            ref: {}, // mock reference object
+                            data: () => ({
+                                domain: 'localhost',
+                                seo: {} as MetaSeo,
+                                locales: [],
+                                createdAt: date,
+                                updatedAt: date
+                            })
+                        } as unknown as DocumentSnapshot<DocumentData>);
+                        const mockDoc = vi.fn().mockReturnValue({ get: mockGet });
+                        const mockCollection = vi.fn().mockReturnValue({ doc: mockDoc });
 
-                    const db = { collection: mockCollection } as unknown as Firestore;
+                        const db = { collection: mockCollection } as unknown as Firestore;
 
-                    const result = await getSiteById(
-'12345' as SiteId,
-db
-);
+                        const result = await getSiteById(
+                            '12345' as SiteId,
+                            db
+                        );
 
-                    expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
-                    expect(mockDoc).toHaveBeenCalledWith('12345');
-                    expect(mockGet).toHaveBeenCalled();
+                        expect(mockCollection).toHaveBeenCalledWith(SITE_COLLECTION);
+                        expect(mockDoc).toHaveBeenCalledWith('12345');
+                        expect(mockGet).toHaveBeenCalled();
 
-                    expect(result).toEqual(siteFactoryEntity(
-                        {} as any,
-                        '12345',
-                        'localhost',
-                        {} as MetaSeo,
-                        [],
-                        date,
-                        date
-                    ));
-                }
-);
+                        expect(result).toEqual(siteFactoryEntity(
+                            {} as any,
+                            '12345',
+                            'localhost',
+                            {} as MetaSeo,
+                            [],
+                            date,
+                            date
+                        ));
+                    }
+                );
 
                 it(
                     'Doit retourner null si le site n\'existe pas',
