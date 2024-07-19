@@ -153,7 +153,7 @@ try {
 
 <style scoped lang="scss">
 main {
-    @apply grid lg:grid-cols-6;
+    @apply grid space-y-10 lg:grid-cols-6;
 
     header {
         @apply lg:col-span-2;

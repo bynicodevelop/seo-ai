@@ -19,7 +19,11 @@ export default defineI18nLocale(() => {
             },
             components: {
                 latestArticle: { title: 'Derniers articles' },
-                footer: { all_rights_reserved: 'Tous droits réservés' }
+                footer: { all_rights_reserved: 'Tous droits réservés' },
+                navigation: {
+                    open_menu: 'Ouvrir le menu',
+                    close_menu: 'Fermer le menu',
+                }
             }
         }
     });
