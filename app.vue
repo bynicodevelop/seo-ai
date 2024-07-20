@@ -3,7 +3,7 @@ import type { Site } from '~/functions/src/shared';
 
 const { locale } = useI18n();
 const {
- $domain, $translate 
+    $domain, $translate
 } = useNuxtApp() as unknown as { $domain: string, $translate: Function };
 const { fetchDomain } = useContent();
 const { getCanonical } = useUtils();
@@ -18,29 +18,28 @@ try {
     );
 
     useHead({
-            htmlAttrs: { lang: locale.value, },
-            title: $translate(
-                domainData.value?.seo.title,
-                locale.value
-            ),
-            meta: [
-                {
-                    hid: 'description',
-                    name: 'description',
-                    content: $translate(
-                        domainData.value?.seo.description,
-                        locale.value
-                    ),
-                },
-            ],
-            link: [
-                {
-                    rel: 'canonical',
-                    href: getCanonical()
-                }
-            ],
-            templateParams: { schemaOrg: { host: baseUrl, } },
-        });
+        htmlAttrs: { lang: locale.value, },
+        title: $translate(
+            domainData.value?.seo.title,
+            locale.value
+        ),
+        meta: [
+            {
+                name: 'description',
+                content: $translate(
+                    domainData.value?.seo.description,
+                    locale.value
+                ),
+            },
+        ],
+        link: [
+            {
+                rel: 'canonical',
+                href: getCanonical()
+            }
+        ],
+        templateParams: { schemaOrg: { host: baseUrl, } },
+    });
 
     const organization = {
         name: $translate(
@@ -50,21 +49,21 @@ try {
     }
 
     useSchemaOrg([
-            defineOrganization(organization),
-        ]);
+        defineOrganization(organization),
+    ]);
 } catch (error) {
     console.log(error);
 
     throw createError({
-            statusCode: 404,
-            message: 'Domain not found',
-            fatal: true
-        });
+        statusCode: 404,
+        message: 'Domain not found',
+        fatal: true
+    });
 }
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+    <NuxtLayout>
+        <NuxtPage />
+    </NuxtLayout>
 </template>
