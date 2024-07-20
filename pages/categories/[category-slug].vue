@@ -41,56 +41,56 @@ try {
     category.value = categoryData.value;
     articles.value = contentsData.value;
 
-    useHead({
-            title: $translate(
-                category.value?.title,
-                locale.value
-            ),
-            meta: [
-                {
-                    name: 'description',
-                    content: $translate(
-                        category.value?.description,
-                        locale.value
-                    ),
-                },
-            ],
-        });
+    useHeadSafe({
+        title: $translate(
+            category.value?.title,
+            locale.value
+        ),
+        meta: [
+            {
+                name: 'description',
+                content: $translate(
+                    category.value?.description,
+                    locale.value
+                ),
+            },
+        ],
+    });
 
     const articlesItems: {}[] = [];
 
     if (!articles.value?.hasOwnProperty('message')) {
         articles.value?.forEach((article: Article) => {
-                articlesItems.push({
-                        '@type': 'ListItem',
-                        'position': articlesItems.length + 1,
-                        'url': `${$domain}/${categoryslug}/${$translate(
-                            article.slug,
-                            locale.value
-                        )}`,
-                        'name': $translate(
-                            article.title,
-                            locale.value
-                        ),
-                    });
+            articlesItems.push({
+                '@type': 'ListItem',
+                'position': articlesItems.length + 1,
+                'url': `${$domain}/${categoryslug}/${$translate(
+                    article.slug,
+                    locale.value
+                )}`,
+                'name': $translate(
+                    article.title,
+                    locale.value
+                ),
             });
+        });
     }
 
     useSchemaOrg([
-            defineItemList({
-                    '@type': 'ItemList',
-                    'itemListElement': articlesItems,
-                }),
-            defineWebPage({ '@type': 'CollectionPage' }),
-        ])
+        defineItemList({
+            '@type': 'ItemList',
+            'itemListElement': articlesItems,
+        }),
+        defineWebPage({ '@type': 'CollectionPage' }),
+    ])
 } catch (error) {
     console.log(error);
 
     throw createError({
-            statusCode: 404,
-            message: 'Category not found',
-            fatal: true
-        });
+        statusCode: 404,
+        message: 'Category not found',
+        fatal: true
+    });
 }
 </script>
 
