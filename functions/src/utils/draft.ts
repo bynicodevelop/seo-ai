@@ -25,39 +25,52 @@ export const selectCategoryForArticle = async (
         siteId,
         db
     );
+
     const categories = await getCategories(
         site!,
         db
     );
 
-    // TODO: TRY CATCH
-    const categorySelected = await selectCategoryForArticlePrompt(
-        content!,
-        categories,
-        openAi
-    );
-
     try {
-        await validateCategoryId(categorySelected);
+        const categorySelected = await selectCategoryForArticlePrompt(
+            content!,
+            categories,
+            openAi
+        );
+
+        try {
+            await validateCategoryId(categorySelected);
+
+            await updateDraftCategory(
+                draftId,
+                siteId,
+                categorySelected.id!,
+                db
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId as SiteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_CATEGORY_NOT_SELECTED } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
     } catch (e) {
         error(e);
 
         await updateDraft(
             draftId,
             siteId as SiteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_CATEGORY_NOT_SELECTED } as unknown as Partial<Draft>,
+            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
             db
         );
 
         return;
     }
-
-    await updateDraftCategory(
-        draftId,
-        siteId,
-        categorySelected.id!,
-        db
-    );
 };
 
 export const generateArticle = async (
@@ -73,29 +86,42 @@ export const generateArticle = async (
     );
 
     // TODO: TRY CATCH
-    const article = await generateArticleFromContent(
-        content,
-        site!,
-        openAi
-    );
+    try {
+        const article = await generateArticleFromContent(
+            content,
+            site!,
+            openAi
+        );
 
-    if (!article) {
+        if (!article) {
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_NOT_GENERATED } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        await updateDraftArticleContent(
+            draftId,
+            site!,
+            article,
+            db
+        );
+    } catch (e) {
+        error(e);
+
         await updateDraft(
             draftId,
             siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_NOT_GENERATED } as unknown as Partial<Draft>,
+            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
             db
         );
 
         return;
     }
-
-    await updateDraftArticleContent(
-        draftId,
-        site!,
-        article,
-        db
-    );
 };
 
 export const generateSeo = async (
@@ -107,36 +133,47 @@ export const generateSeo = async (
 ) => {
     // TODO: TRY CATCH
 
-    const seo = await generateSeoFromArticle(
-        article,
-        openAi
-    );
-
     try {
-        await validateArticleSeoDetails(seo);
+        const seo = await generateSeoFromArticle(
+            article,
+            openAi
+        );
+
+        try {
+            await validateArticleSeoDetails(seo);
+
+            await updateDraftSeo(
+                draftId,
+                siteId,
+                seo.title,
+                seo.keywords,
+                seo.description,
+                seo.summary,
+                seo.slug,
+                db
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_SEO_DETAILS_NOT_COMPLETE } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
     } catch (e) {
         error(e);
 
         await updateDraft(
             draftId,
             siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_SEO_DETAILS_NOT_COMPLETE } as unknown as Partial<Draft>,
+            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
             db
         );
-
-        return;
     }
-
-    await updateDraftSeo(
-        draftId,
-        siteId,
-        seo.title,
-        seo.keywords,
-        seo.description,
-        seo.summary,
-        seo.slug,
-        db
-    );
 }
 
 // TODO: Tester dans un Promise.all
@@ -157,20 +194,165 @@ export const translate = async (
         db
     );
 
-    // TODO: TRY CATCH
     const languages = site!.locales;
 
-
-    const titleTranslated = await translatePrompt(
-        languages,
-        title,
-        openAi
-    );
-
     try {
-        await validateTranslation(
-            titleTranslated,
-            languages
+        const titleTranslated = await translatePrompt(
+            languages,
+            title,
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                titleTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        const keywordsTranslated = await translatePrompt(
+            languages,
+            keywords.join(', '),
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                keywordsTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        const descriptionTranslated = await translatePrompt(
+            languages,
+            description,
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                descriptionTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        const summaryTranslated = await translatePrompt(
+            languages,
+            summary,
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                summaryTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        const articleTranslated = await translatePrompt(
+            languages,
+            article,
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                articleTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        const slugTranslated = await translatePrompt(
+            languages,
+            slug,
+            openAi
+        );
+
+        try {
+            await validateTranslation(
+                slugTranslated,
+                languages
+            );
+        } catch (e) {
+            error(e);
+
+            await updateDraft(
+                draftId,
+                siteId,
+                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+                db
+            );
+
+            return;
+        }
+
+        await updateDraftArticle(
+            draftId,
+            siteId,
+            articleFactory(
+                titleTranslated,
+                keywordsTranslated,
+                descriptionTranslated,
+                articleTranslated,
+                summaryTranslated,
+                formatingSlug(slugTranslated)
+            ),
+            db
         );
     } catch (e) {
         error(e);
@@ -178,146 +360,10 @@ export const translate = async (
         await updateDraft(
             draftId,
             siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
+            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
             db
         );
-
-        return;
     }
-
-    const keywordsTranslated = await translatePrompt(
-        languages,
-        keywords.join(', '),
-        openAi
-    );
-
-    try {
-        await validateTranslation(
-            keywordsTranslated,
-            languages
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
-    }
-
-    const descriptionTranslated = await translatePrompt(
-        languages,
-        description,
-        openAi
-    );
-
-    try {
-        await validateTranslation(
-            descriptionTranslated,
-            languages
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
-    }
-
-    const summaryTranslated = await translatePrompt(
-        languages,
-        summary,
-        openAi
-    );
-
-    try {
-        await validateTranslation(
-            summaryTranslated,
-            languages
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
-    }
-
-    const articleTranslated = await translatePrompt(
-        languages,
-        article,
-        openAi
-    );
-
-    try {
-        await validateTranslation(
-            articleTranslated,
-            languages
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
-    }
-
-    const slugTranslated = await translatePrompt(
-        languages,
-        slug,
-        openAi
-    );
-
-    try {
-        await validateTranslation(
-            slugTranslated,
-            languages
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
-    }
-
-    await updateDraftArticle(
-        draftId,
-        siteId,
-        articleFactory(
-            titleTranslated,
-            keywordsTranslated,
-            descriptionTranslated,
-            articleTranslated,
-            summaryTranslated,
-            formatingSlug(slugTranslated)
-        ),
-        db
-    );
 }
 
 export const moveDraftToArticle = async (
