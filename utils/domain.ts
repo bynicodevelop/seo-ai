@@ -1,4 +1,6 @@
-import type { H3Event, EventHandlerRequest } from 'h3'
+import type {
+ H3Event, EventHandlerRequest 
+} from 'h3'
 import { getHeaders } from 'h3';
 
 export const getDomain = (event: H3Event<EventHandlerRequest>) => {

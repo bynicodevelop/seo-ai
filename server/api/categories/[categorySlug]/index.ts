@@ -12,9 +12,7 @@ import { getDomain } from '~/utils/domain';
 
 export default defineEventHandler(async (event) => {
     const { categorySlug } = event.context.params as { categorySlug: string };
-    const {
-        locale
-    } = getQuery(event) as DomainQuery & LocaleQuery;
+    const { locale } = getQuery(event) as DomainQuery & LocaleQuery;
     const domain = getDomain(event);
 
     try {

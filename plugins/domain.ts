@@ -1,5 +1,8 @@
 export default defineNuxtPlugin(nuxtApp => {
-    console.log('domain plugin', useRequestHeader('x-forwarded-host') || 'localhost');
+    console.log(
+'domain plugin',
+useRequestHeader('x-forwarded-host') || 'localhost'
+);
 
     nuxtApp.provide(
         'domain',

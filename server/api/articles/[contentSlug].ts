@@ -11,7 +11,9 @@ import { getDomain } from '~/utils/domain';
 
 export default defineEventHandler(async event => {
     const { contentSlug } = event.context.params as { contentSlug: string };
-    const { categorySlug, locale } = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
+    const {
+ categorySlug, locale 
+} = getQuery(event) as DomainQuery & CategoryQuery & LocaleQuery;
     const domain = getDomain(event);
 
     try {
