@@ -1,18 +1,18 @@
 import { db } from '../../firebase';
 import type {
- Article, Category 
+    Article, Category
 } from '~/functions/src/shared';
 import {
- getSiteByDomain, getLatestArticles 
+    getSiteByDomain, getLatestArticles
 } from '~/functions/src/shared';
 import type {
- ApiResponse, DomainQuery, ErrorResponse, LimitQuery 
+    ApiResponse, DomainQuery, ErrorResponse, LimitQuery
 } from '~/server/types';
+import { getDomain } from '~/utils/domain';
 
 export default defineEventHandler(async (event) => {
-    const {
- domain, limit 
-} = getQuery(event) as DomainQuery & LimitQuery;
+    const { limit } = getQuery(event) as DomainQuery & LimitQuery;
+    const domain = getDomain(event);
 
     try {
         const siteRef = await getSiteByDomain(
@@ -28,11 +28,11 @@ export default defineEventHandler(async (event) => {
         }
 
         const contents = await getLatestArticles(
-siteRef,
-+limit,
-db
-);
-        
+            siteRef,
+            +limit,
+            db
+        );
+
         return {
             status: 200,
             data: contents,
