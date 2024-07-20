@@ -3,24 +3,24 @@ import type { DocumentData } from 'firebase-admin/firestore';
 
 import type { Article } from '~/functions/src/shared';
 import {
- articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION 
+    articleFactory, getSiteByDomain, ARTICLE_COLLECTION, CATEGORY_COLLECTION
 } from '~/functions/src/shared';
 import { db } from '~/server/firebase';
 import type {
- ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery 
+    ApiResponse, CategoryQuery, DomainQuery, ErrorResponse, LocaleQuery
 } from '~/server/types';
+import { getDomain } from '~/utils/domain';
 
 export default defineEventHandler(async (event) => {
     const { categorySlug } = event.context.params as CategoryQuery;
-    const {
- domain, locale 
-} = getQuery(event) as DomainQuery & LocaleQuery;
+    const { locale } = getQuery(event) as DomainQuery & LocaleQuery;
+    const domain = getDomain(event);
 
     try {
         const siteRef = await getSiteByDomain(
-domain,
-db
-);
+            domain,
+            db
+        );
 
         if (!siteRef) {
             return {
@@ -29,13 +29,13 @@ db
             } as ApiResponse<ErrorResponse>
         }
 
-        const categorySnapshot = await siteRef.ref
+        const categorySnapshot = await siteRef.ref!
             .collection(CATEGORY_COLLECTION)
             .where(
-`slug.${locale}`,
-'==',
-categorySlug
-)
+                `slug.${locale}`,
+                '==',
+                categorySlug
+            )
             .get();
 
         if (categorySnapshot.empty) {
@@ -57,8 +57,8 @@ categorySlug
 
         const contents: Article[] = (contentsSnapshot?.docs ?? []).map((doc: DocumentData) => {
             const {
- title, keywords, slug, article, description, createdAt, updatedAt 
-} = doc.data();
+                title, keywords, slug, article, description, createdAt, updatedAt
+            } = doc.data();
 
             return articleFactory(
                 title,
