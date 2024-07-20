@@ -12,7 +12,7 @@ import {
 } from 'lodash';
 
 import {
-    type Category, categoryFactory, createCategories, createSite, type Draft, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
+    type Category, categoryFactory, createCategories, createSite, type Draft, DRAFT_STATUS, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
 import { formatingSlug } from './utils';
 import {
@@ -183,7 +183,6 @@ export const onSiteBuilder = onDocumentCreated(
         );
 
         info('Site created');
-
     }
 );
 
@@ -207,7 +206,7 @@ export const onDraftCreated = onDocumentWritten(
             slug
         } = event.data?.after.data() as Partial<Draft>;
 
-        if (status === 'DRAFT' && content) {
+        if (status === DRAFT_STATUS.DRAFTED && content) {
             await selectCategoryForArticle(
                 content,
                 draftId,
@@ -217,7 +216,7 @@ export const onDraftCreated = onDocumentWritten(
             );
         }
 
-        if (status === 'CATEGORY_SELECTED' && content) {
+        if (status === DRAFT_STATUS.CATEGORY_SELECTED && content) {
             await generateArticle(
                 siteId,
                 draftId,
@@ -227,7 +226,7 @@ export const onDraftCreated = onDocumentWritten(
             );
         }
 
-        if (status === 'ARTICLE_CREATED' && article) {
+        if (status === DRAFT_STATUS.ARTICLE_CREATED && article) {
             await generateSeo(
                 draftId,
                 siteId,
@@ -237,7 +236,7 @@ export const onDraftCreated = onDocumentWritten(
             );
         }
 
-        if (status === 'SEO_OPTIMIZED') {
+        if (status === DRAFT_STATUS.SEO_OPTIMIZED) {
             translate(
                 draftId,
                 siteId,
@@ -252,7 +251,7 @@ export const onDraftCreated = onDocumentWritten(
             )
         }
 
-        if (status === 'READY_FOR_PUBLISHING') {
+        if (status === DRAFT_STATUS.READY_FOR_PUBLISHING) {
             await moveDraftToArticle(
                 draftId,
                 siteId,

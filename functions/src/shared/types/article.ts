@@ -1,7 +1,9 @@
-import type { DocumentReference } from 'firebase-admin/firestore';
+import {
+    type DocumentReference, Timestamp
+} from 'firebase-admin/firestore';
 
 import type {
- IdType, Reference 
+    IdType, Reference
 } from './common';
 import type { I18n } from './i18n';
 
@@ -12,8 +14,8 @@ export type Article = {
     article: I18n;
     summary: I18n;
     slug: I18n;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Timestamp;
+    updatedAt?: Timestamp;
 }
 
 export type ArticleEntity = Article & Reference & IdType;
@@ -34,8 +36,8 @@ export function articleFactory(
     article: I18n,
     summary: I18n,
     slug: I18n,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: Timestamp,
+    updatedAt: Timestamp
 ): Article;
 
 export function articleFactory(
@@ -45,8 +47,8 @@ export function articleFactory(
     article: I18n,
     summary: I18n,
     slug: I18n,
-    createdAt?: Date,
-    updatedAt?: Date
+    createdAt?: Timestamp,
+    updatedAt?: Timestamp
 ): Article {
     return {
         title,
@@ -55,8 +57,8 @@ export function articleFactory(
         article,
         summary,
         slug,
-        createdAt: createdAt ?? new Date(),
-        updatedAt: updatedAt ?? new Date()
+        createdAt: createdAt ?? Timestamp.now(),
+        updatedAt: updatedAt ?? Timestamp.now()
     }
 }
 
@@ -80,8 +82,8 @@ export function articleFactoryEntity(
     article: I18n,
     summary: I18n,
     slug: I18n,
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: Timestamp,
+    updatedAt: Timestamp
 ): ArticleEntity;
 
 export function articleFactoryEntity(
@@ -93,8 +95,8 @@ export function articleFactoryEntity(
     article: I18n,
     summary: I18n,
     slug: I18n,
-    createdAt?: Date,
-    updatedAt?: Date
+    createdAt?: Timestamp,
+    updatedAt?: Timestamp
 ): ArticleEntity {
     return {
         ref,
@@ -105,7 +107,7 @@ export function articleFactoryEntity(
         article,
         summary,
         slug,
-        createdAt: createdAt ?? new Date(),
-        updatedAt: updatedAt ?? new Date()
+        createdAt: createdAt ?? Timestamp.now(),
+        updatedAt: updatedAt ?? Timestamp.now(),
     }
 }

@@ -18,7 +18,8 @@
     "firebase-functions": "^5.0.0",
     "lodash": "^4.17.21",
     "openai": "^4.52.4",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.1.0",

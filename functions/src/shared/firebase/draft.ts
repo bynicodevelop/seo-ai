@@ -1,20 +1,23 @@
 import type {
- DocumentData, DocumentReference, Firestore 
+    DocumentData, DocumentReference, Firestore
 } from 'firebase-admin/firestore';
 import {
- error, info 
+    error, info
 } from 'firebase-functions/logger';
 
 import { createArticleToCategory } from './article';
 import {
- getSiteByDomain, getSiteById 
+    getSiteByDomain, getSiteById
 } from './site';
-import { DRAFT_COLLECTION } from './types';
+import {
+    DRAFT_COLLECTION, DRAFT_STATUS
+} from './types';
 import type {
- Draft, DraftId, SiteEntity, SiteId 
+    Draft, DraftId, SiteEntity, SiteId
 } from '../types';
 import { draftFactory } from '../types';
 import type { Article } from '../types/article';
+import { validateArticle } from '../validators';
 
 export const createDraft = async (
     domainId: SiteId,
@@ -33,7 +36,7 @@ export const createDraft = async (
     return await siteRef.ref!.collection(DRAFT_COLLECTION)
         .add({
             content,
-            status: 'DRAFT'
+            status: DRAFT_STATUS.DRAFTED
         });
 }
 
@@ -45,8 +48,8 @@ export const updateDraft = async (
 
         if ((site as DocumentData)!.ref === undefined) {
             siteRef = await getSiteById(
-site as SiteId,
-db
+                site as SiteId,
+                db
             );
         } else {
             siteRef = site as DocumentData;
@@ -70,6 +73,7 @@ export const updateDraftArticleContent = async (
     draftId: DraftId,
     site: SiteEntity,
     article: string,
+    db: Firestore
 ) => {
     info(`Updating draft article content for draft ${draftId} in site ${site.id!}`);
 
@@ -78,13 +82,15 @@ export const updateDraftArticleContent = async (
             throw new Error('Site not found');
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
-{
-            article,
-            status: 'ARTICLE_CREATED'
-        },
-{ merge: true }
-);
+        await updateDraft(
+            draftId,
+            site.id as SiteId,
+            {
+                article,
+                status: DRAFT_STATUS.ARTICLE_CREATED
+            } as unknown as Partial<Draft>,
+            db
+        );
     } catch (e) {
         error(e);
         throw e;
@@ -113,17 +119,19 @@ export const updateDraftSeo = async (
             throw new Error('Site not found');
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
-{
-            title,
-            keywords,
-            description,
-            summary,
-            slug,
-            status: 'SEO_OPTIMIZED'
-        },
-{ merge: true }
-);
+        await updateDraft(
+            draftId,
+            siteId,
+            {
+                title,
+                keywords,
+                description,
+                summary,
+                slug,
+                status: DRAFT_STATUS.SEO_OPTIMIZED
+            } as unknown as Partial<Draft>,
+            db
+        );
     } catch (e) {
         error(e);
         throw e;
@@ -148,13 +156,15 @@ export const updateDraftArticle = async (
             throw new Error('Site not found');
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
-{
-            publishableArticle: article,
-            status: 'READY_FOR_PUBLISHING'
-        },
-{ merge: true }
-);
+        await updateDraft(
+            draftId,
+            siteId,
+            {
+                publishableArticle: article,
+                status: DRAFT_STATUS.READY_FOR_PUBLISHING
+            } as unknown as Partial<Draft>,
+            db
+        );
     } catch (e) {
         error(e);
         throw e;
@@ -179,13 +189,15 @@ export const updateDraftCategory = async (
             throw new Error('Site not found');
         }
 
-        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
-{
-            categoryId,
-            status: 'CATEGORY_SELECTED'
-        },
-{ merge: true }
-);
+        await updateDraft(
+            draftId,
+            siteId,
+            {
+                categoryId,
+                status: DRAFT_STATUS.CATEGORY_SELECTED
+            } as unknown as Partial<Draft>,
+            db
+        );
     } catch (e) {
         error(e);
         throw e;
@@ -204,8 +216,8 @@ export const getDraftById = async (
 
         if ((site as DocumentData)!.ref === undefined) {
             siteRef = await getSiteById(
-site as SiteId,
-db
+                site as SiteId,
+                db
             );
         } else {
             siteRef = site as DocumentData;
@@ -255,30 +267,43 @@ db
 
 export const convertDraftToArticle = async (
     draftId: DraftId,
-    site: SiteId | DocumentData,
+    site: SiteEntity,
     db: Firestore
 ) => {
     info(`Converting draft ${draftId} to article`);
 
     const {
- categoryId, publishableArticle 
-} = await getDraftById(
+        categoryId, publishableArticle
+    } = await getDraftById(
         draftId,
         site,
         db
     );
 
-    await createArticleToCategory(
-        publishableArticle!,
-        categoryId!,
-        site,
-        db
-    );
+    let status = 'PUBLISHED';
+
+    try {
+        await validateArticle(
+            publishableArticle!,
+            site.locales
+        );
+
+        await createArticleToCategory(
+            publishableArticle!,
+            categoryId!,
+            site,
+            db
+        );
+    } catch (e) {
+        error(e);
+
+        status = 'ERROR_ARTICLE_NOT_COMPLETE';
+    }
 
     await updateDraft(
         draftId,
-site as SiteId,
-{ status: 'PUBLISHED' } as unknown as Partial<Draft>,
-db
+        site.id as SiteId,
+        { status } as unknown as Partial<Draft>,
+        db
     );
 }
