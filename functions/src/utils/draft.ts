@@ -6,7 +6,7 @@ import type OpenAI from 'openai';
 
 import { formatingSlug } from './slug';
 import {
-    Draft,
+    type Draft,
     articleFactory, convertDraftToArticle, DRAFT_ERROR_STATUS, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type SiteId, translatePrompt, updateDraft, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo
 } from '../shared';
 import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
