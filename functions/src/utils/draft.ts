@@ -15,7 +15,6 @@ import {
 import { ArticleGenerationException } from '../shared/exceptions/article-generation';
 import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
 import { validateCategoryId } from '../shared/validators/category';
-import { validateTranslation } from '../shared/validators/translate';
 
 const getSite = async (
     siteId: SiteId,
@@ -139,12 +138,7 @@ export const generateArticle = async (
 export const translate = async (
     draftId: string,
     siteId: string,
-    title: string,
-    article: string,
-    keywords: string[],
-    description: string,
-    summary: string,
-    slug: string,
+    article: ArticlePrompt,
     openAi: OpenAI,
     db: Firestore
 ) => {
@@ -155,150 +149,38 @@ export const translate = async (
 
     const languages = site!.locales;
 
+    // TODO: Tester dans un Promise.all
     try {
         const titleTranslated = await translatePrompt(
             languages,
-            title,
+            article.title,
             openAi
         );
-
-        try {
-            await validateTranslation(
-                titleTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-
         const keywordsTranslated = await translatePrompt(
             languages,
-            keywords.join(', '),
+            article.keywords.join(', '),
             openAi
         );
-
-        try {
-            await validateTranslation(
-                keywordsTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-
         const descriptionTranslated = await translatePrompt(
             languages,
-            description,
+            article.description,
             openAi
         );
-
-        try {
-            await validateTranslation(
-                descriptionTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-
         const summaryTranslated = await translatePrompt(
             languages,
-            summary,
+            article.summary,
             openAi
         );
-
-        try {
-            await validateTranslation(
-                summaryTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-
         const articleTranslated = await translatePrompt(
             languages,
-            article,
+            article.article,
             openAi
         );
-
-        try {
-            await validateTranslation(
-                articleTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-
         const slugTranslated = await translatePrompt(
             languages,
-            slug,
+            article.slug,
             openAi
         );
-
-        try {
-            await validateTranslation(
-                slugTranslated,
-                languages
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_TRANSLATION } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
 
         await updateDraftArticle(
             draftId,

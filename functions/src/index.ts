@@ -13,11 +13,12 @@ import {
 
 import {
     type ArticlePrompt,
+    articlePromptFactory,
     type Category, categoryFactory, createCategories, createSite, type Draft, DRAFT_STATUS, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
 import { formatingSlug } from './utils';
 import {
-    generateArticle, moveDraftToArticle, translate
+    generateArticle, moveDraftToArticle, selectCategoryForArticle, translate
 } from './utils/draft';
 
 admin.initializeApp();
@@ -203,6 +204,16 @@ export const onDraftCreated = onDocumentWritten(
         } = event.data?.after.data() as Partial<Draft>;
 
         if (status === DRAFT_STATUS.DRAFTED) {
+            await selectCategoryForArticle(
+                content!,
+                draftId,
+                siteId,
+                openAi,
+                db
+            );
+        }
+
+        if (status === DRAFT_STATUS.CATEGORY_SELECTED) {
             await generateArticle(
                 siteId,
                 draftId,
@@ -220,12 +231,14 @@ export const onDraftCreated = onDocumentWritten(
             await translate(
                 draftId,
                 siteId,
-                title,
-                article,
-                keywords,
-                description,
-                summary,
-                slug,
+                articlePromptFactory(
+                    title,
+                    keywords,
+                    description,
+                    article,
+                    summary,
+                    slug
+                ),
                 openAi,
                 db
             )
