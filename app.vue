@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Site } from '~/functions/src/shared';
 
+const localePath = useLocalePath();
 const { locale } = useI18n();
 const {
     $domain, $translate
@@ -35,7 +36,7 @@ try {
         link: [
             {
                 rel: 'canonical',
-                href: getCanonical()
+                href: localePath(getCanonical()),
             }
         ],
         templateParams: { schemaOrg: { host: baseUrl, } },
