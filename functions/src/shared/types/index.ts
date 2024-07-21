@@ -1,3 +1,4 @@
+export * from './article-prompt';
 export * from './article';
 export * from './category';
 export * from './common';

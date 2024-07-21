@@ -5,14 +5,33 @@ import {
 import type OpenAI from 'openai';
 
 import { formatingSlug } from './slug';
-import {
-    type Draft,
-    articleFactory, convertDraftToArticle, DRAFT_ERROR_STATUS, type DraftId, generateArticleFromContent, generateSeoFromArticle, getCategories, getSiteById, type SiteId, translatePrompt, updateDraft, updateDraftArticle, updateDraftArticleContent, updateDraftCategory, updateDraftSeo
+import type {
+    ArticlePrompt, Draft, DraftId, SiteId, SiteEntity
 } from '../shared';
+import {
+
+    articleFactory, convertDraftToArticle, DRAFT_ERROR_STATUS, generatePrompts, getCategories, getSiteById, translatePrompt, updateDraft, updateDraftArticle, updateDraftCategory, updateDraftGeneratedArticle
+} from '../shared';
+import { ArticleGenerationException } from '../shared/exceptions/article-generation';
 import { selectCategoryForArticlePrompt } from '../shared/prompts/select-category-for-article';
 import { validateCategoryId } from '../shared/validators/category';
-import { validateArticleSeoDetails } from '../shared/validators/seo';
 import { validateTranslation } from '../shared/validators/translate';
+
+const getSite = async (
+    siteId: SiteId,
+    db: Firestore
+): Promise<SiteEntity> => {
+    const site = await getSiteById(
+        siteId,
+        db
+    );
+
+    if (!site) {
+        throw new Error('Site not found');
+    }
+
+    return site;
+}
 
 export const selectCategoryForArticle = async (
     content: string,
@@ -21,13 +40,14 @@ export const selectCategoryForArticle = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(
+    const site = await getSite(
         siteId,
         db
     );
 
+
     const categories = await getCategories(
-        site!,
+        site,
         db
     );
 
@@ -74,109 +94,48 @@ export const selectCategoryForArticle = async (
 };
 
 export const generateArticle = async (
-    siteId: string,
     draftId: string,
+    siteId: string,
     content: string,
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(
+    const site = await getSite(
         siteId,
         db
     );
 
-    // TODO: TRY CATCH
+    let article: ArticlePrompt;
+
     try {
-        const article = await generateArticleFromContent(
+        article = await generatePrompts(
+            site,
             content,
-            site!,
             openAi
         );
-
-        if (!article) {
+    } catch (e: unknown) {
+        if (e instanceof ArticleGenerationException) {
             await updateDraft(
                 draftId,
                 siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_NOT_GENERATED } as unknown as Partial<Draft>,
+                { status: e.message } as Partial<Draft>,
                 db
             );
 
             return;
         }
 
-        await updateDraftArticleContent(
-            draftId,
-            site!,
-            article,
-            db
-        );
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
-            db
-        );
-
-        return;
+        throw e;
     }
-};
 
-export const generateSeo = async (
-    draftId: string,
-    siteId: string,
-    article: string,
-    openAi: OpenAI,
-    db: Firestore
-) => {
-    // TODO: TRY CATCH
-
-    try {
-        const seo = await generateSeoFromArticle(
-            article,
-            openAi
-        );
-
-        try {
-            await validateArticleSeoDetails(seo);
-
-            await updateDraftSeo(
-                draftId,
-                siteId,
-                seo.title,
-                seo.keywords,
-                seo.description,
-                seo.summary,
-                seo.slug,
-                db
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_ARTICLE_SEO_DETAILS_NOT_COMPLETE } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
-    } catch (e) {
-        error(e);
-
-        await updateDraft(
-            draftId,
-            siteId,
-            { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
-            db
-        );
-    }
+    await updateDraftGeneratedArticle(
+        draftId,
+        siteId,
+        article,
+        db
+    );
 }
 
-// TODO: Tester dans un Promise.all
 export const translate = async (
     draftId: string,
     siteId: string,
@@ -189,7 +148,7 @@ export const translate = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
-    const site = await getSiteById(
+    const site = await getSite(
         siteId,
         db
     );

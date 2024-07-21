@@ -17,6 +17,7 @@ import type {
 } from '../types';
 import { draftFactory } from '../types';
 import type { Article } from '../types/article';
+import type { ArticlePrompt } from '../types/article-prompt';
 import { articleValidator } from '../validators';
 
 export const createDraft = async (
@@ -131,6 +132,37 @@ export const updateDraftSeo = async (
                 status: DRAFT_STATUS.SEO_OPTIMIZED
             } as unknown as Partial<Draft>,
             db
+        );
+    } catch (e) {
+        error(e);
+        throw e;
+    }
+}
+
+export const updateDraftGeneratedArticle = async (
+    draftId: DraftId,
+    siteId: SiteId,
+    article: ArticlePrompt,
+    db: Firestore
+): Promise<void> => {
+    info(`Updating draft generated article for draft ${draftId} in site ${siteId}`);
+
+    try {
+        const site = await getSiteById(
+            siteId,
+            db
+        );
+
+        if (!site) {
+            throw new Error('Site not found');
+        }
+
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
+            {
+                article,
+                status: 'ARTICLE_CREATED'
+            },
+            { merge: true }
         );
     } catch (e) {
         error(e);
