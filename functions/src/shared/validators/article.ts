@@ -45,12 +45,10 @@ export const articleValidator = async (
     );
 }
 
-export const createArticleServiceValidator = async (
-    data: {
+export const createArticleServiceValidator = async (data: {
         domain?: string,
         result?: string,
-    }
-): Promise<void> => {
+    }): Promise<void> => {
     const schema = yup.object().shape({
         domain: yup.string().required(),
         result: yup.string().required(),

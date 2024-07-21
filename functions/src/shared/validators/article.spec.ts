@@ -4,12 +4,16 @@ import {
     describe, it, expect
 } from 'vitest';
 
-import { createArticleServiceValidator, articleValidator } from './article';
+import {
+ createArticleServiceValidator, articleValidator 
+} from './article';
 import type {
     Article, locales
 } from '../types';
 
-describe('article', () => {
+describe(
+'article',
+() => {
     describe(
         'articleValidator',
         () => {
@@ -106,7 +110,9 @@ describe('article', () => {
         }
     );
 
-    describe('createArticleService', () => {
+    describe(
+'createArticleService',
+() => {
         it(
             'should validate a correct data object',
             async () => {
@@ -122,9 +128,7 @@ describe('article', () => {
         it(
             'should fail validation for an incorrect data object',
             async () => {
-                const invalidData = {
-                    domain: 'example.com',
-                };
+                const invalidData = { domain: 'example.com', };
 
                 await expect(createArticleServiceValidator(invalidData)).rejects.toThrow();
             }
@@ -133,12 +137,12 @@ describe('article', () => {
         it(
             'should fail validation if required fields are missing',
             async () => {
-                const missingFieldsData = {
-                    result: 'success',
-                };
+                const missingFieldsData = { result: 'success', };
 
                 await expect(createArticleServiceValidator(missingFieldsData)).rejects.toThrow();
             }
         );
-    });
-});
+    }
+);
+}
+);

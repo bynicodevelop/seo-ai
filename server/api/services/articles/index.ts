@@ -1,5 +1,7 @@
 import { db } from '../../../firebase';
-import { createArticleServiceValidator, createDraft } from '~/functions/src/shared';
+import {
+ createArticleServiceValidator, createDraft 
+} from '~/functions/src/shared';
 import type { ArticleQuery } from '~/server/types';
 
 export default defineEventHandler(async event => {

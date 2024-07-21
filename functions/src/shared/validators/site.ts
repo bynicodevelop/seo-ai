@@ -1,7 +1,6 @@
 import * as yup from 'yup';
 
-export const createSiteServiceValidator = async (
-    data: {
+export const createSiteServiceValidator = async (data: {
         domain?: string,
         sitename?: string,
         keywords?: string[],

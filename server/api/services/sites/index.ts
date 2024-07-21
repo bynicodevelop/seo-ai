@@ -1,8 +1,8 @@
-import { createSiteServiceValidator } from '~/functions/src/shared/validators/site';
 import { db } from '../../../firebase';
 import {
  initSite, type Config 
 } from '~/functions/src/shared';
+import { createSiteServiceValidator } from '~/functions/src/shared/validators/site';
 
 export default defineEventHandler(async event => {
         const {
