@@ -1,5 +1,5 @@
-import prompts from 'prompts';
 import axios from 'axios';
+import prompts from 'prompts';
 
 const createSite = async () => {
     const response = await prompts([
@@ -31,7 +31,9 @@ const createSite = async () => {
         }
     ]);
 
-    const { sitename, domain, keywords, description, locales } = response;
+    const {
+ sitename, domain, keywords, description, locales 
+} = response;
 
     const siteConfig = {
         sitename,
@@ -41,7 +43,10 @@ const createSite = async () => {
         locales: locales.split(',').map((locale: string) => locale.trim()),
     };
 
-    const { data } = await axios.post(`${domain}/api/services/sites`, siteConfig);
+    const { data } = await axios.post(
+`${domain}/api/services/sites`,
+siteConfig
+);
 
     console.log(data);
 };
@@ -61,17 +66,25 @@ const createArticle = async () => {
         },
     ]);
 
-    const { siteId, content } = response;
+    const {
+ siteId, content 
+} = response;
 
-    let domainUrl = siteId[siteId.length - 1] === '/' ? siteId.slice(0, -1) : siteId;
-    let domain = siteId.split('/')[2].split(':')[0];
+    const domainUrl = siteId[siteId.length - 1] === '/' ? siteId.slice(
+0,
+-1
+) : siteId;
+    const domain = siteId.split('/')[2].split(':')[0];
 
     const articleConfig = {
         siteId: domain,
         content,
     };
 
-    const { data } = await axios.post(`${domainUrl}/api/services/articles`, articleConfig);
+    const { data } = await axios.post(
+`${domainUrl}/api/services/articles`,
+articleConfig
+);
 
     console.log(data);
 };
@@ -87,8 +100,14 @@ const createArticle = async () => {
         name: 'response',
         message: 'Que voulez-vous faire ?',
         choices: [
-            { title: 'Créer un article', value: INITIAL_OPTIONS.CREATE_ARTICLE },
-            { title: 'Créer un site', value: INITIAL_OPTIONS.CREATE_SITE },
+            {
+ title: 'Créer un article',
+value: INITIAL_OPTIONS.CREATE_ARTICLE 
+},
+            {
+ title: 'Créer un site',
+value: INITIAL_OPTIONS.CREATE_SITE 
+},
         ],
         initial: 0
     });
