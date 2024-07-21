@@ -17,7 +17,7 @@ import type {
 } from '../types';
 import { draftFactory } from '../types';
 import type { Article } from '../types/article';
-import { validateArticle } from '../validators';
+import { articleValidator } from '../validators';
 
 export const createDraft = async (
     domainId: SiteId,
@@ -283,7 +283,7 @@ export const convertDraftToArticle = async (
     let status = 'PUBLISHED';
 
     try {
-        await validateArticle(
+        await articleValidator(
             publishableArticle!,
             site.locales
         );

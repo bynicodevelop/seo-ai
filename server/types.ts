@@ -26,6 +26,6 @@ export type CategoryQuery = {
 }
 
 export type ArticleQuery = {
-    siteId: string;
+    domain: string;
     content: string;
 }

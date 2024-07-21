@@ -5,7 +5,7 @@ import type {
     Article, locales
 } from '../types';
 
-export const validateArticle = async (
+export const articleValidator = async (
     article: Article, locales: locales[]
 ): Promise<void> => {
     const i18nSchema = yup.object().shape(locales.reduce(
@@ -41,6 +41,23 @@ export const validateArticle = async (
 
     await articleSchema.validate(
         article,
+        { abortEarly: false }
+    );
+}
+
+export const createArticleServiceValidator = async (
+    data: {
+        domain?: string,
+        result?: string,
+    }
+): Promise<void> => {
+    const schema = yup.object().shape({
+        domain: yup.string().required(),
+        result: yup.string().required(),
+    });
+
+    await schema.validate(
+        data,
         { abortEarly: false }
     );
 }
