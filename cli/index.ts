@@ -44,10 +44,37 @@ const createSite = async () => {
     const { data } = await axios.post(`${domain}/api/services/sites`, siteConfig);
 
     console.log(data);
-
 };
 
-const createArticle = async () => { };
+const createArticle = async () => {
+    const response = await prompts([
+        {
+            type: 'text',
+            name: 'siteId',
+            message: 'Domaine du site (ex: https://google.com)',
+            initial: 'http://localhost:3000'
+        },
+        {
+            type: 'text',
+            name: 'content',
+            message: 'Resumé de l\'article',
+        },
+    ]);
+
+    const { siteId, content } = response;
+
+    let domainUrl = siteId[siteId.length - 1] === '/' ? siteId.slice(0, -1) : siteId;
+    let domain = siteId.split('/')[2].split(':')[0];
+
+    const articleConfig = {
+        siteId: domain,
+        content,
+    };
+
+    const { data } = await axios.post(`${domainUrl}/api/services/articles`, articleConfig);
+
+    console.log(data);
+};
 
 (async () => {
     const INITIAL_OPTIONS = {
