@@ -215,8 +215,8 @@ export const onDraftCreated = onDocumentWritten(
 
         if (status === DRAFT_STATUS.CATEGORY_SELECTED) {
             await generateArticle(
-                siteId,
                 draftId,
+                siteId,
                 content!,
                 openAi,
                 db
@@ -251,6 +251,5 @@ export const onDraftCreated = onDocumentWritten(
                 db
             )
         }
-
     }
 );

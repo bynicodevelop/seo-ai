@@ -44,40 +44,19 @@ export const selectCategoryForArticle = async (
         db
     );
 
-
     const categories = await getCategories(
         site,
         db
     );
 
+    let categorySelected;
+
     try {
-        const categorySelected = await selectCategoryForArticlePrompt(
+        categorySelected = await selectCategoryForArticlePrompt(
             content!,
             categories,
             openAi
         );
-
-        try {
-            await validateCategoryId(categorySelected);
-
-            await updateDraftCategory(
-                draftId,
-                siteId,
-                categorySelected.id!,
-                db
-            );
-        } catch (e) {
-            error(e);
-
-            await updateDraft(
-                draftId,
-                siteId as SiteId,
-                { status: DRAFT_ERROR_STATUS.ERROR_CATEGORY_NOT_SELECTED } as unknown as Partial<Draft>,
-                db
-            );
-
-            return;
-        }
     } catch (e) {
         error(e);
 
@@ -85,6 +64,28 @@ export const selectCategoryForArticle = async (
             draftId,
             siteId as SiteId,
             { status: DRAFT_ERROR_STATUS.ERROR_OPENAI_API } as unknown as Partial<Draft>,
+            db
+        );
+
+        return;
+    }
+
+    try {
+        await validateCategoryId(categorySelected);
+
+        await updateDraftCategory(
+            draftId,
+            siteId,
+            categorySelected.id!,
+            db
+        );
+    } catch (e) {
+        error(e);
+
+        await updateDraft(
+            draftId,
+            siteId as SiteId,
+            { status: DRAFT_ERROR_STATUS.ERROR_CATEGORY_NOT_SELECTED } as unknown as Partial<Draft>,
             db
         );
 
@@ -99,6 +100,7 @@ export const generateArticle = async (
     openAi: OpenAI,
     db: Firestore
 ) => {
+    info(`Generating article for draft ${draftId} in site ${siteId}`);
     const site = await getSite(
         siteId,
         db
@@ -156,26 +158,31 @@ export const translate = async (
             article.title,
             openAi
         );
+
         const keywordsTranslated = await translatePrompt(
             languages,
             article.keywords.join(', '),
             openAi
         );
+
         const descriptionTranslated = await translatePrompt(
             languages,
             article.description,
             openAi
         );
+
         const summaryTranslated = await translatePrompt(
             languages,
             article.summary,
             openAi
         );
+
         const articleTranslated = await translatePrompt(
             languages,
             article.article,
             openAi
         );
+
         const slugTranslated = await translatePrompt(
             languages,
             article.slug,
@@ -184,7 +191,7 @@ export const translate = async (
 
         await updateDraftArticle(
             draftId,
-            siteId,
+            site,
             articleFactory(
                 titleTranslated,
                 keywordsTranslated,

@@ -12,9 +12,9 @@ export const SITE_COLLECTION = 'sites';
  * ARTICLE_CREATED: Le brouillon a été traité et un article a été créé.
  * SEO_OPTIMIZED: L'article a été optimisé pour le SEO (titre, mots clés, description et extrait).
  * TRANSLATED: L'article a été traduit dans une autre langue.
- * READY_FOR_PUBLISHING: L'article est prêt à être publié (Déplacé dans la collection content).
+ * PUBLISHED: L'article est prêt à être publié (Déplacé dans la collection content).
  */
-export type DraftStatus = 'DRAFT' | 'CATEGORY_SELECTED' | 'ARTICLE_CREATED' | 'SEO_OPTIMIZED' | 'TRANSLATED' | 'READY_FOR_PUBLISHING' | 'ERROR_ARTICLE_NOT_COMPLETE';
+export type DraftStatus = 'DRAFT' | 'CATEGORY_SELECTED' | 'ARTICLE_CREATED' | 'SEO_OPTIMIZED' | 'TRANSLATED' | 'PUBLISHED' | 'ERROR_ARTICLE_NOT_COMPLETE';
 
 // Draft statuses
 export const DRAFT_STATUS = {
@@ -23,7 +23,7 @@ export const DRAFT_STATUS = {
     ARTICLE_CREATED: 'ARTICLE_CREATED',
     TRANSLATED: 'TRANSLATED',
     SEO_OPTIMIZED: 'SEO_OPTIMIZED',
-    READY_FOR_PUBLISHING: 'READY_FOR_PUBLISHING'
+    PUBLISHED: 'PUBLISHED'
 };
 
 // Draft error statuses

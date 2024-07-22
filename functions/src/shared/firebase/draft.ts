@@ -172,28 +172,23 @@ export const updateDraftGeneratedArticle = async (
 
 export const updateDraftArticle = async (
     draftId: DraftId,
-    siteId: SiteId,
+    site: SiteEntity,
     article: Article,
     db: Firestore
 ): Promise<void> => {
-    info(`Updating draft article for draft ${draftId} in site ${siteId}`);
+    info(`Updating draft article for draft ${draftId} in site ${site.id}`);
+
+    if (!site) {
+        throw new Error('Site not found');
+    }
 
     try {
-        const site = await getSiteById(
-            siteId,
-            db
-        );
-
-        if (!site) {
-            throw new Error('Site not found');
-        }
-
         await updateDraft(
             draftId,
-            siteId,
+            site.id as SiteId,
             {
                 publishableArticle: article,
-                status: DRAFT_STATUS.READY_FOR_PUBLISHING
+                status: DRAFT_STATUS.TRANSLATED
             } as unknown as Partial<Draft>,
             db
         );
@@ -211,16 +206,16 @@ export const updateDraftCategory = async (
 ): Promise<void> => {
     info(`Updating draft category for draft ${draftId} in site ${siteId}`);
 
+    const site = await getSiteById(
+        siteId,
+        db
+    );
+
+    if (!site) {
+        throw new Error('Site not found');
+    }
+
     try {
-        const site = await getSiteById(
-            siteId,
-            db
-        );
-
-        if (!site) {
-            throw new Error('Site not found');
-        }
-
         await updateDraft(
             draftId,
             siteId,
@@ -312,7 +307,7 @@ export const convertDraftToArticle = async (
         db
     );
 
-    let status = 'PUBLISHED';
+    let status = DRAFT_STATUS.PUBLISHED;
 
     try {
         await articleValidator(
