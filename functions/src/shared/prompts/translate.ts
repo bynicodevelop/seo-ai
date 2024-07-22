@@ -4,7 +4,6 @@ import type { ChatCompletionMessageParam } from 'openai/resources';
 import {
     addMessages, callOpenAI
 } from '../ai/open-ai';
-import type { I18n } from '../types/i18n';
 
 const promptAssistant = (codelang: string[]) => `
 Agissez en tant que traducteur multilingue dans le domaine du SEO. 
@@ -25,7 +24,9 @@ Attendez que le contenu à traduire vous soit donné.
 
 export const translatePrompt = async (
     codeLang: string[], content: string, openai: OpenAI
-): Promise<I18n> => {
+): Promise<{
+    [key: string]: string;
+}> => {
     const messages: ChatCompletionMessageParam[] = [];
 
     addMessages(
@@ -39,7 +40,9 @@ export const translatePrompt = async (
         content
     );
 
-    return await callOpenAI<I18n>(
+    return await callOpenAI<{
+        [key: string]: string;
+    }>(
         messages,
         openai
     );

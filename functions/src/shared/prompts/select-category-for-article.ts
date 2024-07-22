@@ -2,7 +2,7 @@ import type OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources';
 
 import {
- addMessages, callOpenAI 
+    addMessages, callOpenAI
 } from '../ai';
 import type { Category } from '../types';
 
@@ -24,7 +24,7 @@ Retourner la propriété id de la catégorie sélectionnée au format JSON suiva
 `;
 
 export const selectCategoryForArticlePrompt = async (
-content: string, categories: Category[], openai: OpenAI
+    content: string, categories: Category[], openai: OpenAI
 ): Promise<{
     id: string;
 }> => {
@@ -44,7 +44,7 @@ content: string, categories: Category[], openai: OpenAI
     return await callOpenAI<{
         id: string;
     }>(
-messages,
-openai
-);
+        messages,
+        openai
+    );
 }

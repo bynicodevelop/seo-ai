@@ -13,34 +13,34 @@ try {
         async () => await fetchDomain($domain as string)
     );
 
-    useHead({
-            title: $translate(
-                domainData.value?.seo.title,
-                locale.value
-            ),
-            meta: [
-                {
-                    hid: 'description',
-                    name: 'description',
-                    content: $translate(
-                        domainData.value?.seo.description,
-                        locale.value
-                    ),
-                },
-            ],
-        });
+    useHeadSafe({
+        title: $translate(
+            domainData.value?.seo.title,
+            locale.value
+        ),
+        meta: [
+            {
+                hid: 'description',
+                name: 'description',
+                content: $translate(
+                    domainData.value?.seo.description,
+                    locale.value
+                ),
+            },
+        ],
+    });
 
     useSchemaOrg([
-            defineWebPage(),
-        ]);
+        defineWebPage(),
+    ]);
 } catch (error) {
     console.log(error);
 
     throw createError({
-            statusCode: 404,
-            message: 'Domain not found',
-            fatal: true
-        });
+        statusCode: 404,
+        message: 'Domain not found',
+        fatal: true
+    });
 }
 </script>
 
