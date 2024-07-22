@@ -17,6 +17,7 @@ import type {
 } from '../types';
 import { draftFactory } from '../types';
 import type { Article } from '../types/article';
+import type { ArticlePrompt } from '../types/article-prompt';
 import { articleValidator } from '../validators';
 
 export const createDraft = async (
@@ -138,13 +139,13 @@ export const updateDraftSeo = async (
     }
 }
 
-export const updateDraftArticle = async (
+export const updateDraftGeneratedArticle = async (
     draftId: DraftId,
     siteId: SiteId,
-    article: Article,
+    article: ArticlePrompt,
     db: Firestore
 ): Promise<void> => {
-    info(`Updating draft article for draft ${draftId} in site ${siteId}`);
+    info(`Updating draft generated article for draft ${draftId} in site ${siteId}`);
 
     try {
         const site = await getSiteById(
@@ -156,12 +157,38 @@ export const updateDraftArticle = async (
             throw new Error('Site not found');
         }
 
+        await site.ref!.collection(DRAFT_COLLECTION).doc(draftId).set(
+            {
+                article,
+                status: 'ARTICLE_CREATED'
+            },
+            { merge: true }
+        );
+    } catch (e) {
+        error(e);
+        throw e;
+    }
+}
+
+export const updateDraftArticle = async (
+    draftId: DraftId,
+    site: SiteEntity,
+    article: Article,
+    db: Firestore
+): Promise<void> => {
+    info(`Updating draft article for draft ${draftId} in site ${site.id}`);
+
+    if (!site) {
+        throw new Error('Site not found');
+    }
+
+    try {
         await updateDraft(
             draftId,
-            siteId,
+            site.id as SiteId,
             {
                 publishableArticle: article,
-                status: DRAFT_STATUS.READY_FOR_PUBLISHING
+                status: DRAFT_STATUS.TRANSLATED
             } as unknown as Partial<Draft>,
             db
         );
@@ -179,16 +206,16 @@ export const updateDraftCategory = async (
 ): Promise<void> => {
     info(`Updating draft category for draft ${draftId} in site ${siteId}`);
 
+    const site = await getSiteById(
+        siteId,
+        db
+    );
+
+    if (!site) {
+        throw new Error('Site not found');
+    }
+
     try {
-        const site = await getSiteById(
-            siteId,
-            db
-        );
-
-        if (!site) {
-            throw new Error('Site not found');
-        }
-
         await updateDraft(
             draftId,
             siteId,
@@ -280,7 +307,7 @@ export const convertDraftToArticle = async (
         db
     );
 
-    let status = 'PUBLISHED';
+    let status = DRAFT_STATUS.PUBLISHED;
 
     try {
         await articleValidator(

@@ -44,9 +44,9 @@ export const createArticleToCategory = async (
             .doc(categoryId)
             .collection(ARTICLE_COLLECTION)
             .add({
-                    ...article,
-                    siteId: siteRef.id,
-                });
+                ...article,
+                siteId: siteRef.id,
+            });
     } catch (e) {
         error(e);
         throw e;
@@ -90,36 +90,36 @@ export const getLatestArticles = async (
             .get();
 
         return Promise.all(articlesSnapshot.docs.map(async (doc: DocumentData): Promise<{
-                    article: Article,
-                    category: Category
-                }> => {
-                    const parentCategory = doc.ref.parent.parent;
-                    const categoryDoc = await parentCategory?.get();
-                    const {
-                        title: titleCategory, description: descriptionCategory, slug: slugCategory
-                    } = categoryDoc?.data() as DocumentData;
-                    const {
-                        title, keywords, slug, article, summary, description, createdAt, updatedAt
-                    } = doc.data() as DocumentData;
+            article: Article,
+            category: Category
+        }> => {
+            const parentCategory = doc.ref.parent.parent;
+            const categoryDoc = await parentCategory?.get();
+            const {
+                title: titleCategory, description: descriptionCategory, slug: slugCategory
+            } = categoryDoc?.data() as DocumentData;
+            const {
+                title, keywords, slug, article, summary, description, createdAt, updatedAt
+            } = doc.data() as DocumentData;
 
-                    return {
-                        article: articleFactory(
-                            title,
-                            keywords,
-                            description,
-                            article,
-                            summary,
-                            slug,
-                            createdAt,
-                            updatedAt
-                        ),
-                        category: categoryFactory(
-                            titleCategory,
-                            descriptionCategory,
-                            slugCategory
-                        )
-                    }
-                }));
+            return {
+                article: articleFactory(
+                    title,
+                    keywords,
+                    description,
+                    article,
+                    summary,
+                    slug,
+                    createdAt,
+                    updatedAt
+                ),
+                category: categoryFactory(
+                    titleCategory,
+                    descriptionCategory,
+                    slugCategory
+                )
+            }
+        }));
     } catch (e) {
         error(e);
         throw e;
@@ -134,21 +134,21 @@ export const getArticlesByCategory = async (categoryEntity: CategoryEntity,): Pr
             .get();
 
         return articles.docs.map((doc: DocumentData) => {
-                const data = doc.data();
+            const data = doc.data();
 
-                return articleFactoryEntity(
-                    doc.ref,
-                    doc.id,
-                    data.title,
-                    data.keywords,
-                    data.description,
-                    data.article,
-                    data.summary,
-                    data.slug,
-                    data.createdAt,
-                    data.updatedAt
-                );
-            });
+            return articleFactoryEntity(
+                doc.ref,
+                doc.id,
+                data.title,
+                data.keywords,
+                data.description,
+                data.article,
+                data.summary,
+                data.slug,
+                data.createdAt,
+                data.updatedAt
+            );
+        });
     } catch (e) {
         error(e);
         throw e;

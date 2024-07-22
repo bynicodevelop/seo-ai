@@ -12,11 +12,13 @@ import {
 } from 'lodash';
 
 import {
+    type ArticlePrompt,
+    articlePromptFactory,
     type Category, categoryFactory, createCategories, createSite, type Draft, DRAFT_STATUS, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
 import { formatingSlug } from './utils';
 import {
-    generateArticle, generateSeo, moveDraftToArticle, selectCategoryForArticle, translate
+    generateArticle, moveDraftToArticle, selectCategoryForArticle, translate
 } from './utils/draft';
 
 admin.initializeApp();
@@ -198,17 +200,12 @@ export const onDraftCreated = onDocumentWritten(
         const {
             content,
             status,
-            article,
-            title,
-            keywords,
-            description,
-            summary,
-            slug
+            article: articlePrompt,
         } = event.data?.after.data() as Partial<Draft>;
 
-        if (status === DRAFT_STATUS.DRAFTED && content) {
+        if (status === DRAFT_STATUS.DRAFTED) {
             await selectCategoryForArticle(
-                content,
+                content!,
                 draftId,
                 siteId,
                 openAi,
@@ -216,48 +213,43 @@ export const onDraftCreated = onDocumentWritten(
             );
         }
 
-        if (status === DRAFT_STATUS.CATEGORY_SELECTED && content) {
+        if (status === DRAFT_STATUS.CATEGORY_SELECTED) {
             await generateArticle(
-                siteId,
                 draftId,
-                content,
+                siteId,
+                content!,
                 openAi,
                 db
             );
         }
 
-        if (status === DRAFT_STATUS.ARTICLE_CREATED && article) {
-            await generateSeo(
-                draftId,
-                siteId,
-                article,
-                openAi,
-                db
-            );
-        }
+        if (status === DRAFT_STATUS.ARTICLE_CREATED) {
+            const {
+                title, keywords, description, article, summary, slug
+            } = articlePrompt as unknown as ArticlePrompt;
 
-        if (status === DRAFT_STATUS.SEO_OPTIMIZED) {
-            translate(
+            await translate(
                 draftId,
                 siteId,
-                title!,
-                article!,
-                keywords!,
-                description!,
-                summary!,
-                slug!,
+                articlePromptFactory(
+                    title,
+                    keywords,
+                    description,
+                    article,
+                    summary,
+                    slug
+                ),
                 openAi,
                 db
             )
         }
 
-        if (status === DRAFT_STATUS.READY_FOR_PUBLISHING) {
+        if (status === DRAFT_STATUS.TRANSLATED) {
             await moveDraftToArticle(
                 draftId,
                 siteId,
                 db
             )
         }
-
     }
 );
