@@ -26,7 +26,7 @@ export default defineEventHandler(async event => {
 
     await createDraft(
         body.domain,
-        body.content,
+        body.resume,
         db
     );
 

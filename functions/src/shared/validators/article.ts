@@ -47,11 +47,11 @@ export const articleValidator = async (
 
 export const createArticleServiceValidator = async (data: {
         domain?: string,
-        result?: string,
+        resume?: string,
     }): Promise<void> => {
     const schema = yup.object().shape({
         domain: yup.string().required(),
-        result: yup.string().required(),
+        resume: yup.string().required(),
     });
 
     await schema.validate(

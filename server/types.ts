@@ -27,5 +27,5 @@ export type CategoryQuery = {
 
 export type ArticleQuery = {
     domain: string;
-    content: string;
+    resume: string;
 }
