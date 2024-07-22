@@ -2,6 +2,7 @@ import { db } from '../../../firebase';
 import {
  initSite, type Config 
 } from '~/functions/src/shared';
+import { createSiteServiceValidator } from '~/functions/src/shared/validators/site';
 
 export default defineEventHandler(async event => {
         const {
@@ -12,6 +13,22 @@ export default defineEventHandler(async event => {
             locales,
             categories
         } = await readBody(event) as Config;
+
+        try {
+            await createSiteServiceValidator({
+                domain,
+                sitename,
+                keywords,
+                description,
+                locales,
+                categories
+            });
+        } catch (error) {
+            return {
+                status: 400,
+                body: 'Request body is not valid'
+            }
+        }
 
         await initSite(
             {
