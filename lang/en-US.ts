@@ -11,7 +11,11 @@ export default defineI18nLocale(() => {
                     message: 'Sorry, we couldn’t find the page you’re looking for.',
                     backToHome: 'Back to home'
                 },
-                categories: { no_articles: 'No articles found', }
+                categories: { 
+                    no_articles: 'No articles found', 
+                    title:  "Categories",
+                    no_categories: "No categories available"
+                }
             },
             components: {
                 latestArticle: { title: 'Latest articles' },
