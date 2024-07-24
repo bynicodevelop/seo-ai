@@ -13,8 +13,8 @@ export default defineI18nLocale(() => {
                 },
                 categories: { 
                     no_articles: 'Aucun article trouvé',
-                    title:  "Categories",
-                    no_categories: "Aucunes catégories trouvées"
+                    title:  'Categories',
+                    no_categories: 'Aucunes catégories trouvées'
                     }
             },
             components: {

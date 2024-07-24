@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useI18n, useLocalePath, useNuxtApp, useAsyncData, useContent } from '#imports';
+
+import { 
+  useI18n, useLocalePath, useNuxtApp, useAsyncData, useContent 
+} from '#imports';
 import type { Category } from '~/functions/src/shared';
 
 const { locale } = useI18n();
@@ -20,7 +23,10 @@ const fetchCategoriesData = async () => {
     );
     categories.value = data.value || [];
   } catch (error) {
-    console.error('Failed to fetch categories:', error);
+    console.error(
+      'Failed to fetch categories:',
+error
+);
     categories.value = [];
   }
 };
