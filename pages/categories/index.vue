@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { Category } from '~/functions/src/shared';
 
-const { locale } = useI18n();
+const {
+  locale, t
+} = useI18n();
+const { getBaseUrl } = useUtils();
 const localePath = useLocalePath();
 const {
   $domain, $translate
@@ -19,6 +22,40 @@ try {
   );
 
   categories.value = data.value || [];
+
+  useHeadSafe({
+    title: t('pages.categories.title'),
+    meta: [
+      // TODO: Pour description Dépend de la branche : https://github.com/bynicodevelop/seo-ai/pull/98
+      {
+        name: 'og:title',
+        content: t('pages.categories.title'),
+      },
+      // TODO: Pour og:description Dépend de la branche : https://github.com/bynicodevelop/seo-ai/pull/98
+      {
+        name: 'og:url',
+        content: getBaseUrl(localePath('/categories')),
+      },
+      {
+        name: 'og:type',
+        content: 'category',
+      },
+      {
+        name: 'twitter:title',
+        content: t('pages.categories.title'),
+      },
+      // TODO: Pour twitter:description Dépend de la branche : https://github.com/bynicodevelop/seo-ai/pull/98
+      {
+        name: 'twitter:url',
+        content: getBaseUrl(localePath('/categories')),
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      }
+    ],
+  });
+
 } catch (error) {
   console.log(error);
 

@@ -3,10 +3,13 @@ import type {
     Article, Category, locales
 } from '~/functions/src/shared';
 
+const localePath = useLocalePath();
+const {
+    getBaseUrl, getTranslatedValue
+} = useUtils();
 const { locale } = useI18n();
 const { params } = useRoute();
 const { categoryslug } = params as { categoryslug: string };
-
 const {
     $domain, $translate
 } = useNuxtApp() as unknown as {
@@ -41,19 +44,48 @@ try {
     category.value = categoryData.value;
     articles.value = contentsData.value;
 
+    const title = getTranslatedValue(categoryData.value?.title);
+    const description = getTranslatedValue(categoryData.value?.description);
+
     useHeadSafe({
-        title: $translate(
-            category.value?.title,
-            locale.value
-        ),
+        title,
         meta: [
             {
                 name: 'description',
-                content: $translate(
-                    category.value?.description,
-                    locale.value
-                ),
+                content: description,
             },
+            {
+                name: 'og:title',
+                content: title,
+            },
+            {
+                name: 'og:description',
+                content: description,
+            },
+            {
+                name: 'og:url',
+                content: getBaseUrl(localePath(`/categories/${getTranslatedValue(category.value?.slug)}`)),
+            },
+            {
+                name: 'og:type',
+                content: 'category',
+            },
+            {
+                name: 'twitter:title',
+                content: title,
+            },
+            {
+                name: 'twitter:description',
+                content: description,
+            },
+            {
+                name: 'twitter:url',
+                content: getBaseUrl(localePath(`/categories/${getTranslatedValue(category.value?.slug)}`)),
+            },
+            {
+                name: 'twitter:card',
+                content: 'summary_large_image',
+            }
         ],
     });
 
@@ -106,8 +138,7 @@ try {
         </header>
         <section>
             <template v-if="articles?.length">
-                <blocks-articles-component
-v-for="(article, index) in articles" :key="index" :article="{
+                <blocks-articles-component v-for="(article, index) in articles" :key="index" :article="{
                     article: article as Article,
                     category: category as Category
                 }" />
