@@ -19,10 +19,19 @@ export default defineEventHandler(async event => {
             db
         );
 
+        const baseCategoriesPages = locales.map((locale: string) => {
+            return {
+                url: `/${locale}/categories`,
+                lastmod: new Date().toISOString(),
+                changefreq: 'weekly',
+                priority: 0.8
+            };
+        });
+
         const categoriesPages = categories.map(category => {
                 return locales.map((locale: string) => {
                         return {
-                            url: `/${locale}/categoties/${category.slug[locale]}`,
+                            url: `/${locale}/categories/${category.slug[locale]}`,
                             lastmod: new Date().toISOString(),
                             changefreq: 'weekly',
                             priority: 0.8
@@ -45,7 +54,7 @@ export default defineEventHandler(async event => {
                         }).flat();
                 }).flat())).flat();
 
-        const allPages = [...categoriesPages,
+        const allPages = [...baseCategoriesPages,...categoriesPages,
         ...articlesPages];
 
         const sitemapContent = `
