@@ -68,22 +68,72 @@ try {
 </script>
 
 <template>
-  <main class="container mx-auto space-y-4">
+  <main>
     <header>
-      <h1>{{ $t('pages.categories.title') }}</h1>
+      <h3>
+        {{ $t('pages.categories.title') }}
+      </h3>
+      <p>
+        {{ $t('pages.categories.description') }}
+      </p>
     </header>
-    <section v-if="categories && categories.length > 0" class="space-y-4">
-      <div v-for="(category, index) in categories" :key="index" class="p-4 border rounded-lg">
-        <h2 class="text-lg font-semibold">
-          <NuxtLink :to="localePath(`/categories/${$translate(category.slug, locale)}`)">
-            {{ $translate(category.title, locale) }}
-          </NuxtLink>
-        </h2>
-        <p>{{ $translate(category.description, locale) }}</p>
+    <section>
+      <template v-if="categories && categories?.length > 0">
+        <article v-for="(category, index) in categories" :key="index">
+          <h2>
+            <NuxtLink :to="localePath(`/categories/${$translate(category.slug, locale)}`)">
+              {{ $translate(category.title, locale) }}
+            </NuxtLink>
+          </h2>
+          <p>{{ $translate(category.description, locale) }}</p>
+        </article>
+      </template>
+
+      <div v-else class="empty-content">
+        <p>{{ $t('pages.categories.no_categories') }}</p>
       </div>
-    </section>
-    <section v-else>
-      <p>{{ $t('pages.categories.no_categories') }}</p>
     </section>
   </main>
 </template>
+
+<style scoped lang="scss">
+main {
+  @apply grid space-y-10 lg:grid-cols-6;
+
+  header {
+    @apply lg:col-span-2;
+
+    h3 {
+      @apply text-base font-semibold leading-6 text-gray-900;
+    }
+
+    p {
+      @apply mt-1 text-sm text-gray-500;
+    }
+  }
+
+  section {
+    @apply lg:col-span-3 lg:col-start-4;
+
+    article {
+      @apply space-y-3 pb-5;
+
+      h2 {
+        @apply text-xl font-semibold;
+      }
+
+      p {
+        @apply text-base text-gray-700;
+      }
+    }
+
+    .empty-content {
+      @apply flex items-center justify-center h-36;
+
+      p {
+        @apply text-gray-500;
+      }
+    }
+  }
+}
+</style>
