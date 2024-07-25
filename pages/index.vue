@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Site } from '~/functions/src/shared';
 
-const { locale } = useI18n();
-const {
-    $domain, $translate
-} = useNuxtApp() as unknown as { $domain: string, $translate: Function };
+const localePath = useLocalePath();
+const { getTranslatedValue } = useUtils();
+const { getBaseUrl } = useUtils();
+const { $domain } = useNuxtApp() as unknown as { $domain: string };
 const { fetchDomain } = useContent();
 
 try {
@@ -13,20 +13,48 @@ try {
         async () => await fetchDomain($domain as string)
     );
 
+    const title = getTranslatedValue(domainData.value?.seo.title);
+    const description = getTranslatedValue(domainData.value?.seo.description);
+
     useHeadSafe({
-        title: $translate(
-            domainData.value?.seo.title,
-            locale.value
-        ),
+        title,
         meta: [
             {
-                hid: 'description',
                 name: 'description',
-                content: $translate(
-                    domainData.value?.seo.description,
-                    locale.value
-                ),
+                content: description,
             },
+            {
+                name: 'og:title',
+                content: title,
+            },
+            {
+                name: 'og:description',
+                content: description,
+            },
+            {
+                name: 'og:url',
+                content: getBaseUrl(localePath('/')),
+            },
+            {
+                name: 'og:type',
+                content: 'website',
+            },
+            {
+                name: 'twitter:title',
+                content: title,
+            },
+            {
+                name: 'twitter:description',
+                content: description,
+            },
+            {
+                name: 'twitter:url',
+                content: getBaseUrl(localePath('/')),
+            },
+            {
+                name: 'twitter:card',
+                content: 'summary_large_image',
+            }
         ],
     });
 

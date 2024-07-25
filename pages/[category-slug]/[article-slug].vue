@@ -3,12 +3,15 @@ import type {
     Article, locales
 } from '~/functions/src/shared';
 
+const localePath = useLocalePath();
 const { locale } = useI18n();
 const { params } = useRoute();
 const {
+    getBaseUrl, getTranslatedValue
+} = useUtils();
+const {
     categoryslug, articleslug
 } = params as { categoryslug: string, articleslug: string };
-
 const {
     $domain, $translate
 } = useNuxtApp() as unknown as { $domain: string, $translate: Function };
@@ -29,18 +32,15 @@ try {
 
     article.value = contentData.value;
 
+    const title = getTranslatedValue(contentData.value?.title);
+    const description = getTranslatedValue(contentData.value?.description);
+
     useHeadSafe({
-        title: $translate(
-            article.value?.title,
-            locale.value
-        ),
+        title,
         meta: [
             {
                 name: 'description',
-                content: $translate(
-                    article.value?.description,
-                    locale.value
-                ),
+                content: description,
             },
             {
                 name: 'keywords',
@@ -48,6 +48,38 @@ try {
                     article.value?.keywords,
                     locale.value
                 ),
+            },
+            {
+                name: 'og:title',
+                content: title,
+            },
+            {
+                name: 'og:description',
+                content: description,
+            },
+            {
+                name: 'og:url',
+                content: getBaseUrl(localePath(`/${categoryslug}/${getTranslatedValue(contentData.value?.slug)}`)),
+            },
+            {
+                name: 'og:type',
+                content: 'article',
+            },
+            {
+                name: 'twitter:title',
+                content: title,
+            },
+            {
+                name: 'twitter:description',
+                content: description,
+            },
+            {
+                name: 'twitter:url',
+                content: getBaseUrl(localePath(`/${categoryslug}/${getTranslatedValue(contentData.value?.slug)}`)),
+            },
+            {
+                name: 'twitter:card',
+                content: 'summary_large_image',
             }
         ],
     });
