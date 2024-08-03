@@ -2,7 +2,7 @@ import type OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources';
 
 import {
- addMessages, callOpenAI 
+    addMessages, callOpenAI
 } from '../ai';
 import type { ResumeContent } from '../types/prompt';
 
@@ -33,7 +33,7 @@ ${returnContent}
 `;
 
 export const promptResumeContentSuite = (
-resume: { [key: string]: string | string[] }, content: string
+    resume: { [key: string]: string | string[] }, content: string
 ): string => `
 Reprendre le résumé suivant : ${resume.resume} et les mots clés suivants : ${(resume.keywords as string[]).join(', ')} dans votre analyse.
 Complétez le résumé avec les nouvelles informations du contenu suivant : ${content}
@@ -44,43 +44,43 @@ ${returnContent}
 `;
 
 export const resumeContentPrompt = async (
-contents: string[], openai: OpenAI
+    contents: string[], openai: OpenAI
 ): Promise<ResumeContent> => {
     const messages: ChatCompletionMessageParam[] = [];
     const contentCopy = [...contents];
 
     addMessages(
-messages,
-'assistant',
-promptResumeContent()
-);
+        messages,
+        'assistant',
+        promptResumeContent()
+    );
 
     // Extraction du premier contenu pour initialiser le résumé
     const firstContent = contentCopy.shift() as string;
     addMessages(
-messages,
-'user',
-firstContent
-);
+        messages,
+        'user',
+        firstContent
+    );
     let resume = await callOpenAI<ResumeContent>(
-messages,
-openai
-);
+        messages,
+        openai
+    );
 
     // Extraction des autres contenus pour compléter le résumé
     for (const content of contentCopy) {
         addMessages(
-messages,
-'user',
-promptResumeContentSuite(
-resume,
-content
-)
-);
+            messages,
+            'user',
+            promptResumeContentSuite(
+                resume,
+                content
+            )
+        );
         resume = await callOpenAI<ResumeContent>(
-messages,
-openai
-);
+            messages,
+            openai
+        );
     }
 
     return resume;

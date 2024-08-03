@@ -16,10 +16,11 @@ import {
 } from 'lodash';
 
 import type {
-    ArticlePrompt, Category, Draft, I18n, locales, Site
+    ArticlePrompt, Category, Draft, I18n, locales, Site,
+    SiteId
 } from './shared';
 import {
-    articlePromptFactory, categoryFactory, createCategories, createSite, DRAFT_STATUS, generateCategoriesPrompt, initOpentAI, siteFactory, translateCategoriesPrompt, translatePrompt
+    articlePromptFactory, categoryFactory, createCategories, createDraft, createSite, DRAFT_STATUS, generateCategoriesPrompt, initOpentAI, siteFactory, translateCategoriesPrompt, translatePrompt
 } from './shared';
 import { resumeContentPrompt } from './shared/prompts/resume';
 import {
@@ -268,13 +269,14 @@ export const onDataCreated = onDocumentWritten(
         const openAi = initOpentAI(openAIKey.value());
         const { dataId } = event.params;
         const {
+            domain,
             urls,
-            contents
-        } = event.data?.after.data() as { urls: string[], contents: string[] };
+            command,
+            resumes,
+            convertToArticle
+        } = event.data?.after.data() as { domain: SiteId, urls: string[], command: string, resumes?: { [key: string]: string | string[] }, convertToArticle: boolean };
 
-        if (!urls && contents && contents.length > 0) {
-            return;
-        }
+        if (resumes) return;
 
         try {
             const texts = await Promise.all(urls!.map(async (url) => {
@@ -301,6 +303,8 @@ export const onDataCreated = onDocumentWritten(
                 openAi
             );
 
+            resumes.resume = `${resumes.resume} ${command}`;
+
             await admin.firestore().collection('data').doc(dataId).set(
                 {
                     contents,
@@ -308,6 +312,14 @@ export const onDataCreated = onDocumentWritten(
                 },
                 { merge: true }
             );
+
+            if (convertToArticle) {
+                await createDraft(
+                    domain,
+                    resumes.resume,
+                    admin.firestore()
+                );
+            }
         } catch (e) {
             error(e);
             return
