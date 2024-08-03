@@ -81,9 +81,6 @@ const createArticle = async () => {
         resume,
     };
 
-    console.log(domainUrl);
-
-
     const { data } = await axios.post(
         `${domainUrl}/api/services/articles`,
         articleConfig
