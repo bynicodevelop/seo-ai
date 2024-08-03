@@ -32,8 +32,8 @@ const createSite = async () => {
     ]);
 
     const {
- sitename, domain, keywords, description, locales 
-} = response;
+        sitename, domain, keywords, description, locales
+    } = response;
 
     const siteConfig = {
         sitename,
@@ -44,9 +44,9 @@ const createSite = async () => {
     };
 
     const { data } = await axios.post(
-`${domain}/api/services/sites`,
-siteConfig
-);
+        `${domain}/api/services/sites`,
+        siteConfig
+    );
 
     console.log(data);
 };
@@ -61,30 +61,33 @@ const createArticle = async () => {
         },
         {
             type: 'text',
-            name: 'content',
+            name: 'resume',
             message: 'Resumé de l\'article',
         },
     ]);
 
     const {
- siteId, content 
-} = response;
+        siteId, resume
+    } = response;
 
     const domainUrl = siteId[siteId.length - 1] === '/' ? siteId.slice(
-0,
--1
-) : siteId;
+        0,
+        -1
+    ) : siteId;
     const domain = siteId.split('/')[2].split(':')[0];
 
     const articleConfig = {
-        siteId: domain,
-        content,
+        domain,
+        resume,
     };
 
+    console.log(domainUrl);
+
+
     const { data } = await axios.post(
-`${domainUrl}/api/services/articles`,
-articleConfig
-);
+        `${domainUrl}/api/services/articles`,
+        articleConfig
+    );
 
     console.log(data);
 };
@@ -101,13 +104,13 @@ articleConfig
         message: 'Que voulez-vous faire ?',
         choices: [
             {
- title: 'Créer un article',
-value: INITIAL_OPTIONS.CREATE_ARTICLE 
-},
+                title: 'Créer un article',
+                value: INITIAL_OPTIONS.CREATE_ARTICLE
+            },
             {
- title: 'Créer un site',
-value: INITIAL_OPTIONS.CREATE_SITE 
-},
+                title: 'Créer un site',
+                value: INITIAL_OPTIONS.CREATE_SITE
+            },
         ],
         initial: 0
     });
