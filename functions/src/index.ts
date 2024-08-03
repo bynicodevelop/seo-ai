@@ -265,6 +265,7 @@ export const onDraftCreated = onDocumentWritten(
 export const onDataCreated = onDocumentWritten(
     'data/{dataId}',
     async (event) => {
+        const openAi = initOpentAI(openAIKey.value());
         const { dataId } = event.params;
         const {
             urls,
