@@ -1,7 +1,10 @@
-import { ChatCompletionMessageParam } from "openai/resources";
-import { addMessages, callOpenAI } from "../ai";
-import OpenAI from "openai";
-import { ResumeContent } from "../types/prompt";
+import type OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources';
+
+import {
+ addMessages, callOpenAI 
+} from '../ai';
+import type { ResumeContent } from '../types/prompt';
 
 const returnContent = `
 Retournez les informations au format json comme l'exemple qui suit : 
@@ -29,7 +32,9 @@ Interdictions :
 ${returnContent}
 `;
 
-export const promptResumeContentSuite = (resume: { [key: string]: string | string[] }, content: string): string => `
+export const promptResumeContentSuite = (
+resume: { [key: string]: string | string[] }, content: string
+): string => `
 Reprendre le résumé suivant : ${resume.resume} et les mots clés suivants : ${(resume.keywords as string[]).join(', ')} dans votre analyse.
 Complétez le résumé avec les nouvelles informations du contenu suivant : ${content}
 
@@ -38,21 +43,44 @@ Votre résumé doit être complet et inclure les informations les plus important
 ${returnContent}
 `;
 
-export const resumeContentPrompt = async (contents: string[], openai: OpenAI): Promise<ResumeContent> => {
+export const resumeContentPrompt = async (
+contents: string[], openai: OpenAI
+): Promise<ResumeContent> => {
     const messages: ChatCompletionMessageParam[] = [];
     const contentCopy = [...contents];
 
-    addMessages(messages, 'assistant', promptResumeContent());
+    addMessages(
+messages,
+'assistant',
+promptResumeContent()
+);
 
     // Extraction du premier contenu pour initialiser le résumé
     const firstContent = contentCopy.shift() as string;
-    addMessages(messages, 'user', firstContent);
-    let resume = await callOpenAI<ResumeContent>(messages, openai);
+    addMessages(
+messages,
+'user',
+firstContent
+);
+    let resume = await callOpenAI<ResumeContent>(
+messages,
+openai
+);
 
     // Extraction des autres contenus pour compléter le résumé
     for (const content of contentCopy) {
-        addMessages(messages, 'user', promptResumeContentSuite(resume, content));
-        resume = await callOpenAI<ResumeContent>(messages, openai);
+        addMessages(
+messages,
+'user',
+promptResumeContentSuite(
+resume,
+content
+)
+);
+        resume = await callOpenAI<ResumeContent>(
+messages,
+openai
+);
     }
 
     return resume;

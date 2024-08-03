@@ -1,5 +1,5 @@
-import { load } from "cheerio";
-import { isEmpty } from "lodash";
+import { load } from 'cheerio';
+import { isEmpty } from 'lodash';
 
 const regex = [
     /[\n\t]/g,
@@ -11,7 +11,10 @@ export const cleanContentToString = (content: string): string => {
     let cleanedContent = content;
 
     regex.forEach((reg) => {
-        cleanedContent = cleanedContent.replace(reg, ' ');
+        cleanedContent = cleanedContent.replace(
+reg,
+' '
+);
     });
 
     return cleanedContent.trim();

@@ -138,7 +138,8 @@ try {
         </header>
         <section>
             <template v-if="articles && articles?.length > 0">
-                <blocks-articles-component v-for="(article, index) in articles" :key="index" :article="{
+                <blocks-articles-component
+v-for="(article, index) in articles" :key="index" :article="{
                     article: article as Article,
                     category: category as Category
                 }" />
