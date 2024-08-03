@@ -31,19 +31,26 @@ try {
     console.log(error);
 
     throw createError({
-            statusCode: 404,
-            message: 'Articles not found',
-            fatal: true
-        });
+        statusCode: 404,
+        message: 'Articles not found',
+        fatal: true
+    });
 }
 </script>
 
 <template>
-    <section v-if="articles && articles.length > 0" class="space-y-4">
+    <section>
         <h5>{{ $t('components.latestArticle.title') }}</h5>
-        <blocks-articles-component
-v-for="(article, index) in articles"
-:key="index"
-:article="article" />
+        <blocks-articles-component v-for="(article, index) in articles" :key="index" :article="article" />
     </section>
 </template>
+
+<style scoped lang="scss">
+section {
+    @apply space-y-4;
+
+    h5 {
+        @apply text-lg font-semibold;
+    }
+}
+</style>

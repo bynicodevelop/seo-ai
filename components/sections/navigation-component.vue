@@ -25,18 +25,15 @@ const { data: categories } = await useAsyncData<Category[]>(
 </script>
 
 <template>
-    <nav class="container mx-auto flex items-center justify-between py-6" aria-label="Global">
+    <nav aria-label="Global">
         <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5">
             <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
             {{ $translate(domain?.seo.title, locale) }}
         </NuxtLink>
         <div class="flex lg:hidden">
-            <button 
-            class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-                @click="show = true">
-                <span class="sr-only">Open main menu</span>
-                <svg
-class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            <button class="mobile-button" type="button" @click="show = true">
+                <span class="sr-only">{{ $t('components.navigation.open_menu') }}</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                     aria-hidden="true">
                     <path
 stroke-linecap="round" stroke-linejoin="round"
@@ -44,48 +41,71 @@ stroke-linecap="round" stroke-linejoin="round"
                 </svg>
             </button>
         </div>
-        <div class="hidden lg:flex lg:gap-x-12">
-            <NuxtLink
-v-for="(category, index) in categories" :key="index"
+        <div class="aside">
+            <NuxtLink v-for="(category, index) in categories" :key="index"
                 :to="localePath(`/categories/${$translate(category.slug, locale)}`)"
-                :title="$translate(category.title, locale)"
-                class="text-sm font-semibold leading-6 text-gray-900 capitalize">
+                :title="$translate(category.title, locale)">
                 {{ $translate(category.title, locale) }}
             </NuxtLink>
         </div>
     </nav>
     <div :class="{ 'block': show, 'hidden': !show }" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 z-10" />
-        <div
-            class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <div class="nav-mobile">
             <div class="flex items-center justify-between">
                 <NuxtLink :to="localePath('/')" class="-m-1.5 p-1.5" :title="domain?.seo.title">
                     <span class="sr-only">{{ $translate(domain?.seo.title, locale) }}</span>
                     {{ $translate(domain?.seo.title, locale) }}
                 </NuxtLink>
-                <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-700" @click="show = false">
-                    <span class="sr-only">Close menu</span>
-                    <svg
-class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                <button type="button" class="mobile-button" @click="show = false">
+                    <span class="sr-only">{{ $t('components.navigation.close_menu') }}</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
-            <div class="mt-6 flow-root">
-                <div class="-my-6 divide-y divide-gray-500/10">
-                    <div class="space-y-2 py-6">
-                        <NuxtLink
-v-for="(category, index) in categories" :key="index"
-                            :title="$translate(category.title, locale)"
-                            :to="localePath(`/categories/${$translate(category.slug, locale)}`)"
-                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                            @click="show = false">
-                            {{ $translate(category.title, locale) }}
-                        </NuxtLink>
-                    </div>
-                </div>
+            <div class="aside">
+                <NuxtLink v-for="(category, index) in categories" :key="index"
+                    :title="$translate(category.title, locale)"
+                    :to="localePath(`/categories/${$translate(category.slug, locale)}`)" @click="show = false">
+                    {{ $translate(category.title, locale) }}
+                </NuxtLink>
             </div>
         </div>
     </div>
 </template>
+
+<style scoped lang="scss">
+nav {
+    @apply container mx-auto flex items-center justify-between py-4 pl-5 lg:py-6 lg:pl-0;
+
+    .mobile-button {
+        @apply inline-flex items-center justify-center rounded-md p-2.5 text-gray-700;
+    }
+
+    .aside {
+        @apply hidden lg:flex lg:gap-x-12;
+
+        a {
+            @apply text-sm font-semibold leading-6 text-gray-900 capitalize;
+        }
+    }
+}
+
+.nav-mobile {
+    @apply fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10;
+
+    .mobile-button {
+        @apply -m-2.5 rounded-md p-2.5 text-gray-700;
+    }
+
+    .aside {
+        @apply mt-3 space-y-2 py-6;
+
+        a {
+            @apply -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50;
+        }
+    }
+}
+</style>

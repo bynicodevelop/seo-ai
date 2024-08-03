@@ -14,6 +14,7 @@ export default defineI18nLocale(() => {
                 categories: { 
                     no_articles: 'No articles found', 
                     title:  'Categories',
+                    description: 'Find all the categories of our blog.',
                     no_categories: 'No categories available'
                 }
             },
