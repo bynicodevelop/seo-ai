@@ -29,3 +29,4 @@ firebase.json
 hosting.*
 *-lock.json
 .data*
+sandbox
