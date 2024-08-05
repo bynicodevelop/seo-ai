@@ -1,8 +1,12 @@
+import axios from 'axios';
+import { load } from 'cheerio';
 import * as admin from 'firebase-admin';
 import type {
     DocumentData, QueryDocumentSnapshot
 } from 'firebase-admin/firestore';
-import { info } from 'firebase-functions/logger';
+import {
+    error, info
+} from 'firebase-functions/logger';
 import { defineString } from 'firebase-functions/params';
 import {
     onDocumentCreated, onDocumentWritten
@@ -11,12 +15,17 @@ import {
     first, isEmpty
 } from 'lodash';
 
-import {
-    type ArticlePrompt,
-    articlePromptFactory,
-    type Category, categoryFactory, createCategories, createSite, type Draft, DRAFT_STATUS, generateCategoriesPrompt, type I18n, initOpentAI, type locales, type Site, siteFactory, translateCategoriesPrompt, translatePrompt
+import type {
+    ArticlePrompt, Category, Draft, I18n, locales, Site,
+    SiteId
 } from './shared';
-import { formatingSlug } from './utils';
+import {
+    articlePromptFactory, categoryFactory, createCategories, createDraft, createSite, DRAFT_STATUS, generateCategoriesPrompt, initOpentAI, siteFactory, translateCategoriesPrompt, translatePrompt
+} from './shared';
+import { resumeContentPrompt } from './shared/prompts/resume';
+import {
+    cleanContentToString, formatingSlug
+} from './utils';
 import {
     generateArticle, moveDraftToArticle, selectCategoryForArticle, translate
 } from './utils/draft';
@@ -251,5 +260,74 @@ export const onDraftCreated = onDocumentWritten(
                 db
             )
         }
+    }
+);
+
+export const onDataCreated = onDocumentWritten(
+    'data/{dataId}',
+    async (event) => {
+        const openAi = initOpentAI(openAIKey.value());
+        const { dataId } = event.params;
+        const {
+            domain,
+            urls,
+            command,
+            resumes,
+            convertToArticle
+        } = event.data?.after.data() as { domain: SiteId, urls: string[], command: string, resumes?: { [key: string]: string | string[] }, convertToArticle: boolean };
+
+        if (resumes) return;
+
+        try {
+            const texts = await Promise.all(urls!.map(async (url) => {
+                const response = await axios.get(url);
+                const selector = await load(response.data);
+
+                let content = selector('body article').text();
+
+                if (isEmpty(content)) {
+                    content = selector('body main').text();
+                }
+
+                if (isEmpty(content)) {
+                    content = selector('body').text()
+                }
+
+                return content;
+            }));
+
+            const contents = texts.map((text: string) => cleanContentToString(text));
+
+            const resumes = await resumeContentPrompt(
+                contents,
+                openAi
+            );
+
+            resumes.resume = `${resumes.resume} ${command}`;
+
+            await admin.firestore().collection('data').doc(dataId).set(
+                {
+                    contents,
+                    resumes
+                },
+                { merge: true }
+            );
+
+            if (convertToArticle) {
+                await createDraft(
+                    domain,
+                    resumes.resume,
+                    admin.firestore()
+                );
+            }
+        } catch (e) {
+            error(e);
+            return
+        }
+
+        info(
+            'Data created',
+            urls
+        );
     }
 );

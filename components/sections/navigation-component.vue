@@ -33,7 +33,8 @@ const { data: categories } = await useAsyncData<Category[]>(
         <div class="flex lg:hidden">
             <button class="mobile-button" type="button" @click="show = true">
                 <span class="sr-only">{{ $t('components.navigation.open_menu') }}</span>
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                <svg
+class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                     aria-hidden="true">
                     <path
 stroke-linecap="round" stroke-linejoin="round"
@@ -42,7 +43,8 @@ stroke-linecap="round" stroke-linejoin="round"
             </button>
         </div>
         <div class="aside">
-            <NuxtLink v-for="(category, index) in categories" :key="index"
+            <NuxtLink
+v-for="(category, index) in categories" :key="index"
                 :to="localePath(`/categories/${$translate(category.slug, locale)}`)"
                 :title="$translate(category.title, locale)">
                 {{ $translate(category.title, locale) }}
@@ -58,7 +60,8 @@ stroke-linecap="round" stroke-linejoin="round"
                 </NuxtLink>
                 <button type="button" class="mobile-button" @click="show = false">
                     <span class="sr-only">{{ $t('components.navigation.close_menu') }}</span>
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                    <svg
+class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -66,7 +69,8 @@ stroke-linecap="round" stroke-linejoin="round"
                 </button>
             </div>
             <div class="aside">
-                <NuxtLink v-for="(category, index) in categories" :key="index"
+                <NuxtLink
+v-for="(category, index) in categories" :key="index"
                     :title="$translate(category.title, locale)"
                     :to="localePath(`/categories/${$translate(category.slug, locale)}`)" @click="show = false">
                     {{ $translate(category.title, locale) }}
